@@ -1,0 +1,13 @@
+modLoader = "javafml"
+loaderVersion = "[40,)"
+issueTrackerURL = "https://github.com/BrassGoggledCoders/MineScribe/issues"
+license="MIT"
+
+
+[[mods]]
+modId = "minescribe"
+version = "${file.jarVersion}"
+displayName = "MineScribe"
+authors = "SkySom, DivineAspect"
+description = '''
+        '''
