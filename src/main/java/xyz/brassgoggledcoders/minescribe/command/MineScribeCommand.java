@@ -26,6 +26,8 @@ import java.util.List;
 public class MineScribeCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> create() {
         return Commands.literal(MineScribe.ID)
+                .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                .then(PackCommand.create())
                 .then(Commands.literal("loot")
                         .then(Commands.literal("block")
                                 .then(Commands.argument("blockState", BlockStateArgument.block())
