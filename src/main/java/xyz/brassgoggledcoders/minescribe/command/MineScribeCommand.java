@@ -28,6 +28,7 @@ public class MineScribeCommand {
         return Commands.literal(MineScribe.ID)
                 .requires(commandSource -> commandSource.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(PackCommand.create())
+                .then(SchemaCommand.create())
                 .then(Commands.literal("loot")
                         .then(Commands.literal("block")
                                 .then(Commands.argument("blockState", BlockStateArgument.block())
