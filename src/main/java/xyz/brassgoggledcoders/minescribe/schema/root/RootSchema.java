@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.minescribe.schema.root;
 import com.google.gson.annotations.JsonAdapter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.loading.FMLPaths;
+import xyz.brassgoggledcoders.minescribe.api.schema.root.IRootSchema;
 import xyz.brassgoggledcoders.minescribe.schema.IFileMatch;
 import xyz.brassgoggledcoders.minescribe.api.schema.ISchema;
 
@@ -15,7 +16,7 @@ public record RootSchema(
         Map<String, ISchema> definitions,
         ISchema actualSchema,
         String[] fileMatch
-) implements ISchema, IFileMatch {
+) implements IRootSchema, IFileMatch {
     @Override
     public String getType() {
         return actualSchema().getType();
@@ -26,10 +27,16 @@ public record RootSchema(
         return new String[0];
     }
 
+    @Override
     public Path getPath() {
         return FMLPaths.GAMEDIR.get()
                 .resolve(".minescribe")
                 .resolve(this.id().getNamespace())
                 .resolve(this.id().getPath() +  ".json");
+    }
+
+    @Override
+    public ResourceLocation getId() {
+        return this.id();
     }
 }

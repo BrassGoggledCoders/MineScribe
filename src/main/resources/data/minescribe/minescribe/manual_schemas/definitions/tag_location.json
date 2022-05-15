@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "minescribe://minescribe/definitions/tag_location.json",
+  "$comment": "See https://github.com/Levertion/minecraft-json-schemas/blob/master/README.md for License",
+  "type": "string",
+  "pattern": "^#([a-z\\d\\-_]+:)?([a-z\\d\\-_]+/)*[a-z\\d\\-_]+$"
+}

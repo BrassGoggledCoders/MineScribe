@@ -13,6 +13,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 import xyz.brassgoggledcoders.minescribe.api.json.SimpleGathererInstance;
 import xyz.brassgoggledcoders.minescribe.api.schema.creator.SchemaCreatorGatherEvent;
+import xyz.brassgoggledcoders.minescribe.api.schema.root.IRootSchema;
+import xyz.brassgoggledcoders.minescribe.schema.creator.CopyManualSchemaCreator;
 import xyz.brassgoggledcoders.minescribe.schema.creator.RegistrySchemaCreator;
 import xyz.brassgoggledcoders.minescribe.schema.root.RootSchema;
 
@@ -42,11 +44,11 @@ public class SchemaGenerator {
                 .done()
                 .thenApplyAsync(
                         lists -> {
-                            List<RootSchema> schemaList = lists.stream()
+                            List<IRootSchema> schemaList = lists.stream()
                                     .flatMap(Collection::stream)
                                     .toList();
 
-                            for (RootSchema rootSchema : schemaList) {
+                            for (IRootSchema rootSchema : schemaList) {
                                 File file = rootSchema.getPath().toFile();
                                 file.getParentFile().mkdirs();
                                 try (
@@ -55,7 +57,7 @@ public class SchemaGenerator {
                                 ) {
                                     GSON.toJson(GSON.toJsonTree(rootSchema), jsonWriter);
                                 } catch (IOException e) {
-                                    MineScribe.LOGGER.error("Failed to write Root Schema: " + rootSchema.id(), e);
+                                    MineScribe.LOGGER.error("Failed to write Root Schema: " + rootSchema.getId(), e);
                                 }
                             }
 
@@ -74,5 +76,6 @@ public class SchemaGenerator {
     @SubscribeEvent
     public static void gatherSchemaCreator(SchemaCreatorGatherEvent event) {
         event.addSchemaCreator(new RegistrySchemaCreator());
+        event.addSchemaCreator(new CopyManualSchemaCreator());
     }
 }

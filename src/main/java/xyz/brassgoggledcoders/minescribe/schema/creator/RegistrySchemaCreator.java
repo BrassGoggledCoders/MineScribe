@@ -7,6 +7,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import xyz.brassgoggledcoders.minescribe.api.schema.ISchema;
 import xyz.brassgoggledcoders.minescribe.api.schema.creator.ISchemaCreator;
+import xyz.brassgoggledcoders.minescribe.api.schema.root.IRootSchema;
 import xyz.brassgoggledcoders.minescribe.schema.root.RootSchema;
 import xyz.brassgoggledcoders.minescribe.schema.root.RootSchemaBuilder;
 import xyz.brassgoggledcoders.minescribe.schema.subschema.StringEnumSchema;
@@ -17,16 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 public class RegistrySchemaCreator implements ISchemaCreator {
-    @Override
-    public Map<ResourceLocation, JsonElement> prepare(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
-        return Collections.emptyMap();
-    }
 
     @Override
-    public List<RootSchema> apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
+    public List<IRootSchema> apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
         return Registry.REGISTRY.entrySet()
                 .stream()
-                .map(entry -> {
+                .<IRootSchema>map(entry -> {
                     ResourceLocation location = entry.getKey().location();
                     return RootSchemaBuilder.builder(
                                     ResourceLocationHelper.prependPath(location, "definition/registry")

@@ -4,7 +4,8 @@ public enum SchemaType {
     STRING("string"),
     ARRAY("array"),
     NUMBER("number"),
-    OBJECT("object");
+    OBJECT("object"),
+    BOOLEAN("boolean");
 
     private final String name;
 
