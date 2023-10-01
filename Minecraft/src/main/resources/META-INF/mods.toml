@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[43,44)"
+license="MIT"
+
+[[mods]]
+modId="minescribe"
+version="${file.jarVersion}"
+displayName="MineScribe"
+authors="SkySom"
+description='''Datapacks FOR DAYS'''
+
+[[dependencies.minescribe]]
+modId="forge"
+mandatory=true #mandatory
+versionRange="[43.2.0,43.3.0)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.minescribe]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.19.2,1.19.3)"
+ordering="NONE"
+side="BOTH"
