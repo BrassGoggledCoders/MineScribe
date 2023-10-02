@@ -10,14 +10,26 @@ public class NetworkEvent extends Event {
         super(eventType);
     }
 
-    public static class ClientConnectedNetworkEvent extends NetworkEvent {
-        public static final EventType<ClientConnectedNetworkEvent> CLIENT_CONNECTED_EVENT_TYPE = new EventType<>(
+    public static class ClientConnectionNetworkEvent extends NetworkEvent {
+        public static final EventType<ClientConnectionNetworkEvent> CLIENT_CONNECTED_EVENT_TYPE = new EventType<>(
                 NETWORK_EVENT_TYPE,
                 "client_connected"
         );
 
-        public ClientConnectedNetworkEvent() {
+        private final ConnectionStatus status;
+
+        public ClientConnectionNetworkEvent(ConnectionStatus status) {
             super(CLIENT_CONNECTED_EVENT_TYPE);
+            this.status = status;
         }
+
+        public ConnectionStatus getStatus() {
+            return status;
+        }
+    }
+
+    public enum ConnectionStatus {
+        CONNECTED,
+        DISCONNECTED
     }
 }

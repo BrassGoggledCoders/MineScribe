@@ -24,14 +24,14 @@ public class MineScribe {
                 folderLocationRequest -> {
                     MineScribeNettyClient.getInstance().sendToClient(new FolderLocationResponse(
                             "resource pack",
-                            Minecraft.getInstance().getResourcePackDirectory().toPath()
+                            Minecraft.getInstance().getResourcePackDirectory().getAbsoluteFile().toPath()
                     ));
                     Optional.ofNullable(Minecraft.getInstance().level)
                             .map(Level::getServer)
                             .ifPresent(minecraftServer -> MineScribeNettyClient.getInstance()
                                     .sendToClient(new FolderLocationResponse(
                                             "data pack",
-                                            minecraftServer.getFile("datapacks").toPath()
+                                            minecraftServer.getFile("datapacks").getAbsoluteFile().toPath()
                                     ))
                             );
                 }

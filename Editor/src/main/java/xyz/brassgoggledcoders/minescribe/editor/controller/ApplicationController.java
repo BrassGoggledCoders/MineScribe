@@ -11,7 +11,8 @@ import xyz.brassgoggledcoders.minescribe.core.MineScribeInfo;
 import xyz.brassgoggledcoders.minescribe.core.netty.PacketRegistry;
 import xyz.brassgoggledcoders.minescribe.core.netty.packet.FolderLocationResponse;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
-import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent.ClientConnectedNetworkEvent;
+import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent;
+import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent.ClientConnectionNetworkEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.server.MineScribeNettyServer;
 
@@ -34,8 +35,14 @@ public class ApplicationController {
         );
 
         this.content.addEventHandler(
-                ClientConnectedNetworkEvent.CLIENT_CONNECTED_EVENT_TYPE,
-                event -> trySetView("editor")
+                ClientConnectionNetworkEvent.CLIENT_CONNECTED_EVENT_TYPE,
+                event -> {
+                    if(event.getStatus() == NetworkEvent.ConnectionStatus.CONNECTED)  {
+                        trySetView("editor");
+                    } else {
+                        trySetView("loading");
+                    }
+                }
         );
     }
 
