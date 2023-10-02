@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.text.Text?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.LoadingController"
+            fx:id="loading"
 >
-    <TextField></TextField>
+<Text>Waiting on Minecraft Connection</Text>
 </AnchorPane>

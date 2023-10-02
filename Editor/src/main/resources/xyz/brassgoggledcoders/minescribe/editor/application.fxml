@@ -4,7 +4,9 @@
 <?import javafx.scene.layout.*?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.ApplicationController">
    <top>
        <MenuBar BorderPane.alignment="CENTER">
            <Menu mnemonicParsing="false" text="File">
@@ -19,8 +21,9 @@
        </MenuBar>
    </top>
    <center>
-       <AnchorPane BorderPane.alignment="CENTER">
-           <fx:include fx:id="content" source="editor.fxml" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0"/>
+       <AnchorPane BorderPane.alignment="CENTER" fx:id="content">
+           <fx:include source="loading.fxml" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                       AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0"/>
        </AnchorPane>
    </center>
 </BorderPane>

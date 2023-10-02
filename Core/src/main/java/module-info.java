@@ -1,5 +1,13 @@
 module xyz.brassgoggledcoders.minescribe.core {
-    requires java.rmi;
+    requires io.netty.handler;
+    requires io.netty.codec;
+    requires io.netty.transport;
+    requires io.netty.buffer;
 
-    exports xyz.brassgoggledcoders.minescribe.core.remote;
+    requires org.jetbrains.annotations;
+
+    exports xyz.brassgoggledcoders.minescribe.core;
+    exports xyz.brassgoggledcoders.minescribe.core.netty;
+    exports xyz.brassgoggledcoders.minescribe.core.netty.packet;
+
 }

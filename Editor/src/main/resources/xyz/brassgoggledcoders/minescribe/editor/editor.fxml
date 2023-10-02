@@ -5,9 +5,11 @@
 
 
 <SplitPane dividerPositions="0.2" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-           prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+           prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" fx:id="editor"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.EditorController">
-    <ScrollPane prefHeight="398.0" prefWidth="105.0"/>
+    <ScrollPane fx:id="files" prefHeight="398.0" prefWidth="105.0">
+
+    </ScrollPane>
     <TabPane prefHeight="398.0" prefWidth="288.0" tabClosingPolicy="ALL_TABS">
         <Tab text="Untitled Tab 1">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>

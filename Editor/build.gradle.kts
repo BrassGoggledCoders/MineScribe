@@ -31,8 +31,8 @@ application {
 repositories {
     mavenCentral()
     maven {
-        name = "Jitpack"
-        url = uri("https://www.jitpack.io")
+        name = "SonaType"
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
@@ -43,8 +43,21 @@ dependencies {
     }
     implementation("org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0")
     implementation("com.dlsc.preferencesfx:preferencesfx-core:11.16.0")
+    implementation("org.fxmisc.livedirs:livedirsfx:1.0.0-SNAPSHOT")
 
-    implementation(project(":Core"))
+    implementation("io.netty:netty-buffer:4.1.86.Final")
+    implementation("io.netty:netty-codec:4.1.86.Final")
+    implementation("io.netty:netty-common:4.1.86.Final")
+    implementation("io.netty:netty-handler:4.1.86.Final")
+    implementation("io.netty:netty-transport:4.1.86.Final")
+
+    implementation("org.slf4j:slf4j-simple:2.0.9")
+    implementation("org.jetbrains:annotations:24.0.0")
+
+    implementation(project(":Core")) {
+        exclude(group = "io.netty")
+    }
+
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
