@@ -7,6 +7,7 @@ module xyz.brassgoggledcoders.minescribe.core {
     requires org.jetbrains.annotations;
 
     exports xyz.brassgoggledcoders.minescribe.core;
+    exports xyz.brassgoggledcoders.minescribe.core.info;
     exports xyz.brassgoggledcoders.minescribe.core.netty;
     exports xyz.brassgoggledcoders.minescribe.core.netty.packet;
 

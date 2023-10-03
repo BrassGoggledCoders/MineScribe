@@ -8,8 +8,10 @@ import javafx.scene.layout.AnchorPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.MineScribeInfo;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.core.netty.PacketRegistry;
-import xyz.brassgoggledcoders.minescribe.core.netty.packet.FolderLocationResponse;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataResponse;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent;
 import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent.ClientConnectionNetworkEvent;
@@ -18,6 +20,8 @@ import xyz.brassgoggledcoders.minescribe.editor.server.MineScribeNettyServer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.Map;
 
 public class ApplicationController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
@@ -30,14 +34,21 @@ public class ApplicationController {
         FileHandler.initialize();
 
         PacketRegistry.INSTANCE.addPacketHandler(
-                FolderLocationResponse.class,
-                folderLocationResponse -> FileHandler.getInstance().addDirectory((folderLocationResponse.folderPath()))
+                InstanceDataResponse.class,
+                instanceDataResponse -> {
+                    InfoRepository.getInstance().setValue(InfoKeys.RESOURCE_PACK_VERSION, instanceDataResponse.resourcePackVersion());
+                    InfoRepository.getInstance().setValue(InfoKeys.DATA_PACK_VERSION, instanceDataResponse.dataPackVersion());
+                    for (Map.Entry<String, Path> packEntries: instanceDataResponse.packFolders().entrySet()) {
+                        FileHandler.getInstance()
+                                .addPackDirectory(packEntries.getKey(), packEntries.getValue());
+                    }
+                }
         );
 
         this.content.addEventHandler(
                 ClientConnectionNetworkEvent.CLIENT_CONNECTED_EVENT_TYPE,
                 event -> {
-                    if(event.getStatus() == NetworkEvent.ConnectionStatus.CONNECTED)  {
+                    if (event.getStatus() == NetworkEvent.ConnectionStatus.CONNECTED) {
                         trySetView("editor");
                     } else {
                         trySetView("loading");

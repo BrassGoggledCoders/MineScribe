@@ -2,8 +2,8 @@ package xyz.brassgoggledcoders.minescribe.core.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
-import xyz.brassgoggledcoders.minescribe.core.netty.packet.FolderLocationRequest;
-import xyz.brassgoggledcoders.minescribe.core.netty.packet.FolderLocationResponse;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataRequest;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,13 +22,13 @@ public class PacketRegistry {
         this.packetHandlers = new HashMap<>();
 
         this.packets.add(new PacketWrapper<>(
-                FolderLocationRequest.class,
-                FolderLocationRequest::new
+                InstanceDataRequest.class,
+                InstanceDataRequest::new
         ));
         this.packets.add(new PacketWrapper<>(
-                FolderLocationResponse.class,
-                FolderLocationResponse::decode,
-                FolderLocationResponse::encode
+                InstanceDataResponse.class,
+                InstanceDataResponse::decode,
+                InstanceDataResponse::encode
         ));
     }
 
