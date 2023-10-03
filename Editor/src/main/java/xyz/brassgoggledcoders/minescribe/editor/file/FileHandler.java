@@ -1,12 +1,11 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
 import javafx.scene.control.TreeItem;
-import org.fxmisc.livedirs.DirectoryModel;
-import org.fxmisc.livedirs.LiveDirs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.model.editortree.PackDirectoryEditorItem;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -14,41 +13,38 @@ public class FileHandler {
     private final static Logger LOGGER = LoggerFactory.getLogger(FileHandler.class);
     private static FileHandler INSTANCE;
 
+    private final TreeItem<EditorItem> rootItem;
 
-    private final LiveDirs<ChangeSource> liveDirs;
-
-    public FileHandler(LiveDirs<ChangeSource> liveDirs) {
-        this.liveDirs = liveDirs;
+    public FileHandler() {
+        this.rootItem = new TreeItem<>();
     }
 
-    public void addDirectory(Path path) {
-        this.liveDirs.addTopLevelDirectory(path);
+    public void addPackDirectory(String name, Path path) {
+        if (!containsPackDirectory(name, path)) {
+            this.rootItem.getChildren()
+                    .add(new TreeItem<>(new PackDirectoryEditorItem(name, path)));
+        }
     }
 
-    public DirectoryModel<ChangeSource> getModel() {
-        return liveDirs.model();
+    private boolean containsPackDirectory(String name, Path path) {
+        return this.rootItem.getChildren()
+                .stream()
+                .filter(treeItem -> treeItem.getValue() != null)
+                .anyMatch(treeItem -> {
+                    EditorItem value = treeItem.getValue();
+                    return value.getName().equals(name) || value.getPath().equals(path);
+                });
     }
 
-    public void reload(Path path) {
-        this.liveDirs.refresh(path);
+    public TreeItem<EditorItem> getRootModel() {
+        return this.rootItem;
     }
 
     public static void initialize() {
-        try {
-            LiveDirs<ChangeSource> initialLive = new LiveDirs<>(ChangeSource.EXTERNAL);
-            INSTANCE = new FileHandler(initialLive);
-        } catch (IOException e) {
-            LOGGER.error("Failed to Initialize FileHandler", e);
-        }
+        INSTANCE = new FileHandler();
     }
 
     public static FileHandler getInstance() {
         return Objects.requireNonNull(INSTANCE, "initialize has not been called");
-    }
-
-
-    public enum ChangeSource {
-        INTERNAL,
-        EXTERNAL
     }
 }
