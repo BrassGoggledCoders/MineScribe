@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 
 public class MineScribeNettyServer extends Thread implements Closeable {
     private static MineScribeNettyServer INSTANCE;
-    private static boolean addedShutDownHook = false;
 
     private final Consumer<Event> eventConsumer;
     private final int port;
@@ -107,10 +106,6 @@ public class MineScribeNettyServer extends Thread implements Closeable {
         }
         if (INSTANCE == null) {
             INSTANCE = new MineScribeNettyServer(eventConsumer, port);
-        }
-        if (!addedShutDownHook) {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> INSTANCE.close()));
-            addedShutDownHook = true;
         }
         INSTANCE.tryStart();
     }
