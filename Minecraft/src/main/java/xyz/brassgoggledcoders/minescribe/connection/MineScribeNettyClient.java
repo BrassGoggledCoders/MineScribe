@@ -17,7 +17,7 @@ import xyz.brassgoggledcoders.minescribe.core.netty.NettyPacketDecoder;
 import xyz.brassgoggledcoders.minescribe.core.netty.NettyPacketHandler;
 import xyz.brassgoggledcoders.minescribe.core.netty.PacketRegistry;
 
-public class MineScribeNettyClient extends Thread implements AutoCloseable {
+public class MineScribeNettyClient implements AutoCloseable {
     private static MineScribeNettyClient INSTANCE;
     private static boolean addedShutDownHook = false;
 
@@ -28,24 +28,23 @@ public class MineScribeNettyClient extends Thread implements AutoCloseable {
 
     public MineScribeNettyClient(int port) {
         this.port = port;
-        this.setName("MineScribe Netty Client Thread");
     }
 
-    public void run() {
-        workerGroup = new NioEventLoopGroup();
-        Bootstrap b = new Bootstrap();
-        b.group(workerGroup);
-        b.channel(NioSocketChannel.class);
-        b.option(ChannelOption.SO_KEEPALIVE, true);
-        b.handler(new ChannelInitializer<SocketChannel>() {
-            @Override
-            public void initChannel(@NotNull SocketChannel ch) {
-                ch.pipeline().addLast(new NettyPacketDecoder());
-                ch.pipeline().addLast(new NettyPacketHandler());
-            }
-        });
-
-        this.channelFuture = b.connect(NetUtil.LOCALHOST4, port);
+    public void start() {
+        this.workerGroup = new NioEventLoopGroup();
+        this.channelFuture = new Bootstrap()
+                .group(workerGroup)
+                .channel(NioSocketChannel.class)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(@NotNull SocketChannel ch) {
+                        ch.pipeline().addLast(new ServerDisconnectedHandler(MineScribeNettyClient.INSTANCE::close));
+                        ch.pipeline().addLast(new NettyPacketDecoder());
+                        ch.pipeline().addLast(new NettyPacketHandler());
+                    }
+                })
+                .connect(NetUtil.LOCALHOST4, port);
     }
 
     public void sendToClient(Object message) {
@@ -55,7 +54,7 @@ public class MineScribeNettyClient extends Thread implements AutoCloseable {
     }
 
     public void tryStart() {
-        if (this.channelFuture == null || this.channelFuture.isDone()) {
+        if (this.channelFuture == null) {
             this.start();
         }
     }
@@ -64,9 +63,11 @@ public class MineScribeNettyClient extends Thread implements AutoCloseable {
     public void close() {
         if (this.channelFuture != null) {
             this.channelFuture.channel().close();
+            this.channelFuture = null;
         }
         if (this.workerGroup != null) {
-            workerGroup.shutdownGracefully();
+            this.workerGroup.shutdownGracefully();
+            this.workerGroup = null;
         }
     }
 
