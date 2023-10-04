@@ -1,8 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
 import javafx.scene.control.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.PackDirectoryEditorItem;
 
@@ -10,7 +8,6 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class FileHandler {
-    private final static Logger LOGGER = LoggerFactory.getLogger(FileHandler.class);
     private static FileHandler INSTANCE;
 
     private final TreeItem<EditorItem> rootItem;
