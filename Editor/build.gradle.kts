@@ -43,10 +43,9 @@ dependencies {
     }
     implementation("org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0")
     implementation("com.dlsc.preferencesfx:preferencesfx-core:11.16.0")
-    implementation("org.fxmisc.livedirs:livedirsfx:1.0.0-SNAPSHOT")
-    implementation("net.synedra:validatorfx:0.4.2")
 
     implementation("io.netty:netty-handler:4.1.86.Final")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("org.slf4j:slf4j-simple:2.0.9")
     implementation("org.jetbrains:annotations:24.0.0")
