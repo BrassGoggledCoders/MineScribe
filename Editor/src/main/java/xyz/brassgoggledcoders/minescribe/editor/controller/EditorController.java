@@ -3,8 +3,6 @@ package xyz.brassgoggledcoders.minescribe.editor.controller;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataRequest;
 import xyz.brassgoggledcoders.minescribe.editor.event.TabEvent.OpenTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
