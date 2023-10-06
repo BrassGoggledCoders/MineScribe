@@ -1,11 +1,9 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.PackDirectoryEditorItem;
 
@@ -14,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class FileHandler {
-    private final Image folderImage = new Image(Objects.requireNonNull(Application.class.getResourceAsStream("icon/folder_16.png")));
 
     private static FileHandler INSTANCE;
 
@@ -56,9 +53,6 @@ public class FileHandler {
         List<EditorItem> children = treeItem.getValue().createChildren();
         for (EditorItem child : children) {
             TreeItem<EditorItem> childTreeItem = new TreeItem<>(child);
-            if (child.isDirectory()) {
-                childTreeItem.setGraphic(new ImageView(folderImage));
-            }
             treeItem.getChildren().add(childTreeItem);
             createChildren(childTreeItem);
         }
