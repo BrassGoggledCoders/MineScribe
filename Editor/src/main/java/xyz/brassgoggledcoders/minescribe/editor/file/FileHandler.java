@@ -1,13 +1,21 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.PackDirectoryEditorItem;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 
 public class FileHandler {
+    private final Image folderImage = new Image(Objects.requireNonNull(Application.class.getResourceAsStream("icon/folder_16.png")));
+
     private static FileHandler INSTANCE;
 
     private final TreeItem<EditorItem> rootItem;
@@ -18,12 +26,45 @@ public class FileHandler {
 
     public void addPackDirectory(String name, Path path) {
         if (!containsPackDirectory(name, path)) {
+            PackDirectoryEditorItem editorItem = new PackDirectoryEditorItem(name, path);
             this.rootItem.getChildren()
-                    .add(new TreeItem<>(new PackDirectoryEditorItem(name, path)));
+                    .add(new TreeItem<>(editorItem));
+            this.reloadDirectory(editorItem);
         }
     }
 
-    private boolean containsPackDirectory(String name, Path path) {
+    public void reloadDirectory(@NotNull EditorItem editorItem) {
+        this.reloadDirectory(editorItem, this.rootItem);
+    }
+
+    public boolean reloadDirectory(@NotNull EditorItem editorItem, TreeItem<EditorItem> treeItem) {
+        if (editorItem.equals(treeItem.getValue())) {
+            createChildren(treeItem);
+            return true;
+        } else {
+            for (TreeItem<EditorItem> treeItemChild : treeItem.getChildren()) {
+                if (this.reloadDirectory(editorItem, treeItemChild)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    private void createChildren(TreeItem<EditorItem> treeItem) {
+        treeItem.getChildren().clear();
+        List<EditorItem> children = treeItem.getValue().createChildren();
+        for (EditorItem child : children) {
+            TreeItem<EditorItem> childTreeItem = new TreeItem<>(child);
+            if (child.isDirectory()) {
+                childTreeItem.setGraphic(new ImageView(folderImage));
+            }
+            treeItem.getChildren().add(childTreeItem);
+            createChildren(childTreeItem);
+        }
+    }
+
+    private boolean containsPackDirectory(@Nullable String name, @Nullable Path path) {
         return this.rootItem.getChildren()
                 .stream()
                 .filter(treeItem -> treeItem.getValue() != null)

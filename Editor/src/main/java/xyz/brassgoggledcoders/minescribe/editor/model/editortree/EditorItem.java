@@ -1,12 +1,16 @@
 package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 
+import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
-public class EditorItem {
+public abstract class EditorItem {
     private final String name;
     private final Path path;
 
@@ -23,9 +27,31 @@ public class EditorItem {
         return path;
     }
 
-    @Nullable
-    public ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
-        return null;
+    public File getFile() {
+        return this.getPath().toFile();
     }
 
+    @NotNull
+    public ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
+        ContextMenu contextMenu = new ContextMenu();
+        if (this.isDirectory()) {
+            MenuItem reloadFolder = new MenuItem("Reload Files from Disk");
+            reloadFolder.setOnAction(event -> FileHandler.getInstance().reloadDirectory(treeCell.getItem()));
+            contextMenu.getItems().add(reloadFolder);
+        }
+
+        return contextMenu;
+    }
+
+
+    public boolean isValid() {
+        return true;
+    }
+
+    public boolean isDirectory() {
+        return true;
+    }
+
+    @NotNull
+    public abstract List<EditorItem> createChildren();
 }

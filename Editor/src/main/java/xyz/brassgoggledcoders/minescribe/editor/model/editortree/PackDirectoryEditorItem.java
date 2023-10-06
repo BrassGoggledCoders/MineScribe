@@ -3,11 +3,15 @@ package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NewPackController;
 import xyz.brassgoggledcoders.minescribe.editor.event.TabEvent;
 
+import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class PackDirectoryEditorItem extends EditorItem {
     public PackDirectoryEditorItem(String name, Path path) {
@@ -15,17 +19,36 @@ public class PackDirectoryEditorItem extends EditorItem {
     }
 
     @Override
-    public @Nullable ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
-        ContextMenu contextMenu = new ContextMenu();
+    @NotNull
+    public ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
+        ContextMenu contextMenu = super.createContextMenu(treeCell);
         MenuItem createNewPack = new MenuItem("Create New Pack");
-        contextMenu.setOnAction(event -> {
+        createNewPack.setOnAction(event -> {
             //new FormDialog<String>().showAndWait());
 
             treeCell.fireEvent(new TabEvent.OpenTabEvent<NewPackController>("Create New Pack", "tab/new_pack", controller -> {
                 controller.setParentItem(treeCell.getItem());
             }));
         });
-        contextMenu.getItems().add(createNewPack);
+        contextMenu.getItems().add(0, createNewPack);
         return contextMenu;
+    }
+
+    @Override
+    @NotNull
+    public List<EditorItem> createChildren() {
+        File[] childrenFolders = this.getPath()
+                .toFile()
+                .listFiles(File::isDirectory);
+
+        List<EditorItem> childrenEditorItems = new ArrayList<>();
+        if (childrenFolders != null) {
+            for (File childFolder : childrenFolders) {
+                childrenEditorItems.add(new PackEditorItem(childFolder.getName(), childFolder.toPath()));
+            }
+        }
+        childrenEditorItems.removeIf(Predicate.not(EditorItem::isValid));
+
+        return childrenEditorItems;
     }
 }
