@@ -5,7 +5,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NewPackController;
-import xyz.brassgoggledcoders.minescribe.editor.event.TabEvent;
+import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
+import xyz.brassgoggledcoders.minescribe.editor.event.tab.TabEvent;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -26,8 +27,9 @@ public class PackDirectoryEditorItem extends EditorItem {
         createNewPack.setOnAction(event -> {
             //new FormDialog<String>().showAndWait());
 
-            treeCell.fireEvent(new TabEvent.OpenTabEvent<NewPackController>("Create New Pack", "tab/new_pack", controller -> {
+            treeCell.fireEvent(new OpenTabEvent<NewPackController>("Create New Pack", "tab/new_pack", (controller, tabId) -> {
                 controller.setParentItem(treeCell.getItem());
+                controller.setTabId(tabId);
             }));
         });
         contextMenu.getItems().add(0, createNewPack);

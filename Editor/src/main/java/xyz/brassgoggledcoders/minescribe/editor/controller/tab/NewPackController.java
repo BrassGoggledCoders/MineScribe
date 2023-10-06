@@ -13,6 +13,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
+import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.model.form.SmallerSimpleListViewControl;
 import xyz.brassgoggledcoders.minescribe.editor.model.packtype.IPackType;
@@ -39,10 +41,12 @@ public class NewPackController {
 
     @FXML
     public AnchorPane formContainer;
+    @FXML
     public Button submit;
 
     private EditorItem parentItem;
     private Form form;
+    private String tabId;
 
     @FXML
     public void initialize() {
@@ -77,6 +81,10 @@ public class NewPackController {
 
     public void setParentItem(EditorItem parentItem) {
         this.parentItem = parentItem;
+    }
+
+    public void setTabId(String tabId) {
+        this.tabId = tabId;
     }
 
     public void onSubmit() {
@@ -127,6 +135,8 @@ public class NewPackController {
                                         this.parentItem.getPath().resolve(name.get() + "/pack.mcmeta"),
                                         GSON.toJson(packMeta).getBytes()
                                 );
+                                FileHandler.getInstance().reloadDirectory(this.parentItem);
+                                this.formContainer.fireEvent(new CloseTabEvent(this.tabId));
                             } catch (IOException e) {
                                 LOGGER.error("Failed to write pack.mcmeta", e);
                             }
