@@ -135,8 +135,8 @@ public class NewPackController {
                                         this.parentItem.getPath().resolve(name.get() + "/pack.mcmeta"),
                                         GSON.toJson(packMeta).getBytes()
                                 );
-                                FileHandler.getInstance().reloadDirectory(this.parentItem);
                                 this.formContainer.fireEvent(new CloseTabEvent(this.tabId));
+                                FileHandler.getInstance().reloadDirectory(this.parentItem);
                             } catch (IOException e) {
                                 LOGGER.error("Failed to write pack.mcmeta", e);
                             }

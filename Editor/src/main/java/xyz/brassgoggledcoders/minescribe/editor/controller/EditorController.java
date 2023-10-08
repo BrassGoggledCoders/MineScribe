@@ -50,8 +50,6 @@ public class EditorController {
 
     private void handleTabClose(CloseTabEvent event) {
         this.editorTabPane.getTabs()
-                .stream()
-                .filter(childTab -> childTab.getId().equals(event.getId()))
-                .forEach(tab -> this.editorTabPane.getTabs().remove(tab));
+                .removeIf(childTab -> childTab.getId().equals(event.getId()));
     }
 }
