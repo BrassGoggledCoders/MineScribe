@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("net.minecraftforge.gradle") version("5.1.+")
     id("org.parchmentmc.librarian.forgegradle") version ("1.+")
+    id("org.spongepowered.mixin") version("0.7-SNAPSHOT")
 }
 
 group = "xyz.brassgoggledcoders.minescribe"
@@ -21,6 +22,8 @@ dependencies {
     "minecraft"("net.minecraftforge:forge:1.19.2-43.2.0")
 
     implementation(project(":Core"))
+
+    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 }
 
 minecraft {
@@ -39,4 +42,9 @@ minecraft {
             }
         }
     }
+}
+
+mixin {
+    add(sourceSets.main.get(), "minescribe.refmap.json")
+    config("minescribe.mixins.json")
 }

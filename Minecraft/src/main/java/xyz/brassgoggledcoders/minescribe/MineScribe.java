@@ -23,26 +23,6 @@ public class MineScribe {
     public static final Logger LOGGER = LoggerFactory.getLogger(ID);
 
     public MineScribe() {
-        PacketRegistry.INSTANCE.addPacketHandler(
-                InstanceDataRequest.class,
-                instanceDataRequest -> {
-                    Map<String, Path> packLocations = new HashMap<>();
-                    packLocations.put(
-                            "Client Resource Packs",
-                            Minecraft.getInstance().getResourcePackDirectory().getAbsoluteFile().toPath()
-                    );
-                    Optional.ofNullable(Minecraft.getInstance().getSingleplayerServer())
-                            .ifPresent(minecraftServer -> packLocations.put(
-                                    "Level Data Packs",
-                                    minecraftServer.getFile("datapacks").getAbsoluteFile().toPath()
-                            ));
 
-                    MineScribeNettyClient.getInstance().sendToClient(new InstanceDataResponse(
-                            PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion()),
-                            PackType.SERVER_DATA.getVersion(SharedConstants.getCurrentVersion()),
-                            packLocations
-                    ));
-                }
-        );
     }
 }

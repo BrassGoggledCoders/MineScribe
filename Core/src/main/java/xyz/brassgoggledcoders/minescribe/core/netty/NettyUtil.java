@@ -5,11 +5,10 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class NettyUtil {
     public static void writeUtf(ByteBuf byteBuf, String pString) {
@@ -77,5 +76,25 @@ public class NettyUtil {
             map.put(readKey.apply(byteBuf), readValue.apply(byteBuf));
         }
         return map;
+    }
+
+    public static <C extends Collection<V>, V> void writeCollection(ByteBuf byteBuf, C collection, BiConsumer<ByteBuf, V> writeValue) {
+        byteBuf.writeInt(collection.size());
+        for (V value : collection) {
+            writeValue.accept(byteBuf, value);
+        }
+    }
+
+    public static <C extends Collection<V>, V> C readCollection(ByteBuf byteBuf, Supplier<C> cSupplier, Function<ByteBuf, V> valueReader) {
+        int size = byteBuf.readInt();
+        C collection = cSupplier.get();
+        for (int x = 0; x < size; x++) {
+            collection.add(valueReader.apply(byteBuf));
+        }
+        return collection;
+    }
+
+    public static <V> List<V> readList(ByteBuf byteBuf, Function<ByteBuf, V> valueReader) {
+        return readCollection(byteBuf, ArrayList::new, valueReader);
     }
 }

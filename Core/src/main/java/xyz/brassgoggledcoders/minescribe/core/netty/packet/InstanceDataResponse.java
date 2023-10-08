@@ -2,21 +2,21 @@ package xyz.brassgoggledcoders.minescribe.core.netty.packet;
 
 import io.netty.buffer.ByteBuf;
 import xyz.brassgoggledcoders.minescribe.core.netty.NettyUtil;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 public record InstanceDataResponse(
-        int resourcePackVersion,
-        int dataPackVersion,
-        Map<String, Path> packFolders
+        List<PackTypeInfo> packTypes,
+        Map<String, Path> packRepositories
 ) {
     public void encode(ByteBuf byteBuf) {
-        byteBuf.writeInt(this.resourcePackVersion());
-        byteBuf.writeInt(this.dataPackVersion());
+        NettyUtil.writeCollection(byteBuf, this.packTypes(), (listByteBuf, value) -> value.encode(listByteBuf));
         NettyUtil.writeMap(
                 byteBuf,
-                this.packFolders(),
+                this.packRepositories(),
                 NettyUtil::writeUtf,
                 (valueByteBuf, path) -> NettyUtil.writeUtf(valueByteBuf, path.toString())
         );
@@ -24,8 +24,7 @@ public record InstanceDataResponse(
 
     public static InstanceDataResponse decode(ByteBuf byteBuf) {
         return new InstanceDataResponse(
-                byteBuf.readInt(),
-                byteBuf.readInt(),
+                NettyUtil.readList(byteBuf, PackTypeInfo::decode),
                 NettyUtil.readMap(
                         byteBuf,
                         NettyUtil::readUtf,

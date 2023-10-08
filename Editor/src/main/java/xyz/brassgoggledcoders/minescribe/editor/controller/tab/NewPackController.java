@@ -13,18 +13,18 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.model.form.SmallerSimpleListViewControl;
-import xyz.brassgoggledcoders.minescribe.editor.model.packtype.IPackType;
-import xyz.brassgoggledcoders.minescribe.editor.model.packtype.PackType;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +51,7 @@ public class NewPackController {
     @FXML
     public void initialize() {
         form = Form.of(Group.of(
-                Field.ofMultiSelectionType(Arrays.stream(PackType.values()).toList(), List.of(0, 1))
+                Field.ofMultiSelectionType(InfoRepository.getInstance().getValue(InfoKeys.PACK_TYPES), List.of(0, 1))
                         .label("Pack Type")
                         .render(SmallerSimpleListViewControl::new)
                         .id("packTypes")
@@ -104,19 +104,20 @@ public class NewPackController {
             String description = getValue("description", String.class, fieldMap)
                     .findAny()
                     .orElse("");
-            List<IPackType> packTypes = getValue("packTypes", IPackType.class, fieldMap)
+            List<PackTypeInfo> packTypes = getValue("packTypes", PackTypeInfo.class, fieldMap)
                     .toList();
             if (name.isPresent()) {
-                File packFolder = this.parentItem.getPath().resolve(Path.of(name.get())).toFile();
+                Path packPath = this.parentItem.getPath().resolve(Path.of(name.get()));
+                File packFolder = packPath.toFile();
                 if (!packFolder.exists()) {
                     if (packFolder.mkdirs()) {
                         boolean createdAllPackTypeFolder = true;
-                        for (IPackType packType : packTypes) {
-                            createdAllPackTypeFolder &= new File(packFolder, packType.getFolderName()).mkdir();
+                        for (PackTypeInfo packType : packTypes) {
+                            createdAllPackTypeFolder &= packPath.resolve(packType.folder()).toFile().mkdir();
                         }
                         if (createdAllPackTypeFolder) {
                             int packVersion = packTypes.stream()
-                                    .mapToInt(IPackType::getPackVersion)
+                                    .mapToInt(PackTypeInfo::version)
                                     .min()
                                     .orElse(0);
 
@@ -126,8 +127,8 @@ public class NewPackController {
 
                             packObject.addProperty("pack_format", packVersion);
                             packObject.addProperty("description", description);
-                            for (IPackType packType : packTypes) {
-                                packType.addPackMetaJson(packObject);
+                            for (PackTypeInfo packType : packTypes) {
+                                packObject.addProperty(packType.versionKey(), packType.version());
                             }
 
                             try {

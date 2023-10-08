@@ -1,8 +1,10 @@
 package xyz.brassgoggledcoders.minescribe.core.info;
 
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
+
+import java.util.List;
+
 public class InfoKeys {
-    public static final InfoKey<Integer> RESOURCE_PACK_VERSION = new InfoKey<>() {
-    };
-    public static final InfoKey<Integer> DATA_PACK_VERSION = new InfoKey<Integer>() {
+    public static final InfoKey<List<PackTypeInfo>> PACK_TYPES = new InfoKey<>() {
     };
 }

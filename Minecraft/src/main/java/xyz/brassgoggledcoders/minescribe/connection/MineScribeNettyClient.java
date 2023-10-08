@@ -11,11 +11,22 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.NetUtil;
+import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.MineScribeInfo;
 import xyz.brassgoggledcoders.minescribe.core.netty.NettyPacketDecoder;
 import xyz.brassgoggledcoders.minescribe.core.netty.NettyPacketHandler;
+import xyz.brassgoggledcoders.minescribe.core.netty.PacketHandler;
 import xyz.brassgoggledcoders.minescribe.core.netty.PacketRegistry;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataRequest;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataResponse;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
+
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class MineScribeNettyClient implements AutoCloseable {
     private static MineScribeNettyClient INSTANCE;
@@ -31,6 +42,7 @@ public class MineScribeNettyClient implements AutoCloseable {
     }
 
     public void start() {
+        PacketRegistry.INSTANCE.setup(this::registerHandlers);
         this.workerGroup = new NioEventLoopGroup();
         this.channelFuture = new Bootstrap()
                 .group(workerGroup)
@@ -69,6 +81,38 @@ public class MineScribeNettyClient implements AutoCloseable {
             this.workerGroup.shutdownGracefully();
             this.workerGroup = null;
         }
+    }
+
+    private void registerHandlers(Consumer<PacketHandler<?>> packetHandlerConsumer) {
+        packetHandlerConsumer.accept(new PacketHandler<>(
+                InstanceDataRequest.class,
+                instanceDataRequest -> {
+                    Map<String, Path> packRepositories = new HashMap<>();
+                    packRepositories.put(
+                            "Client Resource Packs",
+                            Minecraft.getInstance().getResourcePackDirectory().getAbsoluteFile().toPath()
+                    );
+                    Optional.ofNullable(Minecraft.getInstance().getSingleplayerServer())
+                            .ifPresent(minecraftServer -> packRepositories.put(
+                                    "Level Data Packs",
+                                    minecraftServer.getFile("datapacks").getAbsoluteFile().toPath()
+                            ));
+
+                    List<PackTypeInfo> packTypeInfos = Arrays.stream(PackType.values())
+                            .map(packType -> new PackTypeInfo(
+                                    packType.name().toLowerCase(Locale.ROOT).replace("_", " "),
+                                    Path.of(packType.getDirectory()),
+                                    packType.getVersion(SharedConstants.getCurrentVersion()),
+                                    "forge:%s_pack_format".formatted(packType.bridgeType.name().toLowerCase(Locale.ROOT))
+                            ))
+                            .toList();
+
+                    MineScribeNettyClient.getInstance().sendToClient(new InstanceDataResponse(
+                            packTypeInfos,
+                            packRepositories
+                    ));
+                }
+        ));
     }
 
     public static MineScribeNettyClient getInstance() {

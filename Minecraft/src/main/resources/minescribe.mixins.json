@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "xyz.brassgoggledcoders.minescribe.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "minescribe.refmap.json",
+  "mixins": [
+    "ResourcePackTypeExtender"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.MineScribeInfo;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
+import xyz.brassgoggledcoders.minescribe.core.netty.PacketHandler;
 import xyz.brassgoggledcoders.minescribe.core.netty.PacketRegistry;
 import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataResponse;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class ApplicationController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
@@ -33,17 +35,7 @@ public class ApplicationController {
         MineScribeNettyServer.initialize(this.content::fireEvent, MineScribeInfo.DEFAULT_PORT);
         FileHandler.initialize();
 
-        PacketRegistry.INSTANCE.addPacketHandler(
-                InstanceDataResponse.class,
-                instanceDataResponse -> {
-                    InfoRepository.getInstance().setValue(InfoKeys.RESOURCE_PACK_VERSION, instanceDataResponse.resourcePackVersion());
-                    InfoRepository.getInstance().setValue(InfoKeys.DATA_PACK_VERSION, instanceDataResponse.dataPackVersion());
-                    for (Map.Entry<String, Path> packEntries: instanceDataResponse.packFolders().entrySet()) {
-                        FileHandler.getInstance()
-                                .addPackDirectory(packEntries.getKey(), packEntries.getValue());
-                    }
-                }
-        );
+        PacketRegistry.INSTANCE.setup(this::registerPacketHandlers);
 
         this.content.addEventHandler(
                 ClientConnectionNetworkEvent.CLIENT_CONNECTED_EVENT_TYPE,
@@ -78,5 +70,18 @@ public class ApplicationController {
                 });
             }
         }
+    }
+
+    private void registerPacketHandlers(Consumer<PacketHandler<?>> register) {
+        register.accept(new PacketHandler<>(
+                InstanceDataResponse.class,
+                instanceDataResponse -> {
+                    InfoRepository.getInstance().setValue(InfoKeys.PACK_TYPES, instanceDataResponse.packTypes());
+                    for (Map.Entry<String, Path> packEntries: instanceDataResponse.packRepositories().entrySet()) {
+                        FileHandler.getInstance()
+                                .addPackDirectory(packEntries.getKey(), packEntries.getValue());
+                    }
+                }
+        ));
     }
 }

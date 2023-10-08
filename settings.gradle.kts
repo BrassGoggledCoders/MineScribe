@@ -13,5 +13,8 @@ pluginManagement {
         maven("https://maven.parchmentmc.org") {
             name = "ParchmentMC"
         }
+        maven("https://repo.spongepowered.org/repository/maven-public") {
+            name = "Mixin"
+        }
     }
 }

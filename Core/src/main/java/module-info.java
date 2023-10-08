@@ -10,5 +10,6 @@ module xyz.brassgoggledcoders.minescribe.core {
     exports xyz.brassgoggledcoders.minescribe.core.info;
     exports xyz.brassgoggledcoders.minescribe.core.netty;
     exports xyz.brassgoggledcoders.minescribe.core.netty.packet;
+    exports xyz.brassgoggledcoders.minescribe.core.packinfo;
 
 }

@@ -20,16 +20,21 @@ public class PacketRegistry {
     public PacketRegistry() {
         this.packets = new ArrayList<>();
         this.packetHandlers = new HashMap<>();
+    }
 
-        this.packets.add(new PacketWrapper<>(
-                InstanceDataRequest.class,
-                InstanceDataRequest::new
-        ));
-        this.packets.add(new PacketWrapper<>(
-                InstanceDataResponse.class,
-                InstanceDataResponse::decode,
-                InstanceDataResponse::encode
-        ));
+    public void setup(Consumer<Consumer<PacketHandler<?>>> registerPacketHandlers) {
+        if (this.packets.isEmpty() && this.packetHandlers.isEmpty()) {
+            this.packets.add(new PacketWrapper<>(
+                    InstanceDataRequest.class,
+                    InstanceDataRequest::new
+            ));
+            this.packets.add(new PacketWrapper<>(
+                    InstanceDataResponse.class,
+                    InstanceDataResponse::decode,
+                    InstanceDataResponse::encode
+            ));
+            registerPacketHandlers.accept(this::addPacketHandler);
+        }
     }
 
     public Object decodePacket(ByteBuf byteBuf) {
@@ -42,6 +47,7 @@ public class PacketRegistry {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void encodePacket(Object object, ByteBuf byteBuf) {
         PacketWrapper<?> packetWrapper = null;
         int checkingId = -1;
@@ -54,7 +60,6 @@ public class PacketRegistry {
 
         if (packetWrapper != null) {
             byteBuf.writeInt(checkingId);
-            //noinspection unchecked
             encode(object, (PacketWrapper<Object>) packetWrapper, byteBuf);
         }
     }
@@ -63,8 +68,8 @@ public class PacketRegistry {
         packetWrapper.encoder().accept(o, byteBuf);
     }
 
-    public <T> void addPacketHandler(Class<T> tClass, Consumer<T> handler) {
-        this.packetHandlers.put(tClass, new PacketHandler<>(tClass, handler));
+    public <T> void addPacketHandler(PacketHandler<T> packetHandler) {
+        this.packetHandlers.put(packetHandler.tClass(), packetHandler);
     }
 
     public void handlePacket(Object object) {

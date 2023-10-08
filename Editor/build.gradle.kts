@@ -34,6 +34,10 @@ repositories {
         name = "SonaType"
         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
     }
+    maven {
+        name = "Mojang"
+        url = uri("https://libraries.minecraft.net")
+    }
 }
 
 dependencies {
@@ -49,6 +53,8 @@ dependencies {
 
     implementation("org.slf4j:slf4j-simple:2.0.9")
     implementation("org.jetbrains:annotations:24.0.0")
+
+    implementation("com.mojang:datafixerupper:5.0.28")
 
     implementation(project(":Core")) {
         exclude(group = "io.netty")
