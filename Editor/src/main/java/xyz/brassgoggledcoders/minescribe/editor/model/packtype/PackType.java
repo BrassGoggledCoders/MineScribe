@@ -6,8 +6,8 @@ import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 
 public enum PackType implements IPackType {
-    DATA_PACK(InfoKeys.DATA_PACK_VERSION, "Data Pack", "assets", "forge:resource_pack_format"),
-    RESOURCE_PACK(InfoKeys.RESOURCE_PACK_VERSION, "Resource Pack", "data", "forge:data_pack_format");
+    DATA_PACK(InfoKeys.DATA_PACK_VERSION, "Data Pack", "data", "forge:resource_pack_format"),
+    RESOURCE_PACK(InfoKeys.RESOURCE_PACK_VERSION, "Resource Pack", "assets", "forge:data_pack_format");
 
     private final InfoKey<Integer> packKey;
     private final String name;
