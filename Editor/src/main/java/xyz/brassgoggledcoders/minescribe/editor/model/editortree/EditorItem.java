@@ -7,7 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class EditorItem {
@@ -54,4 +57,18 @@ public abstract class EditorItem {
 
     @NotNull
     public abstract List<EditorItem> createChildren();
+
+    protected List<File> getChildrenFiles() {
+        return this.getChildrenFiles(null);
+    }
+
+    protected List<File> getChildrenFiles(FileFilter fileFilter) {
+        File[] files = this.getFile().listFiles(fileFilter);
+
+        if (files != null) {
+            return Arrays.asList(files);
+        } else {
+            return Collections.emptyList();
+        }
+    }
 }

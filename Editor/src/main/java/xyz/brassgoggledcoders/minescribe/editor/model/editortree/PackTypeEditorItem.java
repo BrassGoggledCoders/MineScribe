@@ -2,8 +2,8 @@ package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
 public class PackTypeEditorItem extends EditorItem {
@@ -13,6 +13,9 @@ public class PackTypeEditorItem extends EditorItem {
 
     @Override
     public @NotNull List<EditorItem> createChildren() {
-        return Collections.emptyList();
+        return this.getChildrenFiles(File::isDirectory)
+                .stream()
+                .<EditorItem>map(file -> new NamespaceEditorItem(file.getName(), file.toPath()))
+                .toList();
     }
 }
