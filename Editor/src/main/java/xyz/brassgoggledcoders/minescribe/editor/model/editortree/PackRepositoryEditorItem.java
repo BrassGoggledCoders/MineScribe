@@ -6,7 +6,6 @@ import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NewPackController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
-import xyz.brassgoggledcoders.minescribe.editor.event.tab.TabEvent;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -14,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class PackDirectoryEditorItem extends EditorItem {
-    public PackDirectoryEditorItem(String name, Path path) {
+public class PackRepositoryEditorItem extends EditorItem {
+    public PackRepositoryEditorItem(String name, Path path) {
         super(name, path);
     }
 

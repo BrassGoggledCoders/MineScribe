@@ -4,7 +4,7 @@ import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
-import xyz.brassgoggledcoders.minescribe.editor.model.editortree.PackDirectoryEditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.model.editortree.PackRepositoryEditorItem;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -22,7 +22,7 @@ public class FileHandler {
 
     public void addPackDirectory(String name, Path path) {
         if (!containsPackDirectory(name, path)) {
-            PackDirectoryEditorItem editorItem = new PackDirectoryEditorItem(name, path);
+            PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(name, path);
             this.rootItem.getChildren()
                     .add(new TreeItem<>(editorItem));
             this.reloadDirectory(editorItem);
