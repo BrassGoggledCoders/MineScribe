@@ -32,6 +32,8 @@ public class LoadingController {
                             this.loadingStatus.setText("Loading Complete. Opening Editor");
                             this.loadingStatus.fireEvent(new RequestPageEvent("editor"));
                         }));
+                    } else {
+                        this.loadingStatus.setText("Awaiting MineCraft Connection");
                     }
                 }
         );
