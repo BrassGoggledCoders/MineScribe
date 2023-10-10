@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public class NettyUtil {
     public static void writeUtf(ByteBuf byteBuf, String pString) {
-        writeUtf(byteBuf, pString, 32767);
+        writeUtf(byteBuf, pString, 100);
     }
 
     public static void writeUtf(ByteBuf byteBuf, String pString, int pMaxLength) {

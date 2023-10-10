@@ -4,6 +4,7 @@ package xyz.brassgoggledcoders.minescribe;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataRequest;
 import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataResponse;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.PackContentSubTypeLoadPacket;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.PackContentTypeLoadPacket;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +34,16 @@ public class PacketRegistry {
                     InstanceDataResponse.class,
                     InstanceDataResponse::decode,
                     InstanceDataResponse::encode
+            ));
+            this.packets.add(new PacketWrapper<>(
+                    PackContentTypeLoadPacket.class,
+                    PackContentTypeLoadPacket::decode,
+                    PackContentTypeLoadPacket::encode
+            ));
+            this.packets.add(new PacketWrapper<>(
+                    PackContentSubTypeLoadPacket.class,
+                    PackContentSubTypeLoadPacket::decode,
+                    PackContentSubTypeLoadPacket::encode
             ));
             registerPacketHandlers.accept(this::addPacketHandler);
         }
@@ -77,9 +89,5 @@ public class PacketRegistry {
         if (packetHandler != null) {
             packetHandler.handleObject(object);
         }
-    }
-
-    public void decodeAndHandle(ByteBuf byteBuf) {
-        this.handlePacket(this.decodePacket(byteBuf));
     }
 }
