@@ -13,10 +13,14 @@ import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.core.netty.PacketHandler;
 import xyz.brassgoggledcoders.minescribe.core.netty.PacketRegistry;
 import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataResponse;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.PackContentSubTypeLoadPacket;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.PackContentTypeLoadPacket;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent;
 import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent.ClientConnectionNetworkEvent;
+import xyz.brassgoggledcoders.minescribe.editor.event.page.RequestPageEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
+import xyz.brassgoggledcoders.minescribe.editor.registry.PackContentTypeRegistry;
 import xyz.brassgoggledcoders.minescribe.editor.server.MineScribeNettyServer;
 
 import java.io.IOException;
@@ -40,13 +44,22 @@ public class ApplicationController {
         this.content.addEventHandler(
                 ClientConnectionNetworkEvent.CLIENT_CONNECTED_EVENT_TYPE,
                 event -> {
-                    if (event.getStatus() == NetworkEvent.ConnectionStatus.CONNECTED) {
-                        trySetView("editor");
-                    } else {
-                        trySetView("loading");
+                    if (event.getStatus() == NetworkEvent.ConnectionStatus.DISCONNECTED) {
+                        this.content.fireEvent(new RequestPageEvent("loading"));
+                    }
+                    if (event.getSource().equals(this.content)) {
+                        this.content.getChildren()
+                                .forEach(node -> node.fireEvent(event));
                     }
                 }
         );
+
+        this.content.addEventHandler(
+                RequestPageEvent.REQUEST_PAGE_EVENT_TYPE,
+                event -> trySetView(event.getPageName())
+        );
+
+        this.content.fireEvent(new RequestPageEvent("loading"));
     }
 
     public void trySetView(String name) {
@@ -77,11 +90,21 @@ public class ApplicationController {
                 InstanceDataResponse.class,
                 instanceDataResponse -> {
                     InfoRepository.getInstance().setValue(InfoKeys.PACK_TYPES, instanceDataResponse.packTypes());
-                    for (Map.Entry<String, Path> packEntries: instanceDataResponse.packRepositories().entrySet()) {
+                    for (Map.Entry<String, Path> packEntries : instanceDataResponse.packRepositories().entrySet()) {
                         FileHandler.getInstance()
                                 .addPackDirectory(packEntries.getKey(), packEntries.getValue());
                     }
                 }
+        ));
+        register.accept(new PacketHandler<>(
+                PackContentTypeLoadPacket.class,
+                packContentTypeLoadPacket -> PackContentTypeRegistry.getInstance()
+                        .setPackContentTypes(packContentTypeLoadPacket.packContentTypes())
+        ));
+        register.accept(new PacketHandler<>(
+                PackContentSubTypeLoadPacket.class,
+                packContentSubTypeLoadPacket -> PackContentTypeRegistry.getInstance()
+                        .setPackContentSubTypes(packContentSubTypeLoadPacket.packContentSubTypes())
         ));
     }
 }
