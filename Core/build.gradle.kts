@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("org.javamodularity.moduleplugin") version("1.8.12")
 }
 
 group = "xyz.brassgoggledcoders.minescribe"
@@ -17,6 +18,7 @@ dependencies {
     implementation("io.netty:netty-handler:4.1.86.Final")
 
     implementation("org.jetbrains:annotations:24.0.0")
+    implementation("com.google.guava:guava:31.0-jre")
     implementation("com.mojang:datafixerupper:5.0.28")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
@@ -25,4 +27,8 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.compileJava {
+    modularity.inferModulePath.set(false)
 }

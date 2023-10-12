@@ -5,11 +5,12 @@ import xyz.brassgoggledcoders.minescribe.core.netty.NettyUtil;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public record PackContentSubTypeLoadPacket(
-        Map<ResourceId, List<PackContentType>> packContentSubTypes
+        Map<ResourceId, Collection<PackContentType>> packContentSubTypes
 ) {
 
     public void encode(ByteBuf byteBuf) {

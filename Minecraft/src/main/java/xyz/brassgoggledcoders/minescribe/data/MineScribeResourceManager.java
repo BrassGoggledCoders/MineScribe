@@ -16,6 +16,7 @@ import net.minecraftforge.resource.PathPackResources;
 import net.minecraftforge.resource.ResourcePackLoader;
 import xyz.brassgoggledcoders.minescribe.api.MineScribeAPI;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
+import xyz.brassgoggledcoders.minescribe.list.GsonListHandler;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class MineScribeResourceManager {
         MinecraftServer currentServer = Minecraft.getInstance().getSingleplayerServer();
         if (this.serverWeakReference == null || this.serverWeakReference.get() != currentServer) {
             if (currentServer != null) {
+                GsonListHandler.minecraftServerWeakReference = serverWeakReference;
                 this.packRepository = new PackRepository(
                         MineScribeAPI.PACK_TYPE,
                         new FolderRepositorySource(

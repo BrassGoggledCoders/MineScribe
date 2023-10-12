@@ -1,6 +1,8 @@
 package xyz.brassgoggledcoders.minescribe.data;
 
 import com.google.common.base.Suppliers;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,7 +17,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 import xyz.brassgoggledcoders.minescribe.connection.MineScribeNettyClient;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.core.netty.packet.PackContentTypeLoadPacket;
+import xyz.brassgoggledcoders.minescribe.core.netty.packet.PackContentSubTypeLoadPacket;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
@@ -26,20 +28,20 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class PackContentTypeManager extends SimpleJsonResourceReloadListener {
+public class PackContentSubTypeManager extends SimpleJsonResourceReloadListener {
     private final Supplier<String> PACK_TYPE_STRING = Suppliers.memoize(() -> Arrays.stream(PackType.values())
             .map(PackType::name)
             .collect(Collectors.joining(" , "))
     );
 
-    public PackContentTypeManager() {
-        super(new Gson(), "types");
+    public PackContentSubTypeManager() {
+        super(new Gson(), "subtypes");
     }
 
     @Override
     @ParametersAreNonnullByDefault
     protected void apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
-        List<PackContentType> packContentTypes = new ArrayList<>();
+        Multimap<ResourceId, PackContentType> packContentTypes = Multimaps.newMultimap(new HashMap<>(), HashSet::new);
 
         for (Entry<ResourceLocation, JsonElement> entry : pObject.entrySet()) {
             JsonObject entryObject = GsonHelper.convertToJsonObject(entry.getValue(), "top element");
@@ -58,13 +60,21 @@ public class PackContentTypeManager extends SimpleJsonResourceReloadListener {
                         if (entryObject.has("form")) {
                             fileForm = FileForm.parseForm(GsonHelper.getAsJsonObject(entryObject, "form"));
                         }
-                        packContentTypes.add(new PackContentType(
-                                new ResourceId(resourceLocation.getNamespace(), resourceLocation.getPath()),
-                                component.getString(),
-                                packType,
-                                path,
-                                Optional.ofNullable(fileForm)
-                        ));
+                        String parent = GsonHelper.getAsString(entryObject, "parent");
+                        ResourceLocation location = ResourceLocation.tryParse(parent);
+                        if (location == null) {
+                            throw new JsonParseException(parent + " is an invalid Resource Location");
+                        }
+                        packContentTypes.put(
+                                new ResourceId(location.getNamespace(), location.getPath()),
+                                new PackContentType(
+                                        new ResourceId(resourceLocation.getNamespace(), resourceLocation.getPath()),
+                                        component.getString(),
+                                        packType,
+                                        path,
+                                        Optional.ofNullable(fileForm)
+                                )
+                        );
                     }
                 } else {
                     throw new JsonParseException("Field 'name' is required");
@@ -75,10 +85,10 @@ public class PackContentTypeManager extends SimpleJsonResourceReloadListener {
 
         }
 
-        MineScribe.LOGGER.info("Loaded {} MineScribe Pack Content Types", packContentTypes.size());
+        MineScribe.LOGGER.info("Loaded {} MineScribe Pack Content SubTypes", packContentTypes.size());
 
         MineScribeNettyClient.getInstance()
-                .sendToClient(new PackContentTypeLoadPacket(packContentTypes));
+                .sendToClient(new PackContentSubTypeLoadPacket(packContentTypes.asMap()));
     }
 
     private void checkPackType(String name) {

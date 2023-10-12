@@ -1,15 +1,18 @@
 package xyz.brassgoggledcoders.minescribe.core.packinfo;
 
 import io.netty.buffer.ByteBuf;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.netty.NettyUtil;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 public record PackContentType(
         ResourceId resourceId,
         String localization,
         String packType,
-        Path path
+        Path path,
+        Optional<FileForm> form
 ) {
 
     public void encode(ByteBuf byteBuf) {
@@ -24,7 +27,8 @@ public record PackContentType(
                 ResourceId.decode(byteBuf),
                 NettyUtil.readUtf(byteBuf),
                 NettyUtil.readUtf(byteBuf),
-                Path.of(NettyUtil.readUtf(byteBuf))
+                Path.of(NettyUtil.readUtf(byteBuf)),
+                Optional.empty()
         );
     }
 

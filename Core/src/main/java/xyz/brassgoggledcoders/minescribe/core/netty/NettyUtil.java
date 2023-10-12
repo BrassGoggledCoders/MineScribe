@@ -97,4 +97,16 @@ public class NettyUtil {
     public static <V> List<V> readList(ByteBuf byteBuf, Function<ByteBuf, V> valueReader) {
         return readCollection(byteBuf, ArrayList::new, valueReader);
     }
+
+    public static void writeUUID(ByteBuf byteBuf, UUID uuid) {
+        byteBuf.writeLong(uuid.getMostSignificantBits());
+        byteBuf.writeLong(uuid.getLeastSignificantBits());
+    }
+
+    public static UUID readUUID(ByteBuf byteBuf) {
+        return new UUID(
+                byteBuf.readLong(),
+                byteBuf.readLong()
+        );
+    }
 }

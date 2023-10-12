@@ -1,0 +1,28 @@
+{
+  "name": "Block Tags",
+  "path": "blocks",
+  "form": {
+    "fields": [
+      {
+        "name": "Replace",
+        "field": "replace",
+        "type": "checkbox"
+      },
+      {
+        "name": "Values",
+        "field": "values",
+        "type": "list_selection",
+        "list": [
+          {
+            "type": "minescribe:registry",
+            "key": "minecraft:block"
+          },
+          {
+            "type": "minescribe:tag",
+            "key": "minecraft:block"
+          }
+        ]
+      }
+    ]
+  }
+}
