@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +52,13 @@ public class NewPackController {
     @FXML
     public void initialize() {
         form = Form.of(Group.of(
-                Field.ofMultiSelectionType(InfoRepository.getInstance().getValue(InfoKeys.PACK_TYPES), List.of(0, 1))
+                Field.ofMultiSelectionType(
+                                new ArrayList<>(InfoRepository.getInstance()
+                                        .getValue(InfoKeys.PACK_TYPES)
+                                        .values()
+                                ),
+                                List.of(0, 1)
+                        )
                         .label("Pack Type")
                         .render(SmallerSimpleListViewControl::new)
                         .id("packTypes")

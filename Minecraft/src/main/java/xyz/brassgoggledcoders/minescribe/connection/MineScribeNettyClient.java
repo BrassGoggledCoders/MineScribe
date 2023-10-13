@@ -101,6 +101,7 @@ public class MineScribeNettyClient implements AutoCloseable {
                     List<PackTypeInfo> packTypeInfos = Arrays.stream(PackType.values())
                             .map(packType -> new PackTypeInfo(
                                     packType.name().toLowerCase(Locale.ROOT).replace("_", " "),
+                                    packType.name(),
                                     Path.of(packType.getDirectory()),
                                     packType.getVersion(SharedConstants.getCurrentVersion()),
                                     "forge:%s_pack_format".formatted(packType.bridgeType.name().toLowerCase(Locale.ROOT))

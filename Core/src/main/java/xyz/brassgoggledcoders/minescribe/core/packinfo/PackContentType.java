@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public record PackContentType(
         ResourceId resourceId,
-        String localization,
+        String label,
         String packType,
         Path path,
         Optional<FileForm> form
@@ -17,7 +17,7 @@ public record PackContentType(
 
     public void encode(ByteBuf byteBuf) {
         this.resourceId().encode(byteBuf);
-        NettyUtil.writeUtf(byteBuf, this.localization());
+        NettyUtil.writeUtf(byteBuf, this.label());
         NettyUtil.writeUtf(byteBuf, this.packType());
         NettyUtil.writeUtf(byteBuf, this.path().toString());
     }

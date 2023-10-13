@@ -1,18 +1,43 @@
 package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
+import xyz.brassgoggledcoders.minescribe.editor.registry.PackContentTypeRegistry;
 
+import java.io.File;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class NamespaceEditorItem extends EditorItem {
-    public NamespaceEditorItem(String name, Path path) {
+    private final PackTypeInfo packType;
+    private final Collection<PackContentType> validTypes;
+
+    public NamespaceEditorItem(String name, Path path, PackTypeInfo packType) {
         super(name, path);
+        this.packType = packType;
+        this.validTypes = PackContentTypeRegistry.getInstance()
+                .getPackContentTypesFor(this.packType);
     }
 
     @Override
     public @NotNull List<EditorItem> createChildren() {
-        return Collections.emptyList();
+        List<File> childrenFiles = this.getChildrenFiles();
+        List<EditorItem> editorItems = new ArrayList<>();
+        for (File childFile : childrenFiles) {
+            if (childFile.isDirectory()) {
+                Path childPath = childFile.toPath();
+                List<PackContentType> typesForFile = validTypes.parallelStream()
+                        .filter(packContentType -> childPath.endsWith(packContentType.path().getName(0)))
+                        .toList();
+
+                if (!typesForFile.isEmpty()) {
+                    editorItems.add(new PackContentTypeEditorItem(childFile.getName(), childPath, typesForFile));
+                }
+            }
+        }
+        return editorItems;
     }
 }

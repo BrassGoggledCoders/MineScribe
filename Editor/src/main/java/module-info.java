@@ -18,6 +18,7 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires org.jetbrains.annotations;
     requires com.google.gson;
     requires datafixerupper;
+    requires com.google.common;
 
     exports xyz.brassgoggledcoders.minescribe.editor;
     opens xyz.brassgoggledcoders.minescribe.editor to javafx.fxml;

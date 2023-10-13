@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.api.list.IListProvider;
 import xyz.brassgoggledcoders.minescribe.list.EmptyListProvider;
+import xyz.brassgoggledcoders.minescribe.list.ListListProvider;
 import xyz.brassgoggledcoders.minescribe.list.RegistryListProvider;
 import xyz.brassgoggledcoders.minescribe.list.TagListProvider;
 
@@ -48,6 +49,7 @@ public class MineScribe {
             helper.register(EmptyListProvider.ID, EmptyListProvider.CODEC);
             helper.register(TagListProvider.ID, TagListProvider.CODEC);
             helper.register(RegistryListProvider.ID, RegistryListProvider.CODEC);
+            helper.register(ListListProvider.ID, ListListProvider.CODEC);
         });
     }
 

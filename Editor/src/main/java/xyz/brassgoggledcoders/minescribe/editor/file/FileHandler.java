@@ -9,6 +9,7 @@ import xyz.brassgoggledcoders.minescribe.editor.model.editortree.PackRepositoryE
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class FileHandler {
 
@@ -50,6 +51,7 @@ public class FileHandler {
     private void createChildren(TreeItem<EditorItem> treeItem) {
         treeItem.getChildren().clear();
         List<EditorItem> children = treeItem.getValue().createChildren();
+        children.removeIf(Predicate.not(EditorItem::isValid));
         for (EditorItem child : children) {
             TreeItem<EditorItem> childTreeItem = new TreeItem<>(child);
             treeItem.getChildren().add(childTreeItem);

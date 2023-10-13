@@ -1,6 +1,9 @@
 package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -23,21 +26,18 @@ public class PackEditorItem extends EditorItem {
     @Override
     @NotNull
     public List<EditorItem> createChildren() {
-        File[] childrenFiles = this.getPath()
-                .toFile()
-                .listFiles();
-
+        List<File> childrenFiles = this.getChildrenFiles();
         List<EditorItem> childrenEditorItems = new ArrayList<>();
-        if (childrenFiles != null) {
-            for (File childFile : childrenFiles) {
-                if (childFile.isDirectory()) {
-                    childrenEditorItems.add(new PackTypeEditorItem(childFile.getName(), childFile.toPath()));
-                } else if (childFile.getName().equalsIgnoreCase("pack.mcmeta")) {
-                    childrenEditorItems.add(new FileEditorItem(childFile.getName(), childFile.toPath()));
-                }
+        for (File childFile : childrenFiles) {
+            if (childFile.isDirectory()) {
+                PackTypeInfo packTypeInfo = InfoRepository.getInstance()
+                        .getValue(InfoKeys.PACK_TYPES)
+                        .get(childFile.getName());
+                childrenEditorItems.add(new PackTypeEditorItem(childFile.getName(), childFile.toPath(), packTypeInfo));
+            } else if (childFile.getName().equalsIgnoreCase("pack.mcmeta")) {
+                childrenEditorItems.add(new FileEditorItem(childFile.getName(), childFile.toPath()));
             }
         }
-        childrenEditorItems.removeIf(Predicate.not(EditorItem::isValid));
 
         return childrenEditorItems;
     }

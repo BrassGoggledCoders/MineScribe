@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Function3;
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.netty.NettyUtil;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
@@ -16,6 +17,7 @@ public class BasicFileFieldParser<T extends FileField> implements IFileFieldPars
     }
 
     @Override
+    @NotNull
     public T fromJson(JsonObject jsonObject) throws JsonParseException {
         return creator.apply(
                 MineScribeJsonHelper.getAsString(jsonObject, JsonFieldNames.LABEL),

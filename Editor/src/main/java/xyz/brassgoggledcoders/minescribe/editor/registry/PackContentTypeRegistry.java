@@ -1,13 +1,13 @@
 package xyz.brassgoggledcoders.minescribe.editor.registry;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Unit;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
@@ -19,6 +19,7 @@ public class PackContentTypeRegistry {
 
     private final Map<ResourceId, PackContentType> packContentTypes;
     private final Map<ResourceId, List<PackContentType>> packContentSubTypes;
+    private final Multimap<PackTypeInfo, PackContentType> packContentTypeByPackType;
 
     public PackContentTypeRegistry() {
         this.packContentTypesLoaded = new CompletableFuture<>();
@@ -26,6 +27,7 @@ public class PackContentTypeRegistry {
 
         this.packContentTypes = new HashMap<>();
         this.packContentSubTypes = new HashMap<>();
+        this.packContentTypeByPackType = HashMultimap.create();
     }
 
     public void setPackContentTypes(List<PackContentType> packContentTypes) {
@@ -47,10 +49,9 @@ public class PackContentTypeRegistry {
         return this.packContentSubTypes.get(packContentType.resourceId());
     }
 
-    public void setPackContentSubTypes(Map<ResourceId, List<PackContentType>> packContentSubTypes) {
+    public void setPackContentSubTypes(Map<ResourceId, Collection<PackContentType>> packContentSubTypes) {
         this.packContentSubTypes.clear();
-        for (Entry<ResourceId, List<PackContentType>> packContentSubType : packContentSubTypes.entrySet()) {
-
+        for (Entry<ResourceId, Collection<PackContentType>> packContentSubType : packContentSubTypes.entrySet()) {
             this.packContentSubTypes.put(
                     packContentSubType.getKey(),
                     new ArrayList<>(packContentSubType.getValue())
@@ -65,6 +66,21 @@ public class PackContentTypeRegistry {
 
     public CompletableFuture<Unit> getPackContentSubTypesLoaded() {
         return packContentSubTypesLoaded;
+    }
+
+    public Collection<PackContentType> getPackContentTypesFor(PackTypeInfo packType) {
+        if (packContentTypeByPackType.containsKey(packType)) {
+            return packContentTypeByPackType.get(packType);
+        } else {
+            List<PackContentType> packContentTypesFor = new ArrayList<>();
+            for (PackContentType packContentType : packContentTypes.values()) {
+                if (packContentType.packType().equalsIgnoreCase(packType.name())) {
+                    packContentTypesFor.add(packContentType);
+                }
+            }
+
+            return packContentTypesFor;
+        }
     }
 
     public static PackContentTypeRegistry getInstance() {

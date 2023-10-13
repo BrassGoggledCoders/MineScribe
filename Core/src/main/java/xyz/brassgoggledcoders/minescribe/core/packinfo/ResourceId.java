@@ -10,7 +10,7 @@ public record ResourceId(
 
     public void encode(ByteBuf byteBuf) {
         NettyUtil.writeUtf(byteBuf, this.namespace());
-        NettyUtil.writeUtf(byteBuf, this.namespace());
+        NettyUtil.writeUtf(byteBuf, this.path());
     }
 
     public static ResourceId decode(ByteBuf byteBuf) {

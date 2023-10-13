@@ -1,5 +1,5 @@
 {
-  "name": "Tag",
-  "packType": "SERVER_RESOURCES",
+  "label": "Tag",
+  "packType": "SERVER_DATA",
   "path": "tags"
 }

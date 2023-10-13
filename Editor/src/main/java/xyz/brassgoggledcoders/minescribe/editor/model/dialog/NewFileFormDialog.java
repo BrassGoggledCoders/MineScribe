@@ -14,12 +14,12 @@ import javafx.scene.control.Dialog;
 import javafx.scene.layout.AnchorPane;
 import xyz.brassgoggledcoders.minescribe.editor.validator.StringRegexValidator;
 
-public class NewDirectoryFormDialog extends Dialog<String> {
+public class NewFileFormDialog extends Dialog<String> {
 
     private final StringProperty folderName;
     private final Form form;
 
-    public NewDirectoryFormDialog() {
+    public NewFileFormDialog() {
         this.folderName = new SimpleStringProperty();
 
         this.form = Form.of(Group.of(

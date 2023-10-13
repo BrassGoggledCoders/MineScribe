@@ -6,7 +6,6 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public record PackContentSubTypeLoadPacket(
@@ -21,7 +20,7 @@ public record PackContentSubTypeLoadPacket(
                 (valueByteBuf, value) -> NettyUtil.writeCollection(
                         valueByteBuf,
                         value,
-                        (listByteBuf, listValue)-> listValue.encode(listByteBuf)
+                        (listByteBuf, listValue) -> listValue.encode(listByteBuf)
                 )
         );
     }

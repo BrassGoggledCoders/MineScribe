@@ -6,6 +6,7 @@ import xyz.brassgoggledcoders.minescribe.core.netty.NettyUtil;
 import java.nio.file.Path;
 
 public record PackTypeInfo(
+        String label,
         String name,
         Path folder,
         int version,
@@ -14,18 +15,20 @@ public record PackTypeInfo(
 
     @Override
     public String toString() {
-        return "%s (./%s)".formatted(toTitleCase(name), folder.toString());
+        return "%s (./%s)".formatted(toTitleCase(this.label()), folder.toString());
     }
 
     public void encode(ByteBuf byteBuf) {
+        NettyUtil.writeUtf(byteBuf, this.label());
         NettyUtil.writeUtf(byteBuf, this.name());
         NettyUtil.writeUtf(byteBuf, this.folder().toString());
-        byteBuf.writeInt(version);
+        byteBuf.writeInt(this.version());
         NettyUtil.writeUtf(byteBuf, this.versionKey());
     }
 
     public static PackTypeInfo decode(ByteBuf byteBuf) {
         return new PackTypeInfo(
+                NettyUtil.readUtf(byteBuf),
                 NettyUtil.readUtf(byteBuf),
                 Path.of(NettyUtil.readUtf(byteBuf)),
                 byteBuf.readInt(),

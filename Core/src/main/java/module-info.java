@@ -10,6 +10,9 @@ module xyz.brassgoggledcoders.minescribe.core {
     requires datafixerupper;
 
     exports xyz.brassgoggledcoders.minescribe.core;
+    exports xyz.brassgoggledcoders.minescribe.core.fileform;
+    exports xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
+    exports xyz.brassgoggledcoders.minescribe.core.fileform.listhandler;
     exports xyz.brassgoggledcoders.minescribe.core.functional;
     exports xyz.brassgoggledcoders.minescribe.core.info;
     exports xyz.brassgoggledcoders.minescribe.core.netty;

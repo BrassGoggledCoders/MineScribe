@@ -45,8 +45,8 @@ public class PackContentTypeManager extends SimpleJsonResourceReloadListener {
             JsonObject entryObject = GsonHelper.convertToJsonObject(entry.getValue(), "top element");
             ResourceLocation resourceLocation = entry.getKey();
             try {
-                if (entryObject.has("name")) {
-                    Component component = Component.Serializer.fromJson(entryObject.get("name"));
+                if (entryObject.has("label")) {
+                    Component component = Component.Serializer.fromJson(entryObject.get("label"));
                     if (component != null) {
                         Path path = Path.of(GsonHelper.getAsString(entryObject, "path"));
                         if (path.isAbsolute()) {
@@ -67,7 +67,7 @@ public class PackContentTypeManager extends SimpleJsonResourceReloadListener {
                         ));
                     }
                 } else {
-                    throw new JsonParseException("Field 'name' is required");
+                    throw new JsonParseException("Field 'label' is required");
                 }
             } catch (JsonParseException jsonParseException) {
                 MineScribe.LOGGER.error("Failed to load {}, due to {}", entry.getKey(), jsonParseException.getMessage());

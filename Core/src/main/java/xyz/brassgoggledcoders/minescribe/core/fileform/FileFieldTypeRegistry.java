@@ -5,6 +5,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldParser;
@@ -28,6 +29,7 @@ public class FileFieldTypeRegistry {
         return fields;
     }
 
+    @NotNull
     public FileField parseField(JsonObject jsonObject) throws JsonParseException {
         String type = MineScribeJsonHelper.getAsString(jsonObject, "type");
         IFileFieldParser<?> parser = fileFieldParsers.get(type);

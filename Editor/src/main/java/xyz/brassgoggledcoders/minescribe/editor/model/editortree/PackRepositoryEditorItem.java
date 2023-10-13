@@ -11,7 +11,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class PackRepositoryEditorItem extends EditorItem {
     public PackRepositoryEditorItem(String name, Path path) {
@@ -48,7 +47,6 @@ public class PackRepositoryEditorItem extends EditorItem {
                 childrenEditorItems.add(new PackEditorItem(childFolder.getName(), childFolder.toPath()));
             }
         }
-        childrenEditorItems.removeIf(Predicate.not(EditorItem::isValid));
 
         return childrenEditorItems;
     }
