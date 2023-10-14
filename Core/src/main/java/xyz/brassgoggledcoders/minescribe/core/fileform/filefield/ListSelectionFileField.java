@@ -10,7 +10,7 @@ public class ListSelectionFileField extends FileField {
     public static final Codec<ListSelectionFileField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf(JsonFieldNames.LABEL).forGetter(IFileField::getLabel),
             Codec.STRING.fieldOf(JsonFieldNames.FIELD).forGetter(IFileField::getField),
-            Codec.INT.fieldOf(JsonFieldNames.SORT_ORDER).forGetter(IFileField::getSortOrder),
+            Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(IFileField::getSortOrder),
             Codec.STRING.listOf().fieldOf(JsonFieldNames.LISTS).forGetter(ListSelectionFileField::getListNames)
     ).apply(instance, ListSelectionFileField::new));
     private final List<String> listNames;
