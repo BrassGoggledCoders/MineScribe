@@ -1,7 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.project;
 
 import xyz.brassgoggledcoders.minescribe.core.info.InfoKey;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
 
 import java.nio.file.Path;
 

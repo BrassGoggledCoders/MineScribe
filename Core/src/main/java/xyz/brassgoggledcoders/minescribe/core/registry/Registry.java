@@ -5,7 +5,8 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import xyz.brassgoggledcoders.minescribe.core.codec.BiMapDispatchCodec;
 
-import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Registry<K, V> {
     private final String name;
@@ -17,7 +18,7 @@ public class Registry<K, V> {
         this.dispatchCodec = new BiMapDispatchCodec<>(
                 this.name,
                 kCodec,
-                this::getValues
+                this::getMap
         );
     }
 
@@ -25,15 +26,27 @@ public class Registry<K, V> {
         this.values.put(key, value);
     }
 
-    public BiMap<K, V> getValues() {
+    public BiMap<K, V> getMap() {
         return values;
     }
 
-    public Codec<V> getDispatchCodec() {
+    public V getValue(K key) {
+        return this.getMap().get(key);
+    }
+
+    public List<V> getValues() {
+        return new ArrayList<>(this.getMap().values());
+    }
+
+    public Codec<V> getCodec() {
         return dispatchCodec;
     }
 
     protected String getName() {
         return this.name;
+    }
+
+    public boolean isEmpty() {
+        return this.getMap().isEmpty();
     }
 }

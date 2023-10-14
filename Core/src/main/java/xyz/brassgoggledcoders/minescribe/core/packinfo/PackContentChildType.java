@@ -5,27 +5,25 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import xyz.brassgoggledcoders.minescribe.core.codec.ErroringOptionalFieldCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
 import java.nio.file.Path;
 
-public class PackContentParentType extends PackContentType {
-    public static final Codec<PackContentParentType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+public class PackContentChildType extends PackContentType {
+    public static final Codec<PackContentChildType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceId.CODEC.fieldOf("id").forGetter(PackContentType::getId),
             Codec.STRING.fieldOf("label").forGetter(PackContentType::getLabel),
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentType::getPath),
             ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentType::getForm),
-            Registries.getPackTypes().getCodec().fieldOf("packType").forGetter(PackContentParentType::getPackType)
-    ).apply(instance, (id, label, path, form, packType) -> new PackContentParentType(id, label, path, form.orElse(null), packType)));
+            ResourceId.CODEC.fieldOf("parentId").forGetter(PackContentChildType::getParentId)
+    ).apply(instance, (id, label, path, form, packType) -> new PackContentChildType(id, label, path, form.orElse(null), packType)));
 
-    private final MineScribePackType packType;
-
-    public PackContentParentType(ResourceId id, String label, Path path, FileForm form, MineScribePackType packType) {
+    private final ResourceId parentId;
+    public PackContentChildType(ResourceId id, String label, Path path, FileForm form, ResourceId parentId) {
         super(id, label, path, form);
-        this.packType = packType;
+        this.parentId = parentId;
     }
 
-    public MineScribePackType getPackType() {
-        return packType;
+    public ResourceId getParentId() {
+        return parentId;
     }
 }

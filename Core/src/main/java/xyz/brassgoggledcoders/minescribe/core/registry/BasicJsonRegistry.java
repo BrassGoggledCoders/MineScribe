@@ -74,6 +74,6 @@ public class BasicJsonRegistry<V> extends Registry<String, V> {
             }
         }
 
-        LOGGER.info("Loaded {} values for registry {}", this.getValues().size(), this.getName());
+        LOGGER.info("Loaded {} values for registry {}", this.getMap().size(), this.getName());
     }
 }

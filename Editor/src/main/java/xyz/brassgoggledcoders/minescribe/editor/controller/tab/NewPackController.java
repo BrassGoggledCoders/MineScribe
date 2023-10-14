@@ -13,9 +13,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
+import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
@@ -25,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,13 +50,7 @@ public class NewPackController {
     @FXML
     public void initialize() {
         form = Form.of(Group.of(
-                Field.ofMultiSelectionType(
-                                new ArrayList<>(InfoRepository.getInstance()
-                                        .getValue(InfoKeys.PACK_TYPES)
-                                        .values()
-                                ),
-                                List.of(0, 1)
-                        )
+                Field.ofMultiSelectionType(Registries.getPackTypes().getValues())
                         .label("Pack Type")
                         .render(SmallerSimpleListViewControl::new)
                         .id("packTypes")

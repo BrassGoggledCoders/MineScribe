@@ -29,21 +29,11 @@ public abstract class FileField implements IFileField {
         return sortOrder;
     }
 
-    @Override
-    public int compareTo(@NotNull IFileField o) {
-        int comparedSortOrder = Integer.compare(this.sortOrder, o.getSortOrder());
-        if (comparedSortOrder == 0) {
-            return String.CASE_INSENSITIVE_ORDER.compare(this.label, o.getLabel());
-        } else {
-            return 0;
-        }
-    }
-
     public static <T extends IFileField> Codec<T> basicCodec(Function3<String, String, Integer, T> create) {
         return RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf(JsonFieldNames.LABEL).forGetter(IFileField::getLabel),
                 Codec.STRING.fieldOf(JsonFieldNames.FIELD).forGetter(IFileField::getField),
-                Codec.INT.fieldOf(JsonFieldNames.SORT_ORDER).forGetter(IFileField::getSortOrder)
+                Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(IFileField::getSortOrder)
         ).apply(instance, create));
     }
 }

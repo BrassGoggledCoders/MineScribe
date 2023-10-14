@@ -4,14 +4,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public class FileForm {
     public static final Codec<FileForm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            IFileField.LIST_CODEC.fieldOf("fields").forGetter(FileForm::getFieldsForCodec)
+            IFileField.SET_CODEC.fieldOf("fields").forGetter(FileForm::getFieldsForCodec)
     ).apply(instance, FileForm::new));
     private final TreeSet<IFileField> fields;
 
@@ -24,7 +21,7 @@ public class FileForm {
         return fields;
     }
 
-    private List<IFileField> getFieldsForCodec() {
-        return new ArrayList<>(this.getFields());
+    private Set<IFileField> getFieldsForCodec() {
+        return new HashSet<>(this.getFields());
     }
 }

@@ -1,0 +1,22 @@
+{
+  "parentId": "minecraft:tag",
+  "label": "Block Tags",
+  "path": "blocks",
+  "form": {
+    "fields": [
+      {
+        "label": "Replace",
+        "field": "replace",
+        "type": "checkbox"
+      },
+      {
+        "label": "Values",
+        "field": "values",
+        "type": "list_selection",
+        "lists": [
+          "hell"
+        ]
+      }
+    ]
+  }
+}

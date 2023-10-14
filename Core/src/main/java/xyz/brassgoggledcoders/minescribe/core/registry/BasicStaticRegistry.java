@@ -8,6 +8,6 @@ import java.util.function.Consumer;
 public class BasicStaticRegistry<K, V> extends Registry<K, V> {
     public BasicStaticRegistry(String name, Codec<K> kCodec, Consumer<BiConsumer<K, V>> initialize) {
         super(name, kCodec);
-        initialize.accept(this.getValues()::put);
+        initialize.accept(this.getMap()::put);
     }
 }
