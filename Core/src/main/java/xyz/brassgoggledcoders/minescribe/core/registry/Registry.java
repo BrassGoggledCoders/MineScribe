@@ -3,15 +3,18 @@ package xyz.brassgoggledcoders.minescribe.core.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.BiMapDispatchCodec;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class Registry<K, V> {
+public class Registry<K, V> implements Iterable<V> {
     private final String name;
     private final BiMap<K, V> values;
     private final Codec<V> dispatchCodec;
+
     public Registry(String name, Codec<K> kCodec) {
         this.name = name;
         this.values = HashBiMap.create();
@@ -48,5 +51,13 @@ public class Registry<K, V> {
 
     public boolean isEmpty() {
         return this.getMap().isEmpty();
+    }
+
+    @NotNull
+    @Override
+    public Iterator<V> iterator() {
+        return this.getMap()
+                .values()
+                .iterator();
     }
 }
