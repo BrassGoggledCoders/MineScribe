@@ -3,7 +3,6 @@ package xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.LazyCodec;
-import xyz.brassgoggledcoders.minescribe.core.codec.SetCodec;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public interface IFileField extends Comparable<IFileField> {
             )
     );
 
-    Codec<Set<IFileField>> SET_CODEC = LazyCodec.of(() -> new SetCodec<>(CODEC));
+    Codec<List<IFileField>> LIST_CODEC = LazyCodec.of(CODEC::listOf);
 
     String getLabel();
 

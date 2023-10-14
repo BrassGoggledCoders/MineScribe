@@ -8,7 +8,7 @@ import java.util.*;
 
 public class FileForm {
     public static final Codec<FileForm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            IFileField.SET_CODEC.fieldOf("fields").forGetter(FileForm::getFieldsForCodec)
+            IFileField.LIST_CODEC.fieldOf("fields").forGetter(FileForm::getFieldsForCodec)
     ).apply(instance, FileForm::new));
     private final TreeSet<IFileField> fields;
 
@@ -21,7 +21,7 @@ public class FileForm {
         return fields;
     }
 
-    private Set<IFileField> getFieldsForCodec() {
-        return new HashSet<>(this.getFields());
+    private List<IFileField> getFieldsForCodec() {
+        return new ArrayList<>(this.getFields());
     }
 }
