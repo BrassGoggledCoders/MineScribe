@@ -7,5 +7,5 @@
            fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.LoadingController"
            fx:id="loading"
 >
-    <Text fx:id="loadingStatus" textAlignment="CENTER">Waiting on Minecraft Connection</Text>
+    <Text fx:id="loadingStatus" textAlignment="CENTER">Waiting on Information generation. If you haven't already, run `/minescribe generate` in MineCraft</Text>
 </StackPane>

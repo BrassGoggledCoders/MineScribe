@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public class Registries {
     private static final Supplier<BasicStaticRegistry<String, Codec<? extends IFileField>>> FILE_FIELD_CODECS =
             Suppliers.memoize(() -> new BasicStaticRegistry<>(
-                    "fileField",
+                    "fileFields",
                     Codec.STRING,
                     initializer -> {
                         initializer.accept("checkbox", CheckBoxFileField.CODEC);
@@ -22,7 +22,7 @@ public class Registries {
             ));
 
     private static final Supplier<BasicJsonRegistry<MineScribePackType>> PACK_TYPES = Suppliers.memoize(() -> new BasicJsonRegistry<>(
-            "packType",
+            "packTypes",
             MineScribePackType.CODEC,
             MineScribePackType::name
     ));

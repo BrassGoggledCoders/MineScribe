@@ -48,7 +48,6 @@ dependencies {
     implementation("org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0")
     implementation("com.dlsc.preferencesfx:preferencesfx-core:11.16.0")
 
-    implementation("io.netty:netty-handler:4.1.86.Final")
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("org.slf4j:slf4j-simple:2.0.9")

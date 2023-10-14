@@ -32,18 +32,6 @@ public class BasicJsonRegistry<V> extends Registry<String, V> {
                 .resolve(this.getName());
 
         if (Files.isDirectory(registryPath)) {
-            Codec<List<V>> listCodec = this.vCodec.listOf();
-            try {
-                String jsonString = Files.readString(registryPath, StandardCharsets.UTF_8);
-                JsonElement jsonElement = GSON.fromJson(jsonString, JsonElement.class);
-                listCodec.decode(JsonOps.INSTANCE, jsonElement)
-                        .get()
-                        .ifLeft(result -> result.getFirst().forEach(value -> this.register(valueName.apply(value), value)))
-                        .ifRight(partial -> LOGGER.error("Failed to decode file {} due to {}", this.getName(), partial.message()));
-            } catch (IOException e) {
-                LOGGER.error("Failed to load Value for file {}", this.getName(), e);
-            }
-        } else {
             DirectoryStream.Filter<Path> filter = file -> file.endsWith(".json") && Files.isReadable(file);
 
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(registryPath, filter)) {
@@ -63,6 +51,29 @@ public class BasicJsonRegistry<V> extends Registry<String, V> {
             } catch (IOException e) {
                 LOGGER.error("Failed to load Values for registry {}", this.getName(), e);
             }
+
+
+        } else {
+            Path filePath = root.resolve("registry")
+                    .resolve(this.getName() + ".json");
+
+            if (Files.exists(filePath)) {
+                Codec<List<V>> listCodec = this.vCodec.listOf();
+                try {
+                    String jsonString = Files.readString(filePath, StandardCharsets.UTF_8);
+                    JsonElement jsonElement = GSON.fromJson(jsonString, JsonElement.class);
+                    listCodec.decode(JsonOps.INSTANCE, jsonElement)
+                            .get()
+                            .ifLeft(result -> result.getFirst().forEach(value -> this.register(valueName.apply(value), value)))
+                            .ifRight(partial -> LOGGER.error("Failed to decode file {} due to {}", this.getName(), partial.message()));
+                } catch (IOException e) {
+                    LOGGER.error("Failed to load Value for file {}", this.getName(), e);
+                }
+            } else {
+                LOGGER.error("Failed to load any values for registry {}", this.getName());
+            }
         }
+
+        LOGGER.info("Loaded {} values for registry {}", this.getValues().size(), this.getName());
     }
 }

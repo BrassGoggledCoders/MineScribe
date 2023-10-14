@@ -2,11 +2,7 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires javafx.controls;
     requires javafx.fxml;
 
-    requires io.netty.buffer;
-    requires io.netty.codec;
-    requires io.netty.common;
-    requires io.netty.handler;
-    requires io.netty.transport;
+    requires java.prefs;
 
     requires org.slf4j;
 
