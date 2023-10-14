@@ -1,5 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
 
+import com.mojang.serialization.Codec;
+
 public interface IFileField extends Comparable<IFileField> {
     String getLabel();
 
@@ -7,5 +9,5 @@ public interface IFileField extends Comparable<IFileField> {
 
     int getSortOrder();
 
-    IFileFieldParser<?> getParser();
+    Codec<? extends IFileField> getCodec();
 }
