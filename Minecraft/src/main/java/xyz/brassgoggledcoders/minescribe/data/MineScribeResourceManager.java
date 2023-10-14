@@ -10,13 +10,13 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.resource.PathPackResources;
 import net.minecraftforge.resource.ResourcePackLoader;
 import xyz.brassgoggledcoders.minescribe.api.MineScribeAPI;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
-import xyz.brassgoggledcoders.minescribe.list.GsonListHandler;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -31,17 +31,18 @@ public class MineScribeResourceManager {
     private final ReloadableResourceManager resourceManager;
     private PackRepository packRepository;
     private WeakReference<MinecraftServer> serverWeakReference;
+    private final MineScribeFileManager fileManager;
 
     public MineScribeResourceManager() {
         this.resourceManager = new ReloadableResourceManager(MineScribeAPI.PACK_TYPE);
         MinecraftForge.EVENT_BUS.post(new RegisterMineScribeReloadListenerEvent(this.resourceManager));
+        this.fileManager = new MineScribeFileManager(FMLPaths.GAMEDIR.get());
     }
 
     private void buildPackRepository() {
         MinecraftServer currentServer = Minecraft.getInstance().getSingleplayerServer();
         if (this.serverWeakReference == null || this.serverWeakReference.get() != currentServer) {
             if (currentServer != null) {
-                GsonListHandler.minecraftServerWeakReference = serverWeakReference;
                 this.packRepository = new PackRepository(
                         MineScribeAPI.PACK_TYPE,
                         new FolderRepositorySource(
@@ -78,6 +79,10 @@ public class MineScribeResourceManager {
         } else {
             return null;
         }
+    }
+
+    public MineScribeFileManager getFileManager() {
+        return this.fileManager;
     }
 
     private static RepositorySource buildPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks) {
