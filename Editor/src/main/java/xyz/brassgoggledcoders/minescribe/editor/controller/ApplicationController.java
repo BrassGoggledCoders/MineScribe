@@ -34,7 +34,6 @@ public class ApplicationController {
 
     @FXML
     public void initialize() {
-        FileHandler.initialize();
         InfoRepository.getInstance().setValue(PAGE_REQUEST_KEY, this::trySetView);
 
         this.content.addEventHandler(

@@ -27,6 +27,13 @@ public class Registries {
             MineScribePackType::name
     ));
 
+    private static final Supplier<BasicJsonRegistry<String, PackRepositoryLocation>> PACK_REPOSITORY_LOCATIONS =
+            Suppliers.memoize(() -> BasicJsonRegistry.ofString(
+                    "packRepositories",
+                    PackRepositoryLocation.CODEC,
+                    PackRepositoryLocation::label
+            ));
+
     private static final Supplier<BasicJsonRegistry<ResourceId, PackContentParentType>> CONTENT_PARENT_TYPES =
             Suppliers.memoize(() -> new BasicJsonRegistry<>(
                     "contentParentTypes",
@@ -53,6 +60,10 @@ public class Registries {
         return PACK_TYPES.get();
     }
 
+    public static BasicJsonRegistry<String, PackRepositoryLocation> getPackRepositoryLocations() {
+        return PACK_REPOSITORY_LOCATIONS.get();
+    }
+
     public static BasicJsonRegistry<ResourceId, PackContentParentType> getContentParentTypes() {
         return CONTENT_PARENT_TYPES.get();
     }
@@ -62,6 +73,7 @@ public class Registries {
     }
 
     public static void load(Path mineScribeRoot) {
+        PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
         PACK_TYPES.get().load(mineScribeRoot);
         CONTENT_PARENT_TYPES.get().load(mineScribeRoot);
         CONTENT_CHILD_TYPES.get().load(mineScribeRoot);

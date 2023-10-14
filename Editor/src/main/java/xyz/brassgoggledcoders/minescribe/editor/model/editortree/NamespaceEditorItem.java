@@ -1,10 +1,9 @@
 package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.PackContentHierarchy;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.IPackContentNode;
+import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.PackContentHierarchy;
 
 import java.io.File;
 import java.nio.file.Path;

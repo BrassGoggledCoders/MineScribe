@@ -1,14 +1,17 @@
 package xyz.brassgoggledcoders.minescribe.event;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
+import xyz.brassgoggledcoders.minescribe.api.event.GatherPackRepositoryLocationsEvent;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
 import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.data.GameGatheredMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
@@ -28,6 +31,16 @@ public class ForgeCommonEventHandler {
                 () -> Stream.of(PackTypeHelper.gatherPackTypes()
                         .toList()
                 )
+        ));
+        event.registerReloadListener(new GameGatheredMineScribeReloadListener<>(
+                "registry",
+                PackRepositoryLocation.CODEC.listOf(),
+                unused -> Path.of("packRepositories.json"),
+                () -> {
+                    GatherPackRepositoryLocationsEvent locations = new GatherPackRepositoryLocationsEvent();
+                    MinecraftForge.EVENT_BUS.post(locations);
+                    return Stream.of(locations.getPackRepositoryLocations());
+                }
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
                 "types/parent",

@@ -23,6 +23,7 @@ public class EditorController {
 
     @FXML
     public void initialize() {
+        FileHandler.initialize();
         TreeView<EditorItem> treeView = new TreeView<>(FileHandler.getInstance().getRootModel());
         treeView.setShowRoot(false);
         treeView.setCellFactory(param -> new EditorTreeCell());
