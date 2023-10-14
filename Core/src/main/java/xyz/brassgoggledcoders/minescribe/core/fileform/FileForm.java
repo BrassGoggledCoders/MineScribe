@@ -11,7 +11,7 @@ import java.util.TreeSet;
 
 public class FileForm {
     public static final Codec<FileForm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            FileFieldTypeRegistry.LIST_CODEC.fieldOf("fields").forGetter(FileForm::getFieldsForCodec)
+            IFileField.LIST_CODEC.fieldOf("fields").forGetter(FileForm::getFieldsForCodec)
     ).apply(instance, FileForm::new));
     private final TreeSet<IFileField> fields;
 
