@@ -42,6 +42,7 @@ public class LoadingController {
     private void startProjectLoad() {
         this.loadingStatus.setText("Found Project. Loading Files from ./minescribe");
         Registries.load(this.project.getMineScribeFolder());
+        this.loadingStatus.setText("Project Loaded. Opening Editor");
     }
 
     private class CheckLoadComplete extends TimerTask {

@@ -15,37 +15,43 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Function;
 
-public class BasicJsonRegistry<V> extends Registry<String, V> {
+public class BasicJsonRegistry<K, V> extends Registry<K, V> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicJsonRegistry.class);
     private static final Gson GSON = new Gson();
+    private final Path directory;
     private final Codec<V> vCodec;
-    private final Function<V, String> valueName;
+    private final Function<V, K> valueName;
 
-    public BasicJsonRegistry(String name, Codec<V> vCodec, Function<V, String> valueName) {
-        super(name, Codec.STRING);
+    public BasicJsonRegistry(String name, Path directory, Codec<K> kCodec, Codec<V> vCodec, Function<V, K> valueName) {
+        super(name, kCodec);
+        this.directory = directory;
         this.vCodec = vCodec;
         this.valueName = valueName;
     }
 
     public void load(Path root) {
-        Path registryPath = root.resolve("registry")
-                .resolve(this.getName());
+        Path registryPath = root.resolve("registry");
+        if (this.directory == null) {
+            registryPath = registryPath.resolve(this.getName());
+        } else {
+            registryPath = registryPath.resolve(this.directory);
+        }
 
         if (Files.isDirectory(registryPath)) {
             DirectoryStream.Filter<Path> filter = file -> file.endsWith(".json") && Files.isReadable(file);
 
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(registryPath, filter)) {
                 for (Path path : stream) {
-                    String name = path.relativize(registryPath).toString();
+                    String fileName = path.relativize(registryPath).toString();
                     try {
                         String jsonString = Files.readString(path, StandardCharsets.UTF_8);
                         JsonElement jsonElement = GSON.fromJson(jsonString, JsonElement.class);
                         this.vCodec.decode(JsonOps.INSTANCE, jsonElement)
                                 .get()
-                                .ifLeft(result -> this.register(name, result.getFirst()))
-                                .ifRight(partial -> LOGGER.error("Failed to decode file {} due to {}", name, partial.message()));
+                                .ifLeft(result -> this.register(valueName.apply(result.getFirst()), result.getFirst()))
+                                .ifRight(partial -> LOGGER.error("Failed to decode file {} due to {}", fileName, partial.message()));
                     } catch (IOException e) {
-                        LOGGER.error("Failed to load Value for file {}", name, e);
+                        LOGGER.error("Failed to load Value for file {}", fileName, e);
                     }
                 }
             } catch (IOException e) {
@@ -75,5 +81,15 @@ public class BasicJsonRegistry<V> extends Registry<String, V> {
         }
 
         LOGGER.info("Loaded {} values for registry {}", this.getMap().size(), this.getName());
+    }
+
+    public static <V> BasicJsonRegistry<String, V> ofString(String name, Codec<V> vCodec, Function<V, String> valueName) {
+        return new BasicJsonRegistry<>(
+                name,
+                null,
+                Codec.STRING,
+                vCodec,
+                valueName
+        );
     }
 }
