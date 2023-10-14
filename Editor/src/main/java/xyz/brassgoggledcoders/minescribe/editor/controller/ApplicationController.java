@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoKey;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.event.page.RequestPageEvent;
@@ -19,17 +20,22 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class ApplicationController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
+    public static final InfoKey<Consumer<String>> PAGE_REQUEST_KEY = new InfoKey<>() {
+    };
+
     @FXML
     public AnchorPane content;
 
     @FXML
     public void initialize() {
         FileHandler.initialize();
+        InfoRepository.getInstance().setValue(PAGE_REQUEST_KEY, this::trySetView);
 
         this.content.addEventHandler(
                 RequestPageEvent.REQUEST_PAGE_EVENT_TYPE,
@@ -44,7 +50,7 @@ public class ApplicationController {
             if (Files.isDirectory(previousProjectPath)) {
                 Project project = new Project(previousProjectPath);
                 InfoRepository.getInstance().setValue(Project.KEY, project);
-                trySetView("loading");
+                this.content.fireEvent(new RequestPageEvent("loading"));
             }
         }
 

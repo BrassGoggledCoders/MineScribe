@@ -15,6 +15,7 @@ public class Project {
         this.mineScribeFolder = this.rootPath.resolve(".minescribe");
     }
 
+    @SuppressWarnings("unused")
     public Path getRootPath() {
         return rootPath;
     }

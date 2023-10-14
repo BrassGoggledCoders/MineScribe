@@ -1,10 +1,8 @@
 package xyz.brassgoggledcoders.minescribe.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.SharedConstants;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ReloadInstance;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
@@ -15,11 +13,7 @@ import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
