@@ -3,7 +3,6 @@ package xyz.brassgoggledcoders.minescribe.editor;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import xyz.brassgoggledcoders.minescribe.editor.server.MineScribeNettyServer;
 
 import java.io.IOException;
 
@@ -15,12 +14,6 @@ public class Application extends javafx.application.Application {
         stage.setTitle("MineScribe!");
         stage.setScene(scene);
         stage.show();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-        MineScribeNettyServer.getInstance().close();
     }
 
     public static void main(String[] args) {

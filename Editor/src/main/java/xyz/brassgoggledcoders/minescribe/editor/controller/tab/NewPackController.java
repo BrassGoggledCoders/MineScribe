@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
@@ -111,7 +111,7 @@ public class NewPackController {
             String description = getValue("description", String.class, fieldMap)
                     .findAny()
                     .orElse("");
-            List<PackTypeInfo> packTypes = getValue("packTypes", PackTypeInfo.class, fieldMap)
+            List<MineScribePackType> packTypes = getValue("packTypes", MineScribePackType.class, fieldMap)
                     .toList();
             if (name.isPresent()) {
                 Path packPath = this.parentItem.getPath().resolve(Path.of(name.get()));
@@ -119,12 +119,12 @@ public class NewPackController {
                 if (!packFolder.exists()) {
                     if (packFolder.mkdirs()) {
                         boolean createdAllPackTypeFolder = true;
-                        for (PackTypeInfo packType : packTypes) {
+                        for (MineScribePackType packType : packTypes) {
                             createdAllPackTypeFolder &= packPath.resolve(packType.folder()).toFile().mkdir();
                         }
                         if (createdAllPackTypeFolder) {
                             int packVersion = packTypes.stream()
-                                    .mapToInt(PackTypeInfo::version)
+                                    .mapToInt(MineScribePackType::version)
                                     .min()
                                     .orElse(0);
 
@@ -134,8 +134,10 @@ public class NewPackController {
 
                             packObject.addProperty("pack_format", packVersion);
                             packObject.addProperty("description", description);
-                            for (PackTypeInfo packType : packTypes) {
-                                packObject.addProperty(packType.versionKey(), packType.version());
+                            for (MineScribePackType packType : packTypes) {
+                                packType.versionKey()
+                                        .ifPresent(versionKey -> packObject.addProperty(versionKey, packType.version()));
+
                             }
 
                             try {

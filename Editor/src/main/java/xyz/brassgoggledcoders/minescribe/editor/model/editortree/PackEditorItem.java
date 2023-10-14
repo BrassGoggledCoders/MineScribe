@@ -3,13 +3,12 @@ package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class PackEditorItem extends EditorItem {
     public PackEditorItem(String name, Path path) {
@@ -30,10 +29,10 @@ public class PackEditorItem extends EditorItem {
         List<EditorItem> childrenEditorItems = new ArrayList<>();
         for (File childFile : childrenFiles) {
             if (childFile.isDirectory()) {
-                PackTypeInfo packTypeInfo = InfoRepository.getInstance()
+                MineScribePackType packType = InfoRepository.getInstance()
                         .getValue(InfoKeys.PACK_TYPES)
                         .get(childFile.getName());
-                childrenEditorItems.add(new PackTypeEditorItem(childFile.getName(), childFile.toPath(), packTypeInfo));
+                childrenEditorItems.add(new PackTypeEditorItem(childFile.getName(), childFile.toPath(), packType));
             } else if (childFile.getName().equalsIgnoreCase("pack.mcmeta")) {
                 childrenEditorItems.add(new FileEditorItem(childFile.getName(), childFile.toPath()));
             }

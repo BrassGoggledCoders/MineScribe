@@ -2,7 +2,7 @@ package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.editor.registry.PackContentTypeRegistry;
 
 import java.io.File;
@@ -12,10 +12,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class NamespaceEditorItem extends EditorItem {
-    private final PackTypeInfo packType;
+    private final MineScribePackType packType;
     private final Collection<PackContentType> validTypes;
 
-    public NamespaceEditorItem(String name, Path path, PackTypeInfo packType) {
+    public NamespaceEditorItem(String name, Path path, MineScribePackType packType) {
         super(name, path);
         this.packType = packType;
         this.validTypes = PackContentTypeRegistry.getInstance()
@@ -30,7 +30,7 @@ public class NamespaceEditorItem extends EditorItem {
             if (childFile.isDirectory()) {
                 Path childPath = childFile.toPath();
                 List<PackContentType> typesForFile = validTypes.parallelStream()
-                        .filter(packContentType -> childPath.endsWith(packContentType.path().getName(0)))
+                        .filter(packContentType -> childPath.endsWith(packContentType.getPath().getName(0)))
                         .toList();
 
                 if (!typesForFile.isEmpty()) {

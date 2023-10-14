@@ -28,7 +28,7 @@ public class PackContentTypeEditorItem extends EditorItem {
         this.index = index;
         this.childTypes = new ArrayList<>();
         for (PackContentType packContentType : validTypes) {
-            if (packContentType.path().getNameCount() > index + 1) {
+            if (packContentType.getPath().getNameCount() > index + 1) {
                 childTypes.add(packContentType);
             }
         }
@@ -57,7 +57,7 @@ public class PackContentTypeEditorItem extends EditorItem {
                 EditorItem editorItem = null;
                 if (!childTypes.isEmpty()) {
                     List<PackContentType> typesForFile = childTypes.parallelStream()
-                            .filter(packContentType -> childPath.endsWith(packContentType.path().subpath(0, index + 1)))
+                            .filter(packContentType -> childPath.endsWith(packContentType.getPath().subpath(0, index + 1)))
                             .toList();
 
                     if (!typesForFile.isEmpty()) {
@@ -69,7 +69,7 @@ public class PackContentTypeEditorItem extends EditorItem {
                             .parallelStream()
                             .filter(packContentType ->packContentType.getValue()
                                     .parallelStream()
-                                    .anyMatch(packContentSubType -> childPath.endsWith(packContentSubType.path().getName(0)))
+                                    .anyMatch(packContentSubType -> childPath.endsWith(packContentSubType.getPath().getName(0)))
                             )
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
@@ -83,7 +83,7 @@ public class PackContentTypeEditorItem extends EditorItem {
             } else {
                 editorItems.add(validTypes.stream()
                         .findFirst()
-                        .flatMap(PackContentType::form)
+                        .flatMap(PackContentType::getForm)
                         .<EditorItem>map(form -> new FormEditorFileEditorItem(childFile.getName(), childPath, form))
                         .orElseGet(() -> new MissingFormFileEditorItem(childFile.getName(), childPath))
                 );

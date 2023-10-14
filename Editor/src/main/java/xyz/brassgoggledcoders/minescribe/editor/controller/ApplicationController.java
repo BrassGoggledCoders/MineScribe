@@ -7,32 +7,14 @@ import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.brassgoggledcoders.minescribe.core.MineScribeInfo;
-import xyz.brassgoggledcoders.minescribe.core.fileform.listhandler.ListHandlerStore;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoKeys;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
-import xyz.brassgoggledcoders.minescribe.core.netty.PacketHandler;
-import xyz.brassgoggledcoders.minescribe.core.netty.PacketRegistry;
-import xyz.brassgoggledcoders.minescribe.core.netty.packet.InstanceDataResponse;
-import xyz.brassgoggledcoders.minescribe.core.netty.packet.ListValueResponse;
-import xyz.brassgoggledcoders.minescribe.core.netty.packet.PackContentSubTypeLoadPacket;
-import xyz.brassgoggledcoders.minescribe.core.netty.packet.PackContentTypeLoadPacket;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent;
 import xyz.brassgoggledcoders.minescribe.editor.event.NetworkEvent.ClientConnectionNetworkEvent;
 import xyz.brassgoggledcoders.minescribe.editor.event.page.RequestPageEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
-import xyz.brassgoggledcoders.minescribe.editor.list.EditorListHandler;
-import xyz.brassgoggledcoders.minescribe.editor.registry.PackContentTypeRegistry;
-import xyz.brassgoggledcoders.minescribe.editor.server.MineScribeNettyServer;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ApplicationController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
@@ -41,11 +23,7 @@ public class ApplicationController {
 
     @FXML
     public void initialize() {
-        MineScribeNettyServer.initialize(this.content::fireEvent, MineScribeInfo.DEFAULT_PORT);
         FileHandler.initialize();
-
-        PacketRegistry.INSTANCE.setup(this::registerPacketHandlers);
-        ListHandlerStore.setListHandler(new EditorListHandler());
 
         this.content.addEventHandler(
                 ClientConnectionNetworkEvent.CLIENT_CONNECTED_EVENT_TYPE,
@@ -89,46 +67,5 @@ public class ApplicationController {
                 });
             }
         }
-    }
-
-    private void registerPacketHandlers(Consumer<PacketHandler<?>> register) {
-        register.accept(new PacketHandler<>(
-                InstanceDataResponse.class,
-                instanceDataResponse -> {
-                    InfoRepository.getInstance()
-                            .setValue(
-                                    InfoKeys.PACK_TYPES,
-                                    instanceDataResponse.packTypes()
-                                            .stream()
-                                            .collect(Collectors.toMap(
-                                                    packTypeInfo -> packTypeInfo.folder()
-                                                            .toString(),
-                                                    Function.identity()
-                                            ))
-                            );
-                    for (Map.Entry<String, Path> packEntries : instanceDataResponse.packRepositories().entrySet()) {
-                        FileHandler.getInstance()
-                                .addPackDirectory(packEntries.getKey(), packEntries.getValue());
-                    }
-                }
-        ));
-        register.accept(new PacketHandler<>(
-                PackContentTypeLoadPacket.class,
-                packContentTypeLoadPacket -> PackContentTypeRegistry.getInstance()
-                        .setPackContentTypes(packContentTypeLoadPacket.packContentTypes())
-        ));
-        register.accept(new PacketHandler<>(
-                PackContentSubTypeLoadPacket.class,
-                packContentSubTypeLoadPacket -> PackContentTypeRegistry.getInstance()
-                        .setPackContentSubTypes(packContentSubTypeLoadPacket.packContentSubTypes())
-        ));
-        register.accept(new PacketHandler<>(
-                ListValueResponse.class,
-                listValueResponse -> {
-                    if (ListHandlerStore.getListHandler() instanceof EditorListHandler editorListHandler) {
-                        editorListHandler.handleListResponse(listValueResponse);
-                    }
-                }
-        ));
     }
 }

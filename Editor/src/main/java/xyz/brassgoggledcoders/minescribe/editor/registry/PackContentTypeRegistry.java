@@ -4,7 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Unit;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackTypeInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.util.*;
@@ -19,7 +19,7 @@ public class PackContentTypeRegistry {
 
     private final Map<ResourceId, PackContentType> packContentTypes;
     private final Map<ResourceId, List<PackContentType>> packContentSubTypes;
-    private final Multimap<PackTypeInfo, PackContentType> packContentTypeByPackType;
+    private final Multimap<MineScribePackType, PackContentType> packContentTypeByPackType;
 
     public PackContentTypeRegistry() {
         this.packContentTypesLoaded = new CompletableFuture<>();
@@ -34,7 +34,7 @@ public class PackContentTypeRegistry {
         this.packContentTypes.clear();
         for (PackContentType packContentType : packContentTypes) {
             this.packContentTypes.put(
-                    packContentType.resourceId(),
+                    packContentType.getId(),
                     packContentType
             );
         }
@@ -46,7 +46,7 @@ public class PackContentTypeRegistry {
     }
 
     public List<PackContentType> getPackContentSubTypes(PackContentType packContentType) {
-        return this.packContentSubTypes.get(packContentType.resourceId());
+        return this.packContentSubTypes.get(packContentType.getId());
     }
 
     public void setPackContentSubTypes(Map<ResourceId, Collection<PackContentType>> packContentSubTypes) {
@@ -68,15 +68,16 @@ public class PackContentTypeRegistry {
         return packContentSubTypesLoaded;
     }
 
-    public Collection<PackContentType> getPackContentTypesFor(PackTypeInfo packType) {
+    public Collection<PackContentType> getPackContentTypesFor(MineScribePackType packType) {
         if (packContentTypeByPackType.containsKey(packType)) {
             return packContentTypeByPackType.get(packType);
         } else {
             List<PackContentType> packContentTypesFor = new ArrayList<>();
+            //TODO Rebuild PackContentType dependencies
             for (PackContentType packContentType : packContentTypes.values()) {
-                if (packContentType.packType().equalsIgnoreCase(packType.name())) {
-                    packContentTypesFor.add(packContentType);
-                }
+                //if (packContentType.packType().equalsIgnoreCase(packType.name())) {
+                //    packContentTypesFor.add(packContentType);
+                //}
             }
 
             return packContentTypesFor;
