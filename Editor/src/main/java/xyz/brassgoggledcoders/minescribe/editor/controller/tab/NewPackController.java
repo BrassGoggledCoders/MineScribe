@@ -17,8 +17,8 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
-import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
-import xyz.brassgoggledcoders.minescribe.editor.model.form.SmallerSimpleListViewControl;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.SmallerSimpleListViewControl;
 
 import java.io.File;
 import java.io.IOException;

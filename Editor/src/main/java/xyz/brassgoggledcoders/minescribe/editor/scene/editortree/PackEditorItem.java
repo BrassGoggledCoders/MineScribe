@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
+package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;

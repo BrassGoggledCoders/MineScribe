@@ -6,8 +6,8 @@ import javafx.scene.control.*;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
-import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
-import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorTreeCell;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorTreeCell;
 
 import java.util.UUID;
 

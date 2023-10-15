@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
+package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -6,7 +6,7 @@ import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
-import xyz.brassgoggledcoders.minescribe.editor.model.dialog.NewDirectoryFormDialog;
+import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewDirectoryFormDialog;
 
 import java.io.File;
 import java.nio.file.Path;

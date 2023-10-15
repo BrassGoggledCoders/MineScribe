@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.model.dialog;
+package xyz.brassgoggledcoders.minescribe.editor.scene.dialog;
 
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.Form;

@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.model.form;
+package xyz.brassgoggledcoders.minescribe.editor.scene.form;
 
 import com.dlsc.formsfx.view.controls.SimpleListViewControl;
 

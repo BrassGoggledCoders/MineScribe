@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
+package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
 import javafx.scene.control.TreeCell;
 import javafx.scene.image.Image;

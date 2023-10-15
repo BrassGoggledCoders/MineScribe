@@ -23,5 +23,5 @@ module xyz.brassgoggledcoders.minescribe.editor {
     exports xyz.brassgoggledcoders.minescribe.editor.controller.tab;
     opens xyz.brassgoggledcoders.minescribe.editor.controller.tab to javafx.fxml;
 
-    exports xyz.brassgoggledcoders.minescribe.editor.model.editortree;
+    exports xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 }
