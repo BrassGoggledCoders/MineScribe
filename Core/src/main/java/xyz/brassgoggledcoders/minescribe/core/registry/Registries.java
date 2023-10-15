@@ -2,6 +2,7 @@ package xyz.brassgoggledcoders.minescribe.core.registry;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileField;
@@ -52,6 +53,14 @@ public class Registries {
                     PackContentType::getId
             ));
 
+    private static final Supplier<LoadOnGetJsonRegistry<FormList>> FORM_LISTS = Suppliers.memoize(
+            () -> new LoadOnGetJsonRegistry<>(
+                    "formLists",
+                    Path.of("formLists"),
+                    FormList.CODEC
+            )
+    );
+
     public static BasicStaticRegistry<String, Codec<? extends IFileField>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
     }
@@ -72,9 +81,14 @@ public class Registries {
         return CONTENT_CHILD_TYPES.get();
     }
 
+    public static LoadOnGetJsonRegistry<FormList> getFormLists() {
+        return FORM_LISTS.get();
+    }
+
     public static void load(Path mineScribeRoot) {
         PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
         PACK_TYPES.get().load(mineScribeRoot);
+        FORM_LISTS.get().setMineScribePath(mineScribeRoot);
         CONTENT_PARENT_TYPES.get().load(mineScribeRoot);
         CONTENT_CHILD_TYPES.get().load(mineScribeRoot);
     }

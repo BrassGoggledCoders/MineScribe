@@ -1,15 +1,32 @@
 package xyz.brassgoggledcoders.minescribe.core.packinfo;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.serialization.DataResult;
 
 public record ResourceId(
         String namespace,
         String path
 ) {
-    public static final Codec<ResourceId> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("namespace").forGetter(ResourceId::namespace),
-            Codec.STRING.fieldOf("path").forGetter(ResourceId::path)
-    ).apply(instance, ResourceId::new));
+    public static final Codec<ResourceId> CODEC = Codec.STRING.flatXmap(
+            ResourceId::fromString,
+            resourceId -> DataResult.success(resourceId.toString())
+    );
 
+    @Override
+    public String toString() {
+        return this.namespace() + ":" + this.path();
+    }
+
+    public static DataResult<ResourceId> fromString(String s) {
+        if (s.isEmpty()) {
+            return DataResult.error("String is empty");
+        } else {
+            String[] strings = s.split(":");
+            if (strings.length != 2) {
+                return DataResult.error("%s should have exact one :".formatted(s));
+            } else {
+                return DataResult.success(new ResourceId(strings[0], strings[1]));
+            }
+        }
+    }
 }

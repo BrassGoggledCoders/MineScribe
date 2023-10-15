@@ -14,7 +14,8 @@
         "field": "values",
         "type": "list_selection",
         "lists": [
-          "hell"
+          "minecraft:registry/blocks",
+          "minecraft:tag/blocks"
         ]
       }
     ]

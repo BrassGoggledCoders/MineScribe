@@ -12,4 +12,5 @@ module xyz.brassgoggledcoders.minescribe.core {
     exports xyz.brassgoggledcoders.minescribe.core.packinfo;
     exports xyz.brassgoggledcoders.minescribe.core.registry;
     exports xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
+    exports xyz.brassgoggledcoders.minescribe.core.util;
 }
