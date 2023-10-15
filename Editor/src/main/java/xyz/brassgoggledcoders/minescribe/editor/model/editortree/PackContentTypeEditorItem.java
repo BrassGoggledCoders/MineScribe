@@ -19,9 +19,8 @@ public class PackContentTypeEditorItem extends EditorItem {
     @Override
     public @NotNull List<EditorItem> createChildren() {
         return this.runForChildren(childPath -> {
+            Path relativePath = this.getPath().relativize(childPath);
             if (Files.isDirectory(childPath)) {
-                Path relativePath = this.getPath().relativize(childPath);
-
                 IPackContentNode packContentNode = contentNode.getNode(relativePath);
 
                 if (packContentNode != null) {
@@ -31,6 +30,11 @@ public class PackContentTypeEditorItem extends EditorItem {
                             packContentNode
                     ));
                 }
+            } else if (Files.isRegularFile(childPath)) {
+                return Optional.of(new FileEditorItem(
+                        relativePath.toString(),
+                        childPath
+                ));
             }
 
             return Optional.empty();
