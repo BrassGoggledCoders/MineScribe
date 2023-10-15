@@ -10,6 +10,7 @@
    <top>
        <MenuBar BorderPane.alignment="CENTER">
            <Menu mnemonicParsing="false" text="File">
+               <MenuItem mnemonicParsing="false" text="Open Project" onAction="#openProject"/>
                <MenuItem mnemonicParsing="false" text="Close"/>
            </Menu>
            <Menu mnemonicParsing="false" text="Edit">

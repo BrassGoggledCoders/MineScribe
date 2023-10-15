@@ -1,23 +1,15 @@
 package xyz.brassgoggledcoders.minescribe.core.packinfo;
 
-import io.netty.buffer.ByteBuf;
-import xyz.brassgoggledcoders.minescribe.core.netty.NettyUtil;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record ResourceId(
         String namespace,
         String path
 ) {
-
-    public void encode(ByteBuf byteBuf) {
-        NettyUtil.writeUtf(byteBuf, this.namespace());
-        NettyUtil.writeUtf(byteBuf, this.path());
-    }
-
-    public static ResourceId decode(ByteBuf byteBuf) {
-        return new ResourceId(
-                NettyUtil.readUtf(byteBuf),
-                NettyUtil.readUtf(byteBuf)
-        );
-    }
+    public static final Codec<ResourceId> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.fieldOf("namespace").forGetter(ResourceId::namespace),
+            Codec.STRING.fieldOf("path").forGetter(ResourceId::path)
+    ).apply(instance, ResourceId::new));
 
 }

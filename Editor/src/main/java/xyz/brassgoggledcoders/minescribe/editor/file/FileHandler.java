@@ -3,6 +3,8 @@ package xyz.brassgoggledcoders.minescribe.editor.file;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
+import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.model.editortree.PackRepositoryEditorItem;
 
@@ -19,15 +21,6 @@ public class FileHandler {
 
     public FileHandler() {
         this.rootItem = new TreeItem<>();
-    }
-
-    public void addPackDirectory(String name, Path path) {
-        if (!containsPackDirectory(name, path)) {
-            PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(name, path);
-            this.rootItem.getChildren()
-                    .add(new TreeItem<>(editorItem));
-            this.reloadDirectory(editorItem);
-        }
     }
 
     public void reloadDirectory(@NotNull EditorItem editorItem) {
@@ -59,22 +52,18 @@ public class FileHandler {
         }
     }
 
-    private boolean containsPackDirectory(@Nullable String name, @Nullable Path path) {
-        return this.rootItem.getChildren()
-                .stream()
-                .filter(treeItem -> treeItem.getValue() != null)
-                .anyMatch(treeItem -> {
-                    EditorItem value = treeItem.getValue();
-                    return value.getName().equals(name) || value.getPath().equals(path);
-                });
-    }
-
     public TreeItem<EditorItem> getRootModel() {
         return this.rootItem;
     }
 
     public static void initialize() {
         INSTANCE = new FileHandler();
+        for (PackRepositoryLocation location : Registries.getPackRepositoryLocations()) {
+            PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(location);
+            INSTANCE.rootItem.getChildren()
+                    .add(new TreeItem<>(editorItem));
+            INSTANCE.reloadDirectory(editorItem);
+        }
     }
 
     public static FileHandler getInstance() {

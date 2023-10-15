@@ -1,27 +1,31 @@
 package xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
-import xyz.brassgoggledcoders.minescribe.core.fileform.listhandler.ListHandlerStore;
-import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
 
-import java.util.UUID;
+import java.util.List;
 
 public class ListSelectionFileField extends FileField {
-    public static final ListSelectionFileFieldParser PARSER = new ListSelectionFileFieldParser();
-    private final UUID listId;
-    public ListSelectionFileField(String name, String field, int sortOrder, UUID listId) {
+    public static final Codec<ListSelectionFileField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.fieldOf(JsonFieldNames.LABEL).forGetter(IFileField::getLabel),
+            Codec.STRING.fieldOf(JsonFieldNames.FIELD).forGetter(IFileField::getField),
+            Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(IFileField::getSortOrder),
+            Codec.STRING.listOf().fieldOf(JsonFieldNames.LISTS).forGetter(ListSelectionFileField::getListNames)
+    ).apply(instance, ListSelectionFileField::new));
+    private final List<String> listNames;
+
+    public ListSelectionFileField(String name, String field, int sortOrder, List<String> listNames) {
         super(name, field, sortOrder);
-        this.listId = listId;
+        this.listNames = listNames;
     }
 
-    public UUID getListId() {
-        return this.listId;
+    public List<String> getListNames() {
+        return this.listNames;
     }
 
     @Override
-    public IFileFieldParser<?> getParser() {
-        return PARSER;
+    public Codec<? extends IFileField> getCodec() {
+        return CODEC;
     }
 }

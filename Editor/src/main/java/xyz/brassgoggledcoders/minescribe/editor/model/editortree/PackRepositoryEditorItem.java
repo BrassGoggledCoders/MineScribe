@@ -4,17 +4,17 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NewPackController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PackRepositoryEditorItem extends EditorItem {
-    public PackRepositoryEditorItem(String name, Path path) {
-        super(name, path);
+    public PackRepositoryEditorItem(PackRepositoryLocation location) {
+        super(location.label(), location.path());
     }
 
     @Override

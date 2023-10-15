@@ -1,35 +1,36 @@
 package xyz.brassgoggledcoders.minescribe.core.packinfo;
 
-import io.netty.buffer.ByteBuf;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.core.netty.NettyUtil;
 
 import java.nio.file.Path;
 import java.util.Optional;
 
-public record PackContentType(
-        ResourceId resourceId,
-        String label,
-        String packType,
-        Path path,
-        Optional<FileForm> form
-) {
+public class PackContentType {
+    private final ResourceId id;
+    private final String label;
+    private final Path path;
+    private final FileForm form;
 
-    public void encode(ByteBuf byteBuf) {
-        this.resourceId().encode(byteBuf);
-        NettyUtil.writeUtf(byteBuf, this.label());
-        NettyUtil.writeUtf(byteBuf, this.packType());
-        NettyUtil.writeUtf(byteBuf, this.path().toString());
+    public PackContentType(ResourceId id, String label, Path path, FileForm form) {
+        this.id = id;
+        this.label = label;
+        this.path = path;
+        this.form = form;
     }
 
-    public static PackContentType decode(ByteBuf byteBuf) {
-        return new PackContentType(
-                ResourceId.decode(byteBuf),
-                NettyUtil.readUtf(byteBuf),
-                NettyUtil.readUtf(byteBuf),
-                Path.of(NettyUtil.readUtf(byteBuf)),
-                Optional.empty()
-        );
+    public ResourceId getId() {
+        return id;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public Path getPath() {
+        return path;
+    }
+
+    public Optional<FileForm> getForm() {
+        return Optional.ofNullable(form);
+    }
 }

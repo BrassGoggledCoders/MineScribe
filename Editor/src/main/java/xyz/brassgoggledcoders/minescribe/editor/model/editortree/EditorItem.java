@@ -4,16 +4,22 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 public abstract class EditorItem {
+    private final Logger LOGGER = LoggerFactory.getLogger(EditorItem.class);
+
     private final String name;
     private final Path path;
 
@@ -68,6 +74,20 @@ public abstract class EditorItem {
         if (files != null) {
             return Arrays.asList(files);
         } else {
+            return Collections.emptyList();
+        }
+    }
+
+    protected <T> List<T> runForChildren(Function<Path, Optional<T>> runOnPath) {
+        try (DirectoryStream<Path> childrenPaths = Files.newDirectoryStream(this.getPath())) {
+            List<T> values = new ArrayList<>();
+            for (Path childPath : childrenPaths) {
+                runOnPath.apply(childPath)
+                        .ifPresent(values::add);
+            }
+            return values;
+        } catch (IOException e) {
+            LOGGER.error("Failed to open Directory Stream for {}", this.getPath(), e);
             return Collections.emptyList();
         }
     }

@@ -1,19 +1,60 @@
 package xyz.brassgoggledcoders.minescribe.event;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
+import xyz.brassgoggledcoders.minescribe.api.event.GatherPackRepositoryLocationsEvent;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
-import xyz.brassgoggledcoders.minescribe.data.PackContentSubTypeManager;
-import xyz.brassgoggledcoders.minescribe.data.PackContentTypeManager;
+import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
+import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
+import xyz.brassgoggledcoders.minescribe.data.GameGatheredMineScribeReloadListener;
+import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
+
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 @EventBusSubscriber(modid = MineScribe.ID, bus = Bus.FORGE)
 public class ForgeCommonEventHandler {
 
     @SubscribeEvent
     public static void registerMineScribeResourceReloadListeners(RegisterMineScribeReloadListenerEvent event) {
-        event.registerReloadListener(new PackContentTypeManager());
-        event.registerReloadListener(new PackContentSubTypeManager());
+        event.registerReloadListener(new GameGatheredMineScribeReloadListener<>(
+                "registry",
+                MineScribePackType.CODEC.listOf(),
+                unused -> Path.of("packTypes.json"),
+                () -> Stream.of(PackTypeHelper.gatherPackTypes()
+                        .toList()
+                )
+        ));
+        event.registerReloadListener(new GameGatheredMineScribeReloadListener<>(
+                "registry",
+                PackRepositoryLocation.CODEC.listOf(),
+                unused -> Path.of("packRepositories.json"),
+                () -> {
+                    GatherPackRepositoryLocationsEvent locations = new GatherPackRepositoryLocationsEvent();
+                    MinecraftForge.EVENT_BUS.post(locations);
+                    return Stream.of(locations.getPackRepositoryLocations());
+                }
+        ));
+        event.registerReloadListener(new CodecMineScribeReloadListener<>(
+                "types/parent",
+                "registry/types/parent",
+                MineScribeCodecs.PACK_CONTENT_PARENT_TYPE,
+                PackContentParentType.CODEC,
+                true
+        ));
+        event.registerReloadListener(new CodecMineScribeReloadListener<>(
+                "types/child",
+                "registry/types/child",
+                MineScribeCodecs.PACK_CONTENT_CHILD_TYPE,
+                PackContentChildType.CODEC,
+                true
+        ));
     }
 }
