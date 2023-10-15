@@ -29,7 +29,7 @@ public class NamespaceEditorItem extends EditorItem {
                 IPackContentNode packContentNode = contentNode.getNode(childPath);
 
                 if (packContentNode != null) {
-                    editorItems.add(new PackContentTypeEditorItem(childFile.getName(), childPath, packContentNode));
+                    editorItems.add(new PackContentTypeEditorItem(childFile.getName(), childFile.toPath(), packContentNode));
                 }
             }
         }

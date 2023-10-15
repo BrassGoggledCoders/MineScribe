@@ -1,33 +1,39 @@
 package xyz.brassgoggledcoders.minescribe.editor.model.editortree;
 
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.IPackContentNode;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class PackContentTypeEditorItem extends EditorItem {
-    private final IPackContentNode packContentNode;
+    private final IPackContentNode contentNode;
 
-    public PackContentTypeEditorItem(String name, Path path, IPackContentNode packContentNode) {
+    public PackContentTypeEditorItem(String name, Path path, IPackContentNode contentNode) {
         super(name, path);
-        this.packContentNode = packContentNode;
+        this.contentNode = contentNode;
     }
 
     @Override
     public @NotNull List<EditorItem> createChildren() {
-        List<File> childrenFiles = this.getChildrenFiles();
-        List<EditorItem> editorItems = new ArrayList<>();
-        for (File childFile : childrenFiles) {
+        return this.runForChildren(childPath -> {
+            if (Files.isDirectory(childPath)) {
+                Path relativePath = this.getPath().relativize(childPath);
 
-        }
+                IPackContentNode packContentNode = contentNode.getNode(relativePath);
 
-        return editorItems;
+                if (packContentNode != null) {
+                    return Optional.of(new PackContentTypeEditorItem(
+                            relativePath.toString(),
+                            childPath,
+                            packContentNode
+                    ));
+                }
+            }
+
+            return Optional.empty();
+        });
     }
 }

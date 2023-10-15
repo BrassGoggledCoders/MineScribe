@@ -9,7 +9,6 @@ import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NewPackController
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 

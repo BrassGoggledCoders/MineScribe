@@ -4,13 +4,12 @@ import com.google.common.base.Suppliers;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class RootPackContentNode implements IPackContentNode {
@@ -36,18 +35,28 @@ public class RootPackContentNode implements IPackContentNode {
             return null;
         } else {
             IPackContentNode contentNode = this.nodes.get(path.toString());
-            if (contentNode == null) {
-                List<PackContentParentType> packContentTypes = new ArrayList<>();
+            if (contentNode == null && !this.nodes.containsKey(path.toString())) {
+                List<NodeTracker> nodeTrackers = new ArrayList<>();
                 for (PackContentParentType packContentType : this.collectParents.get()) {
                     if (packContentType.getPath().startsWith(path)) {
-                        packContentTypes.add(packContentType);
+                        nodeTrackers.add(new NodeTracker(packContentType, Optional.empty(), 1));
                     }
                 }
-                contentNode = new ParentPackContentNode(path, packContentTypes);
+                if (!nodeTrackers.isEmpty()) {
+                    contentNode = new PackContentNode(path, nodeTrackers);
+                }
                 this.nodes.put(path.toString(), contentNode);
             }
             return contentNode;
         }
+    }
+
+    @Override
+    public List<PackContentType> getTypes() {
+        return this.collectParents.get()
+                .stream()
+                .<PackContentType>map(Function.identity())
+                .toList();
     }
 
     private List<PackContentParentType> collectParents() {
