@@ -36,7 +36,6 @@ public class PackTypeEditorItem extends EditorItem {
 
     @Override
     public @NotNull ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
-
         ContextMenu contextMenu = super.createContextMenu(treeCell);
         MenuItem menuItem = new MenuItem("Create Namespace Folder");
         menuItem.setOnAction(event -> new NewDirectoryFormDialog()
