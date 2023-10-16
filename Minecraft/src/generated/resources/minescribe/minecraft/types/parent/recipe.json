@@ -1,0 +1,8 @@
+{
+  "id": "minecraft:recipe",
+  "label": {
+    "text": "Recipe"
+  },
+  "packType": "SERVER_DATA",
+  "path": "recipes"
+}

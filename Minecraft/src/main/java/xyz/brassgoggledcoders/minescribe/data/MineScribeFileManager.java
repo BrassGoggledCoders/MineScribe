@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
+import org.apache.commons.io.FileUtils;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 
 import java.io.IOException;
@@ -53,6 +54,14 @@ public class MineScribeFileManager {
             );
         } catch (IOException e) {
             MineScribe.LOGGER.error("Failed to write file {}", path, e);
+        }
+    }
+
+    public void clearRoot() {
+        try {
+            FileUtils.deleteDirectory(this.getMineScribeRoot().toFile());
+        } catch (IOException e) {
+            MineScribe.LOGGER.error("Failed to Delete .minescribe folder before generation", e);
         }
     }
 }

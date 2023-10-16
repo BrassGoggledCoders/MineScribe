@@ -26,6 +26,14 @@ dependencies {
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDir("/src/generated/resources/")
+        }
+    }
+}
+
 minecraft {
     mappings("parchment", "2022.11.27-1.19.2")
 
@@ -34,6 +42,23 @@ minecraft {
             taskName("client")
             workingDirectory(project.file("run/client"))
             ideaModule("${rootProject.name}.${project.name}.main")
+            mods {
+                create("minescribe") {
+                    source(sourceSets.main.get())
+                    source(project(":Core").sourceSets.main.get())
+                }
+            }
+        }
+        create("data") {
+            taskName("data")
+            workingDirectory(project.file("run/data"))
+            ideaModule("${rootProject.name}.${project.name}.main")
+            args.addAll(listOf(
+                "--mod", "minescribe",
+                "--all",
+                "--output", file("src/generated/resources/").toString(),
+                "--existing", file("src/main/resources/").toString()
+            ))
             mods {
                 create("minescribe") {
                     source(sourceSets.main.get())

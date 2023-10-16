@@ -2,6 +2,7 @@ package xyz.brassgoggledcoders.minescribe.core.fileform;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
 
 import java.util.*;
@@ -23,5 +24,9 @@ public class FileForm {
 
     private List<IFileField> getFieldsForCodec() {
         return new ArrayList<>(this.getFields());
+    }
+
+    public static FileForm of(FileField... fileFields) {
+        return new FileForm(Arrays.asList(fileFields));
     }
 }

@@ -32,6 +32,9 @@ public class MineScribeCommand {
                                                 ))
                                         );
                             }
+                            MineScribeResourceManager.getInstance()
+                                    .getFileManager()
+                                    .clearRoot();
                             ReloadInstance instance = MineScribeResourceManager.getInstance()
                                     .reloadResources();
                             instance.done().thenAcceptAsync(unused -> {

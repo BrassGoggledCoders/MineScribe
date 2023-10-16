@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe;
 
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,5 +13,9 @@ public class MineScribe {
 
     public MineScribe() {
 
+    }
+
+    public static ResourceLocation rl(String path) {
+        return new ResourceLocation(ID, path);
     }
 }

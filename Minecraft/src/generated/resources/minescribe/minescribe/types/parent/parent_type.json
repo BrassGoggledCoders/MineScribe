@@ -1,0 +1,8 @@
+{
+  "id": "minescribe:parent_type",
+  "label": {
+    "text": "Parent Type"
+  },
+  "packType": "MINESCRIBE",
+  "path": "types\\parent"
+}
