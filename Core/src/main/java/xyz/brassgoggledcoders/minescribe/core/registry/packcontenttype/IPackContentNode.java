@@ -14,5 +14,6 @@ public interface IPackContentNode {
     @Nullable
     IPackContentNode getNode(Path path);
 
-    List<PackContentType> getTypes();
+    @NotNull
+    List<NodeTracker> getNodeTrackers();
 }

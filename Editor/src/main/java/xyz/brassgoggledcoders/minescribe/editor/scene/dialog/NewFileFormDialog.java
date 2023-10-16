@@ -14,7 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.AnchorPane;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
@@ -23,46 +23,70 @@ import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTrack
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.CellFactoryComboBoxControl;
 import xyz.brassgoggledcoders.minescribe.editor.validator.StringRegexValidator;
 
-public class NewFileFormDialog extends Dialog<String> {
+import java.util.List;
+import java.util.Optional;
+
+public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
     private final ObjectProperty<PackContentParentType> parentType;
     private final ObjectProperty<PackContentChildType> childType;
-    private final FilteredList<PackContentChildType> childTypes;
+    private final FilteredList<PackContentChildType> childTypesFiltered;
     private final StringProperty fileName;
     private final Form form;
 
-    public NewFileFormDialog(@Nullable NodeTracker nodeTracker) {
+    public NewFileFormDialog(@NotNull List<NodeTracker> nodeTrackers) {
         this.childType = new SimpleObjectProperty<>();
         this.fileName = new SimpleStringProperty("");
 
-        SingleSelectionField<PackContentParentType> parentField = Field.ofSingleSelectionType(Registries.getContentParentTypes()
-                        .getValues()
-                )
-                .label("Parent Type:")
+        List<PackContentParentType> parentTypes = nodeTrackers.stream()
+                .map(NodeTracker::parentType)
+                .distinct()
+                .toList();
+
+        List<PackContentChildType> childTypes = nodeTrackers.stream()
+                .flatMap(nodeTracker -> nodeTracker.childTypeOpt().stream())
+                .distinct()
+                .toList();
+
+        if (parentTypes.isEmpty()) {
+            parentTypes = Registries.getContentParentTypes()
+                    .getValues();
+        }
+        if (childTypes.isEmpty()) {
+            childTypes = Registries.getContentChildTypes()
+                    .getValues();
+        }
+
+        this.childTypesFiltered = FXCollections.observableArrayList(childTypes)
+                .filtered(null);
+
+        SingleSelectionField<PackContentParentType> parentField = Field.ofSingleSelectionType(parentTypes)
+                .label("Parent Type")
                 .render(() -> new CellFactoryComboBoxControl<>(PackContentType::getLabel))
-                .required(true);
+                .required("Parent Type is required");
 
         this.parentType = parentField.selectionProperty();
-
-        this.childTypes = FXCollections.observableArrayList(Registries.getContentChildTypes().getValues())
-                .filtered(null);
-        this.parentType.addListener(((observable, oldValue, newValue) -> this.childTypes.setPredicate(
+        this.parentType.addListener(((observable, oldValue, newValue) -> this.childTypesFiltered.setPredicate(
                 childValue -> childValue.getParentId().equals(newValue.getId())
         )));
 
         SingleSelectionField<PackContentChildType> childField = Field.ofSingleSelectionType(
-                        new SimpleListProperty<>(this.childTypes),
+                        new SimpleListProperty<>(this.childTypesFiltered),
                         this.childType
                 )
                 .render(() -> new CellFactoryComboBoxControl<>(PackContentType::getLabel))
-                .label("Child Type");
+                .label("Child Type")
+                .required("Child Type is required");
 
-        childField.itemsProperty().addListener((ListChangeListener<PackContentChildType>) c -> {
-            childField.requiredProperty().set(!c.getList().isEmpty());
-        });
+        childField.itemsProperty().addListener(
+                (ListChangeListener<PackContentChildType>) c -> childField.requiredProperty().set(!c.getList().isEmpty())
+        );
 
-        if (nodeTracker != null) {
-            this.parentType.set(nodeTracker.parentType());
-            nodeTracker.childTypeOpt().ifPresent(this.childType::set);
+        if (parentTypes.size() == 1) {
+            this.parentType.set(parentTypes.get(0));
+
+            if (childTypes.size() == 1) {
+                this.childType.set(childTypes.get(0));
+            }
         }
 
         this.form = Form.of(Group.of(
@@ -97,12 +121,24 @@ public class NewFileFormDialog extends Dialog<String> {
         this.setResultConverter(this::convertResult);
     }
 
-    private String convertResult(ButtonType buttonType) {
+    private NewFileResult convertResult(ButtonType buttonType) {
         if (buttonType == ButtonTypes.CREATE) {
             this.form.persist();
-            return this.fileName.get();
+            return new NewFileResult(
+                    this.parentType.get(),
+                    Optional.ofNullable(this.childType.getValue()),
+                    this.fileName.get()
+            );
         } else {
             return null;
         }
+    }
+
+    public record NewFileResult(
+            PackContentParentType parentType,
+            Optional<PackContentChildType> childTypeOpt,
+            String fileName
+    ) {
+
     }
 }

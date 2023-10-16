@@ -4,12 +4,10 @@ import com.google.common.base.Suppliers;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class RootPackContentNode implements IPackContentNode {
@@ -52,11 +50,8 @@ public class RootPackContentNode implements IPackContentNode {
     }
 
     @Override
-    public List<PackContentType> getTypes() {
-        return this.collectParents.get()
-                .stream()
-                .<PackContentType>map(Function.identity())
-                .toList();
+    public @NotNull List<NodeTracker> getNodeTrackers() {
+        return Collections.emptyList();
     }
 
     private List<PackContentParentType> collectParents() {

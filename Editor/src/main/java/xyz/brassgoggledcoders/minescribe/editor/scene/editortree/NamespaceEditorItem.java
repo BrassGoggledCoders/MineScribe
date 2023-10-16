@@ -7,14 +7,12 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.IPackContentNode;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.PackContentHierarchy;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
-import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewDirectoryFormDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NamespaceEditorItem extends EditorItem {
@@ -47,7 +45,7 @@ public class NamespaceEditorItem extends EditorItem {
     public @NotNull ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
         ContextMenu contextMenu = super.createContextMenu(treeCell);
         MenuItem menuItem = new MenuItem("Create Content File");
-        menuItem.setOnAction(event -> new NewFileFormDialog(null)
+        menuItem.setOnAction(event -> new NewFileFormDialog(Collections.emptyList())
                 .showAndWait()
                 .ifPresent(System.out::println)
         );

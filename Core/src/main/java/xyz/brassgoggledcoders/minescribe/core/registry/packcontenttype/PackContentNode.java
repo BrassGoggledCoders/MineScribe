@@ -44,9 +44,7 @@ public class PackContentNode implements IPackContentNode {
     }
 
     @Override
-    public List<PackContentType> getTypes() {
-        return this.nodeTrackers.stream()
-                .<PackContentType>map(NodeTracker::parentType)
-                .toList();
+    public @NotNull List<NodeTracker> getNodeTrackers() {
+        return this.nodeTrackers;
     }
 }
