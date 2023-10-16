@@ -6,4 +6,5 @@ public class JsonFieldNames {
     public static final String FIELD = "field";
     public static final String SORT_ORDER = "sortOrder";
     public static final String FIELDS = "fields";
+    public static final String DEFAULT_VALUE = "defaultValue";
 }

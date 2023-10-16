@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.BiMapDispatchCodec;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,5 +60,17 @@ public class Registry<K, V> implements Iterable<V> {
         return this.getMap()
                 .values()
                 .iterator();
+    }
+
+    public Collection<K> getKeys() {
+        return this.getMap().keySet();
+    }
+
+    public boolean hasKey(K key) {
+        return this.getMap().containsKey(key);
+    }
+
+    public K getKey(V value) {
+        return this.getMap().inverse().get(value);
     }
 }

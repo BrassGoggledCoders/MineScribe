@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.util.List;
 
@@ -11,16 +12,16 @@ public class ListSelectionFileField extends FileField {
             Codec.STRING.fieldOf(JsonFieldNames.LABEL).forGetter(IFileField::getLabel),
             Codec.STRING.fieldOf(JsonFieldNames.FIELD).forGetter(IFileField::getField),
             Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(IFileField::getSortOrder),
-            Codec.STRING.listOf().fieldOf(JsonFieldNames.LISTS).forGetter(ListSelectionFileField::getListNames)
+            ResourceId.CODEC.listOf().fieldOf(JsonFieldNames.LISTS).forGetter(ListSelectionFileField::getListNames)
     ).apply(instance, ListSelectionFileField::new));
-    private final List<String> listNames;
+    private final List<ResourceId> listNames;
 
-    public ListSelectionFileField(String name, String field, int sortOrder, List<String> listNames) {
+    public ListSelectionFileField(String name, String field, int sortOrder, List<ResourceId> listNames) {
         super(name, field, sortOrder);
         this.listNames = listNames;
     }
 
-    public List<String> getListNames() {
+    public List<ResourceId> getListNames() {
         return this.listNames;
     }
 

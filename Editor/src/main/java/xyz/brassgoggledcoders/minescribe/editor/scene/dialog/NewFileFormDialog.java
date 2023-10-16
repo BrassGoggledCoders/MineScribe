@@ -77,6 +77,9 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                 .label("Child Type")
                 .required("Child Type is required");
 
+        if (childTypes.isEmpty()) {
+            childField.required(false);
+        }
         childField.itemsProperty().addListener(
                 (ListChangeListener<PackContentChildType>) c -> childField.requiredProperty().set(!c.getList().isEmpty())
         );
@@ -117,7 +120,7 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
         createButton.disableProperty().bind(Bindings.not(form.validProperty()));
 
         this.setResizable(true);
-        this.setTitle("Create Namespace Folder");
+        this.setTitle("Create New File");
         this.setResultConverter(this::convertResult);
     }
 

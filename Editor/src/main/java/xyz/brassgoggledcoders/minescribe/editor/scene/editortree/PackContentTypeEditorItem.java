@@ -1,10 +1,15 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.IPackContentNode;
+import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
+import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
 
 import java.nio.file.Files;
@@ -51,7 +56,25 @@ public class PackContentTypeEditorItem extends EditorItem {
         MenuItem menuItem = new MenuItem("Create Content File");
         menuItem.setOnAction(event -> new NewFileFormDialog(this.contentNode.getNodeTrackers())
                 .showAndWait()
-                .ifPresent(System.out::println)
+                .ifPresent(newFileResult -> {
+                    Optional<FileForm> fileForm = newFileResult.parentType().getForm()
+                            .or(() -> newFileResult.childTypeOpt()
+                                    .flatMap(PackContentType::getForm)
+                            );
+
+                    if (fileForm.isPresent()) {
+                        treeCell.fireEvent(new OpenTabEvent<FormController>(
+                                newFileResult.fileName(),
+                                "tab/form",
+                                (controller, tabId) -> controller.setFormInfo(
+                                        this.getPath().resolve(newFileResult.fileName()),
+                                        fileForm.get()
+                                )
+                        ));
+                    } else {
+                        new Alert(Alert.AlertType.ERROR, "No Valid Form Found").show();
+                    }
+                })
         );
         contextMenu.getItems().add(0, menuItem);
         return contextMenu;

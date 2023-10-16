@@ -14,6 +14,7 @@ import xyz.brassgoggledcoders.minescribe.api.data.PackContentParentData;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileField;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -77,14 +78,14 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Block Tags"),
                 Path.of("blocks"),
                 Optional.of(FileForm.of(
-                        new CheckBoxFileField("Replace", "replace", 0),
+                        new CheckBoxFileField("Replace", "replace", 0, false),
                         new ListSelectionFileField(
                                 "Values",
                                 "values",
                                 1,
                                 List.of(
-                                        "minecraft:registry/block",
-                                        "minecraft:tag/block"
+                                        new ResourceId("minecraft", "registry/block"),
+                                        new ResourceId("minecraft", "tag/block")
                                 )
                         )
                 ))
@@ -95,14 +96,14 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Item Tags"),
                 Path.of("items"),
                 Optional.of(FileForm.of(
-                        new CheckBoxFileField("Replace", "replace", 0),
+                        new CheckBoxFileField("Replace", "replace", 0, false),
                         new ListSelectionFileField(
                                 "Values",
                                 "values",
                                 1,
                                 List.of(
-                                        "minecraft:registry/item",
-                                        "minecraft:tag/item"
+                                        new ResourceId("minecraft", "registry/item"),
+                                        new ResourceId("minecraft", "tag/item")
                                 )
                         )
                 ))

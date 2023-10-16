@@ -4,7 +4,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.editor.controller.NoFormController;
+import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NoFormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
 import java.io.File;

@@ -2,7 +2,7 @@ package xyz.brassgoggledcoders.minescribe.editor.event.tab;
 
 import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
@@ -32,15 +32,15 @@ public class OpenTabEvent<T> extends TabEvent {
         return this.tabName;
     }
 
-    public AnchorPane createTabContent(UUID tabId) {
+    public Node createTabContent(UUID tabId) {
         try {
             FXMLLoader loader = new FXMLLoader(Application.class.getResource(fxmlFile + ".fxml"));
-            AnchorPane anchorPane = loader.load();
+            Node node = loader.load();
             T controller = loader.getController();
             if (controller != null) {
                 setControllerData.accept(controller, tabId.toString());
             }
-            return anchorPane;
+            return node;
         } catch (IOException e) {
             LOGGER.error("Failed to Create Tab: {}", this.tabName, e);
             return null;
