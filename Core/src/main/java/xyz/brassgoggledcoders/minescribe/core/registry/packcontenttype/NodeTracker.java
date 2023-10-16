@@ -32,7 +32,7 @@ public record NodeTracker(
                     ));
                 }
             } else {
-                return createNodeTracksForChildren();
+                return createNodeTracksForChildren(path);
             }
         } else {
             Path parentSubPath = parentPath.subpath(depth, parentPath.getNameCount());
@@ -48,10 +48,10 @@ public record NodeTracker(
     }
 
     @NotNull
-    private List<NodeTracker> createNodeTracksForChildren() {
+    private List<NodeTracker> createNodeTracksForChildren(Path path) {
         List<NodeTracker> nodeTrackerList = new ArrayList<>();
         for (PackContentChildType childType : Registries.getContentChildTypes()) {
-            if (childType.getParentId().equals(this.parentType().getId())) {
+            if (childType.getParentId().equals(this.parentType().getId()) && childType.getPath().startsWith(path)) {
                 nodeTrackerList.add(new NodeTracker(
                         this.parentType(),
                         Optional.of(childType),
