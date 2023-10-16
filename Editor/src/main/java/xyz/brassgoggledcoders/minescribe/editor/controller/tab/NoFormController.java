@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.controller;
+package xyz.brassgoggledcoders.minescribe.editor.controller.tab;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
