@@ -1,0 +1,33 @@
+{
+  "form": {
+    "fields": [
+      {
+        "type": "string",
+        "field": "string",
+        "label": "String Field"
+      },
+      {
+        "type": "list_of_fields",
+        "value": {
+          "field": "stringList",
+          "label": "String List",
+          "maximum": 5,
+          "minimum": 2,
+          "sortOrder": 1,
+          "valueField": {
+            "type": "string",
+            "field": "",
+            "label": "",
+            "sortOrder": 1
+          }
+        }
+      }
+    ]
+  },
+  "id": "minecraft:test_lists",
+  "label": {
+    "text": "Testing Lists of Fields"
+  },
+  "packType": "MINESCRIBE",
+  "path": "test"
+}

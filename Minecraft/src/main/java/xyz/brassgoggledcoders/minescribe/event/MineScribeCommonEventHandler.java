@@ -13,7 +13,9 @@ import xyz.brassgoggledcoders.minescribe.api.data.PackContentChildData;
 import xyz.brassgoggledcoders.minescribe.api.data.PackContentParentData;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.nio.file.Path;
@@ -69,6 +71,28 @@ public class MineScribeCommonEventHandler {
                 PackType.SERVER_DATA,
                 Optional.empty()
         ));
+        consumer.accept(new PackContentParentData(
+                new ResourceLocation("test_lists"),
+                Component.literal("Testing Lists of Fields"),
+                Path.of("test"),
+                MineScribeAPI.PACK_TYPE,
+                Optional.of(FileForm.of(
+                        new StringFileField("String Field", "string", 0, ""),
+                        new ListOfFileField(
+                                "String List",
+                                "stringList",
+                                1,
+                                2,
+                                5,
+                                new StringFileField(
+                                        "",
+                                        "",
+                                        1,
+                                        ""
+                                )
+                        )
+                ))
+        ));
     }
 
     private static void generateChildTypes(Consumer<PackContentChildData> consumer) {
@@ -109,6 +133,4 @@ public class MineScribeCommonEventHandler {
                 ))
         ));
     }
-
-
 }

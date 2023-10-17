@@ -28,12 +28,4 @@ public abstract class FileField implements IFileField {
     public int getSortOrder() {
         return sortOrder;
     }
-
-    public static <T extends IFileField> Codec<T> basicCodec(Function3<String, String, Integer, T> create) {
-        return RecordCodecBuilder.create(instance -> instance.group(
-                Codec.STRING.fieldOf(JsonFieldNames.LABEL).forGetter(IFileField::getLabel),
-                Codec.STRING.fieldOf(JsonFieldNames.FIELD).forGetter(IFileField::getField),
-                Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(IFileField::getSortOrder)
-        ).apply(instance, create));
-    }
 }

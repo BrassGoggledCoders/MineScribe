@@ -69,7 +69,9 @@ public class FormController {
                 if (jsonElement.isJsonObject()) {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
                     for (IEditorFormField<?> editorFormField : editorFormFieldList) {
-                        editorFormField.loadFromJson(jsonObject);
+                        if (jsonObject.has(editorFormField.getFileField().getField())) {
+                            editorFormField.loadFromJson(jsonObject.get(editorFormField.getFileField().getField()));
+                        }
                     }
                     this.form.persist();
                 }
@@ -84,7 +86,11 @@ public class FormController {
             this.form.persist();
             JsonObject result = new JsonObject();
             for (IEditorFormField<?> editorFormField : this.editorFormFieldList) {
-                editorFormField.saveToJson(result);
+                result.add(
+                        editorFormField.getFileField()
+                                .getField(),
+                        editorFormField.saveAsJson()
+                );
             }
             if (!result.isEmpty()) {
                 try {

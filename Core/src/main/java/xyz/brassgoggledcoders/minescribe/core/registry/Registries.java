@@ -3,9 +3,7 @@ package xyz.brassgoggledcoders.minescribe.core.registry;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 
 import java.nio.file.Path;
@@ -19,6 +17,8 @@ public class Registries {
                     initializer -> {
                         initializer.accept("checkbox", CheckBoxFileField.CODEC);
                         initializer.accept("list_selection", ListSelectionFileField.CODEC);
+                        initializer.accept("list_of_fields", ListOfFileField.CODEC);
+                        initializer.accept("string", StringFileField.CODEC);
                     }
             ));
 

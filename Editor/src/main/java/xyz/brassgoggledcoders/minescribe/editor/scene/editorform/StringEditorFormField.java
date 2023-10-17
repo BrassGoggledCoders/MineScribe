@@ -1,19 +1,19 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform;
 
-import com.dlsc.formsfx.model.structure.BooleanField;
 import com.dlsc.formsfx.model.structure.Field;
+import com.dlsc.formsfx.model.structure.StringField;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileField;
 
-public class CheckBoxEditorFormField implements IEditorFormField<BooleanField> {
-    private final CheckBoxFileField fileField;
-    private final BooleanField field;
+public class StringEditorFormField implements IEditorFormField<StringField> {
+    private final StringFileField fileField;
+    private final StringField field;
 
-    public CheckBoxEditorFormField(CheckBoxFileField fileField) {
+    public StringEditorFormField(StringFileField fileField) {
         this.fileField = fileField;
-        this.field = Field.ofBooleanType(fileField.getDefaultValue())
+        this.field = Field.ofStringType(fileField.getDefaultValue())
                 .label(fileField.getLabel());
     }
 
@@ -23,13 +23,14 @@ public class CheckBoxEditorFormField implements IEditorFormField<BooleanField> {
     }
 
     @Override
-    public BooleanField asField() {
+    public StringField asField() {
         return this.field;
     }
 
     @Override
     public void loadFromJson(JsonElement jsonElement) {
-        field.valueProperty().set(jsonElement.getAsBoolean());
+        this.field.valueProperty()
+                .setValue(jsonElement.getAsString());
     }
 
     @Override
