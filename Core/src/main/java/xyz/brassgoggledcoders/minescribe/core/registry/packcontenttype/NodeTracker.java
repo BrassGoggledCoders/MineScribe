@@ -1,8 +1,10 @@
 package xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
 
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
 import java.nio.file.Path;
@@ -60,5 +62,13 @@ public record NodeTracker(
             }
         }
         return nodeTrackerList;
+    }
+
+    public Optional<FileForm> getForm() {
+        return this.parentType()
+                .getForm()
+                .or(() -> this.childTypeOpt()
+                        .flatMap(PackContentType::getForm)
+                );
     }
 }

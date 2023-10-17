@@ -14,8 +14,8 @@
                 <Insets bottom="10" left="10" right="10" top="10"/>
             </padding>
             <spacing>10</spacing>
-            <Button prefHeight="50" prefWidth="150" onMouseClicked="#saveForm">Save</Button>
-            <Button prefHeight="50" prefWidth="150" onMouseClicked="#resetForm">Reset</Button>
+            <Button prefHeight="30" prefWidth="125" onMouseClicked="#saveForm">Save</Button>
+            <Button prefHeight="30" prefWidth="125" onMouseClicked="#resetForm">Reset</Button>
         </HBox>
     </VBox>
 </AnchorPane>

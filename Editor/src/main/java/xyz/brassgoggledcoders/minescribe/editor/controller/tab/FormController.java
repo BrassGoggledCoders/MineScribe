@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
 import xyz.brassgoggledcoders.minescribe.editor.SceneUtils;
+import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.IEditorFormField;
 
@@ -87,6 +88,7 @@ public class FormController {
             }
             if (!result.isEmpty()) {
                 try {
+                    Files.createDirectories(filePath.getParent());
                     Files.writeString(
                             filePath,
                             GSON.toJson(result),
@@ -95,6 +97,7 @@ public class FormController {
                             StandardOpenOption.CREATE,
                             StandardOpenOption.TRUNCATE_EXISTING
                     );
+                    FileHandler.getInstance().reloadClosestNode(filePath);
                 } catch (IOException e) {
                     LOGGER.error("Failed to write file {}", this.filePath, e);
                 }

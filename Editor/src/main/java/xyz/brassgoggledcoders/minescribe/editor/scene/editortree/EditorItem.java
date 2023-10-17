@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 
-public abstract class EditorItem {
+public abstract class EditorItem implements Comparable<EditorItem> {
     private final Logger LOGGER = LoggerFactory.getLogger(EditorItem.class);
 
     private final String name;
@@ -61,6 +61,10 @@ public abstract class EditorItem {
         return true;
     }
 
+    public void onDoubleClick(TreeCell<EditorItem> treeCell) {
+
+    }
+
     @NotNull
     public abstract List<EditorItem> createChildren();
 
@@ -89,6 +93,17 @@ public abstract class EditorItem {
         } catch (IOException e) {
             LOGGER.error("Failed to open Directory Stream for {}", this.getPath(), e);
             return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public int compareTo(@NotNull EditorItem o) {
+        if (this.isDirectory() && !o.isDirectory()) {
+            return -1;
+        } else if (!this.isDirectory() && o.isDirectory()) {
+            return 1;
+        } else {
+            return String.CASE_INSENSITIVE_ORDER.compare(this.getName(), o.getName());
         }
     }
 }

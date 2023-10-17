@@ -6,16 +6,17 @@ import javafx.collections.ListChangeListener;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 import org.controlsfx.control.ListSelectionView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class ListSelectionControl<T> extends SimpleControl<MultiSelectionField<T>> {
+public class ListSelectionControl<T extends Comparable<T>> extends SimpleControl<MultiSelectionField<T>> {
     protected Label fieldLabel;
     protected ListSelectionView<T> listView = new ListSelectionView<>();
-
     protected boolean preventUpdate;
 
     @Override
@@ -39,10 +40,10 @@ public class ListSelectionControl<T> extends SimpleControl<MultiSelectionField<T
                 sourceItems.add(value);
             }
         }
-        this.listView.getSourceItems().clear();
-        this.listView.getSourceItems().addAll(sourceItems);
-        this.listView.getTargetItems().clear();
-        this.listView.getTargetItems().addAll(selectedItems);
+        this.listView.getSourceItems().setAll(sourceItems);
+        this.listView.getSourceItems().sort(Comparable::compareTo);
+        this.listView.getTargetItems().setAll(selectedItems);
+        this.listView.getTargetItems().sort(Comparable::compareTo);
     }
 
     /**
@@ -54,7 +55,7 @@ public class ListSelectionControl<T> extends SimpleControl<MultiSelectionField<T
 
         int columns = field.getSpan();
 
-        listView.setPrefHeight(200);
+        listView.setPrefHeight(400);
 
         Node labelDescription = field.getLabelDescription();
         Node valueDescription = field.getValueDescription();

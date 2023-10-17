@@ -40,9 +40,10 @@ public class PackContentTypeEditorItem extends EditorItem {
                     ));
                 }
             } else if (Files.isRegularFile(childPath)) {
-                return Optional.of(new FileEditorItem(
+                return Optional.of(new FormFileEditorItem(
                         relativePath.toString(),
-                        childPath
+                        childPath,
+                        contentNode.getNodeTrackers()
                 ));
             }
 

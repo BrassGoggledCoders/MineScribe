@@ -7,6 +7,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.PackRepositoryEditorItem;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -19,6 +20,25 @@ public class FileHandler {
 
     public FileHandler() {
         this.rootItem = new TreeItem<>();
+    }
+
+    public void reloadClosestNode(@NotNull Path path) {
+        this.reloadClosestNode(path, this.rootItem);
+    }
+
+    public void reloadClosestNode(@NotNull Path path, TreeItem<EditorItem> treeItem) {
+        List<TreeItem<EditorItem>> children = treeItem.getChildren();
+        boolean foundNode = false;
+        for (TreeItem<EditorItem> child: children) {
+            if (path.startsWith(child.getValue().getPath())) {
+                reloadClosestNode(path, child);
+                foundNode = true;
+                break;
+            }
+        }
+        if (!foundNode && treeItem.getValue() != null) {
+            reloadDirectory(treeItem.getValue(), treeItem);
+        }
     }
 
     public void reloadDirectory(@NotNull EditorItem editorItem) {
@@ -43,6 +63,7 @@ public class FileHandler {
         treeItem.getChildren().clear();
         List<EditorItem> children = treeItem.getValue().createChildren();
         children.removeIf(Predicate.not(EditorItem::isValid));
+        children.sort(EditorItem::compareTo);
         for (EditorItem child : children) {
             TreeItem<EditorItem> childTreeItem = new TreeItem<>(child);
             treeItem.getChildren().add(childTreeItem);

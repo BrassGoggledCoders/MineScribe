@@ -4,6 +4,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NoFormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
@@ -12,9 +14,12 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
-public class FileEditorItem extends EditorItem {
-    public FileEditorItem(String name, Path path) {
+public class FormFileEditorItem extends EditorItem {
+    private final List<NodeTracker> nodes;
+
+    public FormFileEditorItem(String name, Path path, List<NodeTracker> nodes) {
         super(name, path);
+        this.nodes = nodes;
     }
 
     @Override
@@ -45,5 +50,22 @@ public class FileEditorItem extends EditorItem {
         ));
         contextMenu.getItems().add(menuItem);
         return contextMenu;
+    }
+
+    @Override
+    public void onDoubleClick(TreeCell<EditorItem> treeCell) {
+        this.nodes.stream()
+                .flatMap(node -> node.getForm().stream())
+                .findFirst()
+                .ifPresent(fileForm -> treeCell.fireEvent(
+                        new OpenTabEvent<FormController>(
+                                treeCell.getItem().getName(),
+                                "tab/form",
+                                (controller, tabId) -> controller.setFormInfo(
+                                        treeCell.getItem().getPath(),
+                                        fileForm
+                                ))
+                ));
+        ;
     }
 }
