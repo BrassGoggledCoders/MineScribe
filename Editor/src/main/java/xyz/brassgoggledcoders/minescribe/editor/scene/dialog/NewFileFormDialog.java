@@ -65,9 +65,7 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                 .required("Parent Type is required");
 
         this.parentType = parentField.selectionProperty();
-        this.parentType.addListener(((observable, oldValue, newValue) -> this.childTypesFiltered.setPredicate(
-                childValue -> childValue.getParentId().equals(newValue.getId())
-        )));
+
 
         SingleSelectionField<PackContentChildType> childField = Field.ofSingleSelectionType(
                         new SimpleListProperty<>(this.childTypesFiltered),
@@ -77,12 +75,15 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                 .label("Child Type")
                 .required("Child Type is required");
 
-        if (childTypes.isEmpty()) {
-            childField.required(false);
-        }
-        childField.itemsProperty().addListener(
-                (ListChangeListener<PackContentChildType>) c -> childField.requiredProperty().set(!c.getList().isEmpty())
-        );
+
+        this.parentType.addListener(((observable, oldValue, newValue) -> {
+            this.childTypesFiltered.setPredicate(
+                    childValue -> childValue.getParentId().equals(newValue.getId())
+            );
+            childField.requiredProperty().set(!this.childTypesFiltered.isEmpty());
+        }));
+
+        childField.required(false);
 
         if (parentTypes.size() == 1) {
             this.parentType.set(parentTypes.get(0));
