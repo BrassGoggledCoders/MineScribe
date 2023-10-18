@@ -74,6 +74,7 @@ public class FormController {
                         }
                     }
                     this.form.persist();
+                    this.form.reset();
                 }
             } catch (IOException e) {
                 LOGGER.error("Failed to read File {}", this.filePath, e);
