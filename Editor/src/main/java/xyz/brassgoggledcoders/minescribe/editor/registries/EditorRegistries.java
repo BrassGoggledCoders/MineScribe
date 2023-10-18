@@ -2,9 +2,11 @@ package xyz.brassgoggledcoders.minescribe.editor.registries;
 
 import com.google.common.base.Suppliers;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileField;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.CheckBoxEditorFormField;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.ListOfEditorFormField;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.ListSelectionEditorFormField;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.StringEditorFormField;
 
@@ -25,6 +27,10 @@ public class EditorRegistries {
                 registry.register("string", new EditorFormFieldTransform<>(
                         StringFileField.class,
                         StringEditorFormField::new
+                ));
+                registry.register("list_of_fields", new EditorFormFieldTransform<>(
+                        ListOfFileField.class,
+                        ListOfEditorFormField::new
                 ));
                 registry.validate();
                 return registry;

@@ -12,7 +12,7 @@ public class ListOfFileField extends FileField {
             Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(IFileField::getSortOrder),
             Codec.INT.optionalFieldOf("minimum", 1).forGetter(ListOfFileField::getMinimum),
             Codec.INT.optionalFieldOf("maximum", Integer.MAX_VALUE).forGetter(ListOfFileField::getMaximum),
-            IFileField.CODEC.fieldOf("valueField").forGetter(ListOfFileField::getValueField)
+            IFileField.CODEC.fieldOf("valueField").forGetter(ListOfFileField::getChildField)
     ).apply(instance, ListOfFileField::new)));
 
     private final int minimum;
@@ -39,7 +39,7 @@ public class ListOfFileField extends FileField {
         return maximum;
     }
 
-    public IFileField getValueField() {
+    public IFileField getChildField() {
         return valueField;
     }
 }
