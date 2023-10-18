@@ -1,20 +1,14 @@
-package xyz.brassgoggledcoders.minescribe.editor.scene.form;
+package xyz.brassgoggledcoders.minescribe.editor.scene.form.control;
 
 import com.dlsc.formsfx.model.structure.MultiSelectionField;
-import com.dlsc.formsfx.view.controls.SimpleControl;
 import javafx.collections.ListChangeListener;
-import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.layout.GridPane;
 import org.controlsfx.control.ListSelectionView;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-public class ListSelectionControl<T extends Comparable<T>> extends SimpleControl<MultiSelectionField<T>> {
+public class ListSelectionControl<T extends Comparable<T>> extends MineScribeSimpleControl<MultiSelectionField<T>> {
     protected Label fieldLabel;
     protected ListSelectionView<T> listView = new ListSelectionView<>();
     protected boolean preventUpdate;
@@ -53,23 +47,9 @@ public class ListSelectionControl<T extends Comparable<T>> extends SimpleControl
     public void layoutParts() {
         super.layoutParts();
 
-        int columns = field.getSpan();
-
         listView.setPrefHeight(400);
 
-        Node labelDescription = field.getLabelDescription();
-        Node valueDescription = field.getValueDescription();
-
-        add(fieldLabel, 0, 0, 2, 1);
-        if (labelDescription != null) {
-            GridPane.setValignment(labelDescription, VPos.TOP);
-            add(labelDescription, 0, 1, 2, 1);
-        }
-        add(listView, 2, 0, columns - 2, 1);
-        if (valueDescription != null) {
-            GridPane.setValignment(valueDescription, VPos.TOP);
-            add(valueDescription, 2, 1, columns - 2, 1);
-        }
+        this.layoutForNode(this.listView);
     }
 
     /**

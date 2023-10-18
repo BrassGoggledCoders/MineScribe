@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.scene.form;
+package xyz.brassgoggledcoders.minescribe.editor.scene.form.control;
 
 import com.dlsc.formsfx.view.controls.SimpleComboBoxControl;
 import javafx.scene.control.ListCell;

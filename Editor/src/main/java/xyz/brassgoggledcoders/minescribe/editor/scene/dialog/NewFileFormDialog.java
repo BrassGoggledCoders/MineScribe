@@ -8,7 +8,6 @@ import com.dlsc.formsfx.view.renderer.FormRenderer;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -20,7 +19,7 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
-import xyz.brassgoggledcoders.minescribe.editor.scene.form.CellFactoryComboBoxControl;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
 import xyz.brassgoggledcoders.minescribe.editor.validator.StringRegexValidator;
 
 import java.util.List;

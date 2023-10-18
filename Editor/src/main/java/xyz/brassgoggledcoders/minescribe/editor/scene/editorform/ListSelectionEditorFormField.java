@@ -8,7 +8,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileField;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
-import xyz.brassgoggledcoders.minescribe.editor.scene.form.ListSelectionControl;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.ListSelectionControl;
 
 import java.util.List;
 
