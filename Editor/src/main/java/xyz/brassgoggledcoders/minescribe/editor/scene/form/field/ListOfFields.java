@@ -1,14 +1,17 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.form.field;
 
+import com.dlsc.formsfx.model.event.FieldEvent;
 import com.dlsc.formsfx.model.structure.DataField;
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.MultiSelectionField;
 import com.dlsc.formsfx.model.structure.SingleSelectionField;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.SimpleFieldListControl;
 
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ListOfFields extends DataField<ListProperty<Field<?>>, ObservableList<Field<?>>, ListOfFields> {
@@ -29,6 +32,11 @@ public class ListOfFields extends DataField<ListProperty<Field<?>>, ObservableLi
             throw new IllegalStateException("Minimum Fields must be between 0 and %s (maximum value)".formatted(minimumFields));
         }
         this.minimumFields.set(minimumFields);
+        if (this.fieldSupplier.get() != null) {
+            while (this.getValue().size() < this.getMinimumFields()) {
+                this.requestNewField();
+            }
+        }
         return this;
     }
 
@@ -42,6 +50,9 @@ public class ListOfFields extends DataField<ListProperty<Field<?>>, ObservableLi
 
     public ListOfFields fieldSupplier(Supplier<Field<?>> fieldSupplier) {
         this.fieldSupplier.set(fieldSupplier);
+        while (this.getValue().size() < this.getMinimumFields()) {
+            this.requestNewField();
+        }
         return this;
     }
 
@@ -54,10 +65,23 @@ public class ListOfFields extends DataField<ListProperty<Field<?>>, ObservableLi
     }
 
     public void requestNewField() {
-        Field<?> newField = this.fieldSupplier.get().get();
-        if (newField != null) {
-            this.getValue().add(newField);
+        if (this.fieldSupplier.get() != null) {
+            Field<?> newField = this.fieldSupplier.get().get();
+            if (newField != null) {
+                this.getValue().add(newField);
+                newField.validProperty().addListener(this::onChildFiendValidChange);
+            }
         }
+    }
+
+    private void onChildFiendValidChange(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        boolean thisIsValid = this.getValue().size() >= this.minimumFields.get() && this.getValue().size() <= this.maximumFields.get();
+        if (thisIsValid) {
+            thisIsValid = this.getValue()
+                    .stream()
+                    .allMatch(Field::isValid);
+        }
+        this.validProperty().set(thisIsValid);
     }
 
     @Override
@@ -77,7 +101,7 @@ public class ListOfFields extends DataField<ListProperty<Field<?>>, ObservableLi
 
     @Override
     public void reset() {
-        super.reset();
+        this.getValue().removeIf(Predicate.not(this.persistentValue::contains));
         for (Field<?> field : this.getValue()) {
             field.reset();
         }
@@ -85,9 +109,18 @@ public class ListOfFields extends DataField<ListProperty<Field<?>>, ObservableLi
 
     @Override
     public void persist() {
-        super.persist();
-        for (Field<?> field : this.getValue()) {
-            field.persist();
+        if (!isValid()) {
+            return;
         }
+
+        persistentValue.setValue(FXCollections.observableArrayList(this.getValue()));
+
+        fireEvent(FieldEvent.fieldPersistedEvent(this));
+        if (this.isValid()) {
+            for (Field<?> field : this.getValue()) {
+                field.persist();
+            }
+        }
+
     }
 }
