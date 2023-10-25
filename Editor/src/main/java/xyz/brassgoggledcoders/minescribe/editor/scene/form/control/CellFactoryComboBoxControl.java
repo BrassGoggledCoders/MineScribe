@@ -16,12 +16,22 @@ public class CellFactoryComboBoxControl<T> extends SimpleComboBoxControl<T> {
     }
 
     @Override
+    public void setupBindings() {
+        super.setupBindings();
+        this.readOnlyLabel.textProperty().unbind();
+        this.readOnlyLabel.textProperty().set("");
+        this.readOnlyLabel.visibleProperty().unbind();
+        this.comboBox.visibleProperty().unbind();
+        this.comboBox.disableProperty().bind(this.field.editableProperty().not());
+    }
+
+    @Override
     public void initializeParts() {
         super.initializeParts();
-        this.comboBox.setConverter(new StringConverter<T>() {
+        this.comboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(T object) {
-                return object != null ? labelCreator.apply(object) : null;
+                return object != null ? labelCreator.apply(object) : "";
             }
 
             @Override
@@ -33,11 +43,15 @@ public class CellFactoryComboBoxControl<T> extends SimpleComboBoxControl<T> {
             @Override
             public ListCell<T> call(ListView<T> param) {
                 return new ListCell<>() {
+                    {
+                        this.setText("");
+                    }
+
                     @Override
                     protected void updateItem(T item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item == null) {
-                            this.setText(null);
+                            this.setText("");
                         } else {
                             this.setText(labelCreator.apply(item));
                         }
