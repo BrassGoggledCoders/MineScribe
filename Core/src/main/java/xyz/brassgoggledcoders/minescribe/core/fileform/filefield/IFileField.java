@@ -25,6 +25,7 @@ public interface IFileField extends Comparable<IFileField> {
 
     int getSortOrder();
 
+    @NotNull
     Codec<? extends IFileField> getCodec();
 
     @Override

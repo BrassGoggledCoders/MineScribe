@@ -2,6 +2,7 @@ package xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
@@ -26,7 +27,7 @@ public class ListSelectionFileField extends FileField {
     }
 
     @Override
-    public Codec<? extends IFileField> getCodec() {
+    public @NotNull Codec<? extends IFileField> getCodec() {
         return CODEC;
     }
 }
