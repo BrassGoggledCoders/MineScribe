@@ -17,7 +17,6 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +50,7 @@ public class NamespaceEditorItem extends EditorItem {
     public @NotNull ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
         ContextMenu contextMenu = super.createContextMenu(treeCell);
         MenuItem menuItem = new MenuItem("Create Content File");
-        menuItem.setOnAction(event -> new NewFileFormDialog(Collections.emptyList())
+        menuItem.setOnAction(event -> new NewFileFormDialog(this.contentNode.getNodeTrackers())
                 .showAndWait()
                 .ifPresent(newFileResult -> {
                     Optional<FileForm> fileForm = newFileResult.parentType().getForm()

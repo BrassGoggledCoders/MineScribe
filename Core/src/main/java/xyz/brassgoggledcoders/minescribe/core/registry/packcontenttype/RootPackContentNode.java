@@ -14,11 +14,13 @@ public class RootPackContentNode implements IPackContentNode {
     private static final Path PATH = Path.of(".");
     private final MineScribePackType mineScribePackType;
     private final Supplier<List<PackContentParentType>> collectParents;
+    private final Supplier<List<NodeTracker>> collectNodeTrackers;
     private final Map<String, IPackContentNode> nodes;
 
     public RootPackContentNode(MineScribePackType mineScribePackType) {
         this.mineScribePackType = mineScribePackType;
         this.collectParents = Suppliers.memoize(this::collectParents);
+        this.collectNodeTrackers = Suppliers.memoize(this::collectNodeTrackers);
         this.nodes = new HashMap<>();
     }
 
@@ -35,10 +37,8 @@ public class RootPackContentNode implements IPackContentNode {
             IPackContentNode contentNode = this.nodes.get(path.toString());
             if (contentNode == null && !this.nodes.containsKey(path.toString())) {
                 List<NodeTracker> nodeTrackers = new ArrayList<>();
-                for (PackContentParentType packContentType : this.collectParents.get()) {
-                    if (packContentType.getPath().startsWith(path)) {
-                        nodeTrackers.add(new NodeTracker(packContentType, Optional.empty(), 1));
-                    }
+                for (NodeTracker nodeTracker : this.collectNodeTrackers.get()) {
+                    nodeTrackers.addAll(nodeTracker.advancePath(path));
                 }
                 if (!nodeTrackers.isEmpty()) {
                     contentNode = new PackContentNode(path, nodeTrackers);
@@ -51,7 +51,15 @@ public class RootPackContentNode implements IPackContentNode {
 
     @Override
     public @NotNull List<NodeTracker> getNodeTrackers() {
-        return Collections.emptyList();
+        return this.collectNodeTrackers.get();
+    }
+
+    private List<NodeTracker> collectNodeTrackers() {
+        List<NodeTracker> nodeTrackers = new ArrayList<>(this.collectParents.get().size());
+        for (PackContentParentType parentType : this.collectParents.get()) {
+            nodeTrackers.add(new NodeTracker(parentType, Optional.empty(), 0));
+        }
+        return nodeTrackers;
     }
 
     private List<PackContentParentType> collectParents() {
