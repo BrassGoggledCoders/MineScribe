@@ -25,8 +25,7 @@ public class ListSelectionEditorFormField implements IEditorFormField<MultiSelec
                         .flatMap(List::stream)
                         .toList()
                 )
-                .render(ListSelectionControl::new)
-                .label(fileField.getLabel());
+                .render(ListSelectionControl::new);
     }
 
     @Override

@@ -19,6 +19,7 @@ public class Registries {
                         initializer.accept("list_selection", ListSelectionFileField.CODEC);
                         initializer.accept("list_of_fields", ListOfFileField.CODEC);
                         initializer.accept("string", StringFileField.CODEC);
+                        initializer.accept("single_selection", SingleSelectionFileField.CODEC);
                     }
             ));
 
