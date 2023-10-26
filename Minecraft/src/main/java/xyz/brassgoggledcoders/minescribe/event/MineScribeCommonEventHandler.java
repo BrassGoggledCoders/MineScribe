@@ -180,6 +180,7 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("recipes/blasting"),
                 new ResourceLocation("blasting"),
                 new ResourceLocation("types/parent/recipe"),
+                Component.literal("Blasting"),
                 FileForm.of(
                     new SingleSelectionFileField(
                             "Result",

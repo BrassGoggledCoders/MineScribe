@@ -11,6 +11,9 @@
     ]
   },
   "id": "minecraft:recipes/blasting",
+  "label": {
+    "text": "Blasting"
+  },
   "parentId": "minecraft:types/parent/recipe",
   "serializerId": "minecraft:blasting"
 }

@@ -1,7 +1,9 @@
 {
   "form": {
     "fields": [],
-    "serializer": {}
+    "serializer": {
+      "label": "Type"
+    }
   },
   "id": "minecraft:recipe",
   "label": {

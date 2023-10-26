@@ -17,7 +17,8 @@
           "list": "minecraft:tag/item",
           "sortOrder": 2
         }
-      ]
+      ],
+      "label": "Type"
     }
   },
   "id": "minecraft:ingredient"

@@ -18,7 +18,17 @@ public class MineScribeCodecs {
             Component.Serializer::toJsonTree
     );
 
+    public static final Codec<String> LABEL_STRING = COMPONENT.xmap(
+            Component::getString,
+            Component::literal
+    );
+
     public static final Codec<PackType> PACK_TYPE = new EnumCodec<>(PackType.class);
+
+    public static final Codec<MineScribePackType> MS_PACK_TYPE = PACK_TYPE.xmap(
+            mcPackType -> Registries.getPackTypes().getValue(mcPackType.name()),
+            msPackType -> PackType.valueOf(msPackType.name())
+    );
 
     public static final Codec<ResourceId> RESOURCE_ID = ResourceLocation.CODEC.xmap(
             rl -> new ResourceId(rl.getNamespace(), rl.getPath()),
@@ -27,24 +37,15 @@ public class MineScribeCodecs {
 
     public static final Codec<PackContentParentType> PACK_CONTENT_PARENT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             RESOURCE_ID.fieldOf("id").forGetter(PackContentType::getId),
-            COMPONENT.fieldOf("label").xmap(
-                    Component::getString,
-                    Component::literal
-            ).forGetter(PackContentType::getLabel),
+            LABEL_STRING.fieldOf("label").forGetter(PackContentType::getLabel),
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentType::getPath),
             ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentType::getForm),
-            PACK_TYPE.fieldOf("packType").xmap(
-                    mcPackType -> Registries.getPackTypes().getValue(mcPackType.name()),
-                    msPackType -> PackType.valueOf(msPackType.name())
-            ).forGetter(PackContentParentType::getPackType)
+            MS_PACK_TYPE.fieldOf("packType").forGetter(PackContentParentType::getPackType)
     ).apply(instance, (id, label, path, form, packType) -> new PackContentParentType(id, label, path, form.orElse(null), packType)));
 
     public static final Codec<PackContentChildType> PACK_CONTENT_CHILD_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             RESOURCE_ID.fieldOf("id").forGetter(PackContentType::getId),
-            COMPONENT.fieldOf("label").xmap(
-                    Component::getString,
-                    Component::literal
-            ).forGetter(PackContentType::getLabel),
+            LABEL_STRING.fieldOf("label").forGetter(PackContentType::getLabel),
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentType::getPath),
             ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentType::getForm),
             RESOURCE_ID.fieldOf("parentId").forGetter(PackContentType::getId)
@@ -58,6 +59,8 @@ public class MineScribeCodecs {
     public static final Codec<SerializerType> SERIALIZER_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             RESOURCE_ID.fieldOf("parentId").forGetter(SerializerType::parentId),
             RESOURCE_ID.fieldOf("id").forGetter(SerializerType::id),
+            RESOURCE_ID.fieldOf("serializerId").forGetter(SerializerType::serializerId),
+            LABEL_STRING.fieldOf("label").forGetter(SerializerType::label),
             FileForm.CODEC.fieldOf("form").forGetter(SerializerType::fileForm)
     ).apply(instance, SerializerType::new));
 }
