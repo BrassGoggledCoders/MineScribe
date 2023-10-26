@@ -55,15 +55,17 @@ public class FormFileEditorItem extends EditorItem {
     @Override
     public void onDoubleClick(TreeCell<EditorItem> treeCell) {
         this.nodes.stream()
-                .flatMap(node -> node.getForm().stream())
+                .filter(node -> node.getForm().isPresent())
                 .findFirst()
-                .ifPresent(fileForm -> treeCell.fireEvent(
+                .ifPresent(nodeTracker -> treeCell.fireEvent(
                         new OpenTabEvent<FormController>(
                                 treeCell.getItem().getName(),
                                 "tab/form",
                                 (controller, tabId) -> controller.setFormInfo(
                                         treeCell.getItem().getPath(),
-                                        fileForm
+                                        nodeTracker.parentType(),
+                                        nodeTracker.childTypeOpt()
+                                                .orElse(null)
                                 ))
                 ));
         ;

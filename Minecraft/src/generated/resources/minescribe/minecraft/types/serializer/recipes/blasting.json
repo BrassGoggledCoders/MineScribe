@@ -1,0 +1,16 @@
+{
+  "form": {
+    "fields": [
+      {
+        "type": "single_selection",
+        "field": "result",
+        "label": "Result",
+        "list": "minecraft:registry/item",
+        "sortOrder": 3
+      }
+    ]
+  },
+  "id": "minecraft:recipes/blasting",
+  "parentId": "minecraft:types/parent/recipe",
+  "serializerId": "minecraft:blasting"
+}

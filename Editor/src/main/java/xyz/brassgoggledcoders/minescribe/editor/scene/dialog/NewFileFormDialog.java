@@ -79,14 +79,16 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
         this.parentType.addListener(((observable, oldValue, newValue) -> this.childTypesFiltered.setPredicate(
                 childValue -> childValue.getParentId().equals(newValue.getId())
         )));
+        childField.required(!this.childTypesFiltered.isEmpty());
+        childField.editable(!this.childTypesFiltered.isEmpty());
 
-        BooleanBinding childListEmpty = Bindings.isNotEmpty(this.childTypesFiltered);
+        BooleanBinding childListNotEmpty = Bindings.isNotEmpty(this.childTypesFiltered);
 
         childField.requiredProperty()
-                .bind(childListEmpty.not());
+                .bind(childListNotEmpty);
 
         childField.editableProperty()
-                .bind(childListEmpty);
+                .bind(childListNotEmpty);
 
         if (parentTypes.size() == 1) {
             this.parentType.set(parentTypes.get(0));

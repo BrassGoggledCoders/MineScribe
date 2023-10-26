@@ -69,7 +69,9 @@ public class PackContentTypeEditorItem extends EditorItem {
                                 "tab/form",
                                 (controller, tabId) -> controller.setFormInfo(
                                         this.getPath().resolve(newFileResult.fileName()),
-                                        fileForm.get()
+                                        newFileResult.parentType(),
+                                        newFileResult.childTypeOpt()
+                                                .orElse(null)
                                 )
                         ));
                     } else {

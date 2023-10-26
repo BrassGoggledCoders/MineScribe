@@ -62,6 +62,9 @@ public class Registries {
             )
     );
 
+    private static final Supplier<SerializerTypeRegistry> SERIALIZER_TYPES =
+            Suppliers.memoize(SerializerTypeRegistry::new);
+
     public static BasicStaticRegistry<String, Codec<? extends IFileField>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
     }
@@ -86,11 +89,16 @@ public class Registries {
         return FORM_LISTS.get();
     }
 
+    public static SerializerTypeRegistry getSerializerTypes() {
+        return SERIALIZER_TYPES.get();
+    }
+
     public static void load(Path mineScribeRoot) {
         PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
         PACK_TYPES.get().load(mineScribeRoot);
         FORM_LISTS.get().setMineScribePath(mineScribeRoot);
         CONTENT_PARENT_TYPES.get().load(mineScribeRoot);
         CONTENT_CHILD_TYPES.get().load(mineScribeRoot);
+        SERIALIZER_TYPES.get().load(mineScribeRoot);
     }
 }

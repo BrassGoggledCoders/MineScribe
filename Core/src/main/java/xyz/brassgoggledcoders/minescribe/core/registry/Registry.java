@@ -5,11 +5,9 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.BiMapDispatchCodec;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Registry<K, V> implements Iterable<V> {
     private final String name;
@@ -72,5 +70,9 @@ public class Registry<K, V> implements Iterable<V> {
 
     public K getKey(V value) {
         return this.getMap().inverse().get(value);
+    }
+
+    public Optional<V> getOptionalValue(K key) {
+        return Optional.ofNullable(this.getValue(key));
     }
 }

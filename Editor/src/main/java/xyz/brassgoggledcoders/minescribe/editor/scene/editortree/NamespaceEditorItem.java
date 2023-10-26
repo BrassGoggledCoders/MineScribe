@@ -70,7 +70,9 @@ public class NamespaceEditorItem extends EditorItem {
                                 "tab/form",
                                 (controller, tabId) -> controller.setFormInfo(
                                         finalPath.resolve(newFileResult.fileName()),
-                                        fileForm.get()
+                                        newFileResult.parentType(),
+                                        newFileResult.childTypeOpt()
+                                                .orElse(null)
                                 )
                         ));
                     } else {

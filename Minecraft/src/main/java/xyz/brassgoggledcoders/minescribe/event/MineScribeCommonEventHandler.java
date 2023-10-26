@@ -133,4 +133,19 @@ public class MineScribeCommonEventHandler {
                 ))
         ));
     }
+    private static void generateSerializerTypes(Consumer<SerializerTypeData> consumer) {
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation("recipes/blasting"),
+                new ResourceLocation("blasting"),
+                new ResourceLocation("types/parent/recipe"),
+                FileForm.of(
+                    new SingleSelectionFileField(
+                            "Result",
+                            "result",
+                            3,
+                            new ResourceId("minecraft", "registry/item")
+                    )
+                )
+        ));
+    }
 }
