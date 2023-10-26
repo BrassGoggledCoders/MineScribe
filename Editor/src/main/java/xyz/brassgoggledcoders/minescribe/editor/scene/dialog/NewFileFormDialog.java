@@ -6,7 +6,6 @@ import com.dlsc.formsfx.model.structure.Group;
 import com.dlsc.formsfx.model.structure.SingleSelectionField;
 import com.dlsc.formsfx.view.renderer.FormRenderer;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -76,19 +75,16 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                 .required("Child Type is required");
 
 
-        this.parentType.addListener(((observable, oldValue, newValue) -> this.childTypesFiltered.setPredicate(
-                childValue -> childValue.getParentId().equals(newValue.getId())
-        )));
+        this.parentType.addListener(((observable, oldValue, newValue) -> {
+            this.childTypesFiltered.setPredicate(
+                    childValue -> childValue.getParentId().equals(newValue.getId())
+            );
+            childField.required(!this.childTypesFiltered.isEmpty());
+            childField.editable(!this.childTypesFiltered.isEmpty());
+        }));
+
         childField.required(!this.childTypesFiltered.isEmpty());
         childField.editable(!this.childTypesFiltered.isEmpty());
-
-        BooleanBinding childListNotEmpty = Bindings.isNotEmpty(this.childTypesFiltered);
-
-        childField.requiredProperty()
-                .bind(childListNotEmpty);
-
-        childField.editableProperty()
-                .bind(childListNotEmpty);
 
         if (parentTypes.size() == 1) {
             this.parentType.set(parentTypes.get(0));
