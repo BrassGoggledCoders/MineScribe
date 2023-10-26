@@ -77,6 +77,13 @@ public class ForgeCommonEventHandler {
                 true
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
+                "types/object",
+                "registry/types/object",
+                MineScribeCodecs.OBJECT_TYPE,
+                ObjectType.CODEC,
+                true
+        ));
+        event.registerReloadListener(new CodecMineScribeReloadListener<>(
                 "types/serializer",
                 "registry/types/serializer",
                 MineScribeCodecs.SERIALIZER_TYPE,

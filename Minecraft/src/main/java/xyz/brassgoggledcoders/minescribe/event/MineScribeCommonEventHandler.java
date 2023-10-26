@@ -9,13 +9,13 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 import xyz.brassgoggledcoders.minescribe.api.MineScribeAPI;
+import xyz.brassgoggledcoders.minescribe.api.data.ObjectTypeData;
 import xyz.brassgoggledcoders.minescribe.api.data.PackContentChildData;
 import xyz.brassgoggledcoders.minescribe.api.data.PackContentParentData;
+import xyz.brassgoggledcoders.minescribe.api.data.SerializerTypeData;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.nio.file.Path;
@@ -39,6 +39,18 @@ public class MineScribeCommonEventHandler {
                 event.getExistingFileHelper(),
                 MineScribe.ID,
                 MineScribeCommonEventHandler::generateChildTypes
+        ));
+        event.getGenerator().addProvider(event.includeServer(), ObjectTypeData.createProvider(
+                event.getGenerator(),
+                event.getExistingFileHelper(),
+                MineScribe.ID,
+                MineScribeCommonEventHandler::generateObjectTypes
+        ));
+        event.getGenerator().addProvider(event.includeServer(), SerializerTypeData.createProvider(
+                event.getGenerator(),
+                event.getExistingFileHelper(),
+                MineScribe.ID,
+                MineScribeCommonEventHandler::generateSerializerTypes
         ));
     }
 
@@ -69,7 +81,12 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Recipe"),
                 Path.of("recipes"),
                 PackType.SERVER_DATA,
-                Optional.empty()
+                Optional.of(FileForm.of(
+                        SerializerInfo.of(
+                                "type",
+                                "Type"
+                        )
+                ))
         ));
         consumer.accept(new PackContentParentData(
                 new ResourceLocation("test_lists"),
@@ -133,6 +150,31 @@ public class MineScribeCommonEventHandler {
                 ))
         ));
     }
+
+    private static void generateObjectTypes(Consumer<ObjectTypeData> consumer) {
+        consumer.accept(new ObjectTypeData(
+                new ResourceLocation("ingredient"),
+                FileForm.of(
+                        SerializerInfo.of(
+                                "type",
+                                "Type",
+                                new SingleSelectionFileField(
+                                        "item",
+                                        "Item",
+                                        1,
+                                        new ResourceId("minecraft", "registry/item")
+                                ),
+                                new SingleSelectionFileField(
+                                        "tag",
+                                        "Item Tag",
+                                        2,
+                                        new ResourceId("minecraft", "tag/item")
+                                )
+                        )
+                )
+        ));
+    }
+
     private static void generateSerializerTypes(Consumer<SerializerTypeData> consumer) {
         consumer.accept(new SerializerTypeData(
                 new ResourceLocation("recipes/blasting"),

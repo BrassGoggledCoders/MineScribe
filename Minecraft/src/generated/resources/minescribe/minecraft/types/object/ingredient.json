@@ -1,0 +1,24 @@
+{
+  "form": {
+    "fields": [],
+    "serializer": {
+      "defaultFields": [
+        {
+          "type": "single_selection",
+          "field": "Item",
+          "label": "item",
+          "list": "minecraft:registry/item",
+          "sortOrder": 1
+        },
+        {
+          "type": "single_selection",
+          "field": "Item Tag",
+          "label": "tag",
+          "list": "minecraft:tag/item",
+          "sortOrder": 2
+        }
+      ]
+    }
+  },
+  "id": "minecraft:ingredient"
+}
