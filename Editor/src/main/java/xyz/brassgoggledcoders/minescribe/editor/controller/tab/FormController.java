@@ -10,7 +10,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -51,8 +53,12 @@ public class FormController {
     @FXML
     public TitledPane serializerFormPane;
 
+    private FileForm fileForm;
+
     private Form currentForm;
     private List<IEditorFormField<?>> editorFormFieldList;
+
+    private ObjectProperty<SerializerType> serializerTypeProperty;
 
     private Form serializerForm;
     private List<IEditorFormField<?>> serializeEditorFormFieldList;
@@ -66,14 +72,14 @@ public class FormController {
     }
 
     public void setFormInfo(Path filePath, PackContentParentType parentType, @Nullable PackContentChildType childType) {
-        FileForm fileForm = parentType.getForm()
+        this.fileForm = parentType.getForm()
                 .or(() -> Optional.ofNullable(childType)
                         .flatMap(PackContentType::getForm)
                 )
                 .orElseThrow();
         this.filePath = filePath;
         this.editorFormFieldList = new ArrayList<>();
-        for (IFileField field : fileForm.getFields()) {
+        for (IFileField field : this.fileForm.getFields()) {
             IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
                     .createEditorFieldFor(field);
 
@@ -82,7 +88,7 @@ public class FormController {
             }
         }
 
-        Optional<SerializerInfo> serializerInfoOpt = fileForm.getSerializer();
+        Optional<SerializerInfo> serializerInfoOpt = this.fileForm.getSerializer();
         List<Field<?>> fields = editorFormFieldList.stream()
                 .map(editorFormField -> editorFormField.asField()
                         .label(editorFormField.getFileField().getLabel())
@@ -97,8 +103,10 @@ public class FormController {
             if (childType != null) {
                 serializerTypes.addAll(Registries.getSerializerTypes().getFor(childType));
             }
+            this.serializerTypeProperty = new SimpleObjectProperty<>();
             SingleSelectionField<SerializerType> serializerSelectionField = Field.ofSingleSelectionType(
-                            new SimpleListProperty<>(serializerTypes)
+                            new SimpleListProperty<>(serializerTypes),
+                            this.serializerTypeProperty
                     )
                     .render(() -> new CellFactoryComboBoxControl<>(SerializerType::label))
                     .label(serializerInfoOpt.get().label());
@@ -125,16 +133,16 @@ public class FormController {
                 JsonElement jsonElement = GSON.fromJson(jsonString, JsonElement.class);
                 if (jsonElement.isJsonObject()) {
                     this.existingObject = jsonElement.getAsJsonObject();
-                    tryLoadForm(this.currentForm, this.editorFormFieldList, this.existingObject);
                     serializerInfoOpt.ifPresent(serializerInfo -> {
                         JsonElement typeInfo = this.existingObject.get(serializerInfo.fieldName());
                         if (typeInfo.isJsonPrimitive()) {
                             ResourceId.fromString(typeInfo.getAsString())
                                     .result()
-                                    .map(Registries.getSerializerTypes()::getValue)
+                                    .map(Registries.getSerializerTypes()::getForSerializerId)
                                     .ifPresent(setType);
                         }
                     });
+                    tryLoadForm(this.currentForm, this.editorFormFieldList, this.existingObject);
                     tryLoadForm(this.serializerForm, this.serializeEditorFormFieldList, this.existingObject);
                 }
             } catch (IOException e) {
@@ -160,6 +168,14 @@ public class FormController {
 
             if (this.serializerForm != null && this.serializeEditorFormFieldList != null) {
                 this.serializerForm.persist();
+                SerializerType serializerType = this.serializerTypeProperty.get();
+                if (serializerType != null) {
+                    this.fileForm.getSerializer()
+                            .ifPresent(serializerInfo -> result.addProperty(
+                                    serializerInfo.fieldName(),
+                                    serializerType.serializerId().toString()
+                            ));
+                }
                 for (IEditorFormField<?> editorFormField : this.serializeEditorFormFieldList) {
                     JsonElement savedJson = editorFormField.saveAsJson();
                     if (savedJson != null && !savedJson.isJsonNull()) {
@@ -202,25 +218,31 @@ public class FormController {
 
     private void handleNewSerializer(ObservableValue<? extends SerializerType> observable, SerializerType oldValue, SerializerType newValue) {
         this.serializeEditorFormFieldList = new ArrayList<>();
-        for (IFileField field : newValue.fileForm().getFields()) {
-            IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
-                    .createEditorFieldFor(field);
+        if (newValue != null) {
+            for (IFileField field : newValue.fileForm().getFields()) {
+                IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
+                        .createEditorFieldFor(field);
 
-            if (editorFormField != null) {
-                this.serializeEditorFormFieldList.add(editorFormField);
+                if (editorFormField != null) {
+                    this.serializeEditorFormFieldList.add(editorFormField);
+                }
             }
+            this.serializerForm = Form.of(Group.of(this.serializeEditorFormFieldList.stream()
+                    .map(editorFormField -> editorFormField.asField()
+                            .label(editorFormField.getFileField().getLabel())
+                            .id(editorFormField.getFileField().getField())
+                    )
+                    .toArray(Field[]::new)
+            ));
+
+            tryLoadForm(this.serializerForm, this.serializeEditorFormFieldList, this.existingObject);
+
+            this.serializerFormPane.setContent(new FormRenderer(this.serializerForm));
+        } else {
+            this.serializerForm = null;
+            this.serializerFormPane.setContent(null);
         }
-        this.serializerForm = Form.of(Group.of(this.serializeEditorFormFieldList.stream()
-                .map(editorFormField -> editorFormField.asField()
-                        .label(editorFormField.getFileField().getLabel())
-                        .id(editorFormField.getFileField().getField())
-                )
-                .toArray(Field[]::new)
-        ));
 
-        tryLoadForm(this.serializerForm, this.serializeEditorFormFieldList, this.existingObject);
-
-        this.serializerFormPane.setContent(new FormRenderer(this.serializerForm));
     }
 
     private void tryLoadForm(Form form, List<IEditorFormField<?>> editorFormFields, JsonObject jsonObject) {

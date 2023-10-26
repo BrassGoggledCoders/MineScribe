@@ -45,4 +45,13 @@ public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, Serial
 
         return serializerTypes;
     }
+
+    public SerializerType getForSerializerId(ResourceId resourceId) {
+        for (SerializerType type: this.getValues()) {
+            if (type.serializerId().equals(resourceId)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

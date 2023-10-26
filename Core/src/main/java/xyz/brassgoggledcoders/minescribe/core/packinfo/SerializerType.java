@@ -7,12 +7,14 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 public record SerializerType(
         ResourceId parentId,
         ResourceId id,
+        ResourceId serializerId,
         String label,
         FileForm fileForm
 ) {
     public static final Codec<SerializerType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceId.CODEC.fieldOf("parentId").forGetter(SerializerType::parentId),
             ResourceId.CODEC.fieldOf("id").forGetter(SerializerType::id),
+            ResourceId.CODEC.fieldOf("serializerId").forGetter(SerializerType::serializerId),
             Codec.STRING.fieldOf("label").forGetter(SerializerType::label),
             FileForm.CODEC.fieldOf("form").forGetter(SerializerType::fileForm)
     ).apply(instance, SerializerType::new));
