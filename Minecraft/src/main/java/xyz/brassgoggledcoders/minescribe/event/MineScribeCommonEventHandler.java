@@ -16,7 +16,10 @@ import xyz.brassgoggledcoders.minescribe.api.data.SerializerTypeData;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.util.Range;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -182,12 +185,32 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("types/parent/recipe"),
                 Component.literal("Blasting"),
                 FileForm.of(
-                    new SingleSelectionFileField(
-                            "Result",
-                            "result",
-                            3,
-                            new ResourceId("minecraft", "registry/item")
-                    )
+                        new SingleSelectionFileField(
+                                "Result",
+                                "result",
+                                3,
+                                new ResourceId("minecraft", "registry/item")
+                        ),
+                        new DoubleFileField(
+                                "Experience",
+                                "experience",
+                                4,
+                                new Range<>(
+                                        0.0,
+                                        0.7,
+                                        Double.MAX_VALUE
+                                )
+                        ),
+                        new IntegerFileField(
+                                "Cooking Ticks",
+                                "cookingtime",
+                                5,
+                                new Range<>(
+                                        1,
+                                        100,
+                                        Integer.MAX_VALUE
+                                )
+                        )
                 )
         ));
     }

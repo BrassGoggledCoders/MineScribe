@@ -7,6 +7,25 @@
         "label": "Result",
         "list": "minecraft:registry/item",
         "sortOrder": 3
+      },
+      {
+        "type": "double",
+        "field": "experience",
+        "label": "Experience",
+        "range": {
+          "start": 0.7
+        },
+        "sortOrder": 4
+      },
+      {
+        "type": "integer",
+        "field": "cookingtime",
+        "label": "Cooking Ticks",
+        "range": {
+          "min": 1,
+          "start": 100
+        },
+        "sortOrder": 5
       }
     ]
   },

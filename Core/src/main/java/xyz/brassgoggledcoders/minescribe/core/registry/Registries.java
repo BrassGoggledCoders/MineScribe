@@ -4,6 +4,9 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.NumberFileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 
 import java.nio.file.Path;
@@ -20,6 +23,8 @@ public class Registries {
                         initializer.accept("list_of_fields", ListOfFileField.CODEC);
                         initializer.accept("string", StringFileField.CODEC);
                         initializer.accept("single_selection", SingleSelectionFileField.CODEC);
+                        initializer.accept("integer", IntegerFileField.CODEC);
+                        initializer.accept("double", DoubleFileField.CODEC);
                     }
             ));
 
