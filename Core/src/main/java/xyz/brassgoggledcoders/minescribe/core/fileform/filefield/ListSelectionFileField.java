@@ -17,8 +17,8 @@ public class ListSelectionFileField extends FileField {
     ).apply(instance, ListSelectionFileField::new));
     private final List<ResourceId> listNames;
 
-    public ListSelectionFileField(String name, String field, int sortOrder, List<ResourceId> listNames) {
-        super(name, field, sortOrder);
+    public ListSelectionFileField(String label, String field, int sortOrder, List<ResourceId> listNames) {
+        super(label, field, sortOrder);
         this.listNames = listNames;
     }
 

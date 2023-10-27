@@ -16,8 +16,8 @@ public class SingleSelectionFileField extends FileField {
 
     private final ResourceId listId;
 
-    public SingleSelectionFileField(String name, String field, int sortOrder, ResourceId listId) {
-        super(name, field, sortOrder);
+    public SingleSelectionFileField(String label, String field, int sortOrder, ResourceId listId) {
+        super(label, field, sortOrder);
         this.listId = listId;
     }
 

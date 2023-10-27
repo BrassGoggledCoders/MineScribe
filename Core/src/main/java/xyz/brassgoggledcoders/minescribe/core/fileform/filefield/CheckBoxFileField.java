@@ -15,8 +15,8 @@ public class CheckBoxFileField extends FileField {
 
     private final boolean defaultValue;
 
-    public CheckBoxFileField(String name, String field, int sortOrder, boolean defaultValue) {
-        super(name, field, sortOrder);
+    public CheckBoxFileField(String label, String field, int sortOrder, boolean defaultValue) {
+        super(label, field, sortOrder);
         this.defaultValue = defaultValue;
     }
 

@@ -14,8 +14,8 @@ public class StringFileField extends FileField {
     ).apply(instance, StringFileField::new));
 
     private final String defaultValue;
-    public StringFileField(String name, String field, int sortOrder, String defaultValue) {
-        super(name, field, sortOrder);
+    public StringFileField(String label, String field, int sortOrder, String defaultValue) {
+        super(label, field, sortOrder);
         this.defaultValue = defaultValue;
     }
 

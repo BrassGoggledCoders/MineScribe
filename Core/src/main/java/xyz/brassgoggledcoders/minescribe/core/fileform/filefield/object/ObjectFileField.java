@@ -24,9 +24,9 @@ public class ObjectFileField extends FileField {
     private final ResourceId defaultType;
     private final boolean includeType;
 
-    public ObjectFileField(String name, String field, int sortOrder, boolean includeType, ResourceId defaultType,
+    public ObjectFileField(String label, String field, int sortOrder, boolean includeType, ResourceId defaultType,
                            Map<ResourceId, List<IFileField>> typedFields) {
-        super(name, field, sortOrder);
+        super(label, field, sortOrder);
         this.includeType = includeType;
         this.typedFields = typedFields;
         this.defaultType = defaultType;

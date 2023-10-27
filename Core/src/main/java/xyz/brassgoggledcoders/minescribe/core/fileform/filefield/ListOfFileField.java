@@ -20,8 +20,8 @@ public class ListOfFileField extends FileField {
     private final int maximum;
     private final IFileField valueField;
 
-    public ListOfFileField(String name, String field, int sortOrder, int minimum, int maximum, IFileField valueField) {
-        super(name, field, sortOrder);
+    public ListOfFileField(String label, String field, int sortOrder, int minimum, int maximum, IFileField valueField) {
+        super(label, field, sortOrder);
         this.minimum = minimum;
         this.maximum = maximum;
         this.valueField = valueField;
