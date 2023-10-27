@@ -31,6 +31,7 @@ import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.IEditorFormField;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
+import xyz.brassgoggledcoders.minescribe.editor.util.FormUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -78,15 +79,7 @@ public class FormController {
                 )
                 .orElseThrow();
         this.filePath = filePath;
-        this.editorFormFieldList = new ArrayList<>();
-        for (IFileField field : this.fileForm.getFields()) {
-            IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
-                    .createEditorFieldFor(field);
-
-            if (editorFormField != null) {
-                editorFormFieldList.add(editorFormField);
-            }
-        }
+        this.editorFormFieldList = FormUtils.getFields(this.fileForm);
 
         Optional<SerializerInfo> serializerInfoOpt = this.fileForm.getSerializer();
         List<Field<?>> fields = editorFormFieldList.stream()
@@ -142,8 +135,8 @@ public class FormController {
                                     .ifPresent(setType);
                         }
                     });
-                    tryLoadForm(this.currentForm, this.editorFormFieldList, this.existingObject);
-                    tryLoadForm(this.serializerForm, this.serializeEditorFormFieldList, this.existingObject);
+                    FormUtils.tryLoadForm(this.currentForm, this.editorFormFieldList, this.existingObject);
+                    FormUtils.tryLoadForm(this.serializerForm, this.serializeEditorFormFieldList, this.existingObject);
                 }
             } catch (IOException e) {
                 LOGGER.error("Failed to read File {}", this.filePath, e);
@@ -235,7 +228,7 @@ public class FormController {
                     .toArray(Field[]::new)
             ));
 
-            tryLoadForm(this.serializerForm, this.serializeEditorFormFieldList, this.existingObject);
+            FormUtils.tryLoadForm(this.serializerForm, this.serializeEditorFormFieldList, this.existingObject);
 
             this.serializerFormPane.setContent(new FormRenderer(this.serializerForm));
         } else {
@@ -243,17 +236,5 @@ public class FormController {
             this.serializerFormPane.setContent(null);
         }
 
-    }
-
-    private void tryLoadForm(Form form, List<IEditorFormField<?>> editorFormFields, JsonObject jsonObject) {
-        if (form != null && editorFormFields != null && jsonObject != null) {
-            for (IEditorFormField<?> editorFormField : editorFormFields) {
-                if (jsonObject.has(editorFormField.getFileField().getField())) {
-                    editorFormField.loadFromJson(jsonObject.get(editorFormField.getFileField().getField()));
-                }
-            }
-            form.persist();
-            form.reset();
-        }
     }
 }

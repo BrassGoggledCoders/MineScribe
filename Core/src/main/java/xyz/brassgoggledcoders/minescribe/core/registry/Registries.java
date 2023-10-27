@@ -7,6 +7,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.NumberFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 
 import java.nio.file.Path;
@@ -25,6 +26,7 @@ public class Registries {
                         initializer.accept("single_selection", SingleSelectionFileField.CODEC);
                         initializer.accept("integer", IntegerFileField.CODEC);
                         initializer.accept("double", DoubleFileField.CODEC);
+                        initializer.accept("object_ref", ReferencedObjectFileField.CODEC);
                     }
             ));
 

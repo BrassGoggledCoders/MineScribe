@@ -13,8 +13,6 @@ public class FileForm {
             SerializerInfo.CODEC.optionalFieldOf("serializer").forGetter(FileForm::getSerializer)
     ).apply(instance, (fields, serializer) -> new FileForm(fields, serializer.orElse(null))));
 
-
-
     private final SerializerInfo serializer;
     private final TreeSet<IFileField> fields;
 

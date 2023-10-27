@@ -18,6 +18,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 
@@ -209,6 +210,28 @@ public class MineScribeCommonEventHandler {
                                         1,
                                         100,
                                         Integer.MAX_VALUE
+                                )
+                        )
+                )
+        ));
+
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation("forge", "ingredients/compound"),
+                new ResourceLocation("forge", "compound"),
+                new ResourceLocation("types/object/ingredient"),
+                Component.literal("Compound"),
+                FileForm.of(
+                        new ListOfFileField(
+                                "Children",
+                                "children",
+                                1,
+                                1,
+                                Integer.MAX_VALUE,
+                                new ReferencedObjectFileField(
+                                        "",
+                                        "",
+                                        1,
+                                        new ResourceId("minecraft", "ingredient")
                                 )
                         )
                 )

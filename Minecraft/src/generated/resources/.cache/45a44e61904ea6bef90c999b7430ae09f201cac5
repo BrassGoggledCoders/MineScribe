@@ -1,2 +1,3 @@
-// 1.19.2	2023-10-26T21:45:19.8861346	types/serializer generator for minescribe
+// 1.19.2	2023-10-26T22:31:09.5150934	types/serializer generator for minescribe
+b0d14316fe337468d1c56792695f0bf49f17c1a9 minescribe/forge/types/serializer/ingredients/compound.json
 84481d50654551f7a15ad4e2714c6239b77f17fa minescribe/minecraft/types/serializer/recipes/blasting.json

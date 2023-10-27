@@ -1,0 +1,27 @@
+{
+  "form": {
+    "fields": [
+      {
+        "type": "list_of_fields",
+        "value": {
+          "field": "children",
+          "label": "Children",
+          "sortOrder": 1,
+          "valueField": {
+            "type": "object_ref",
+            "field": "",
+            "label": "",
+            "objectId": "minecraft:ingredient",
+            "sortOrder": 1
+          }
+        }
+      }
+    ]
+  },
+  "id": "forge:ingredients/compound",
+  "label": {
+    "text": "Compound"
+  },
+  "parentId": "minecraft:types/object/ingredient",
+  "serializerId": "forge:compound"
+}
