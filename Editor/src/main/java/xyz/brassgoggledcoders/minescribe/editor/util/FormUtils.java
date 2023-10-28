@@ -122,6 +122,26 @@ public class FormUtils {
         }
     }
 
+    public static void trySaveForm(FormSetup formSetup, JsonObject jsonObject) {
+        for (IEditorFormField<?> editorFormField : formSetup.editorFields()) {
+            JsonElement savedJson = editorFormField.saveAsJson();
+            if (savedJson != null && !savedJson.isJsonNull()) {
+                jsonObject.add(
+                        editorFormField.getFileField()
+                                .getField(),
+                        savedJson
+                );
+            }
+        }
+
+        formSetup.serializerFieldOpt.ifPresent(serializerField -> {
+            SerializerType serializerType = serializerField.selectionProperty().get();
+            if (serializerType != null && !serializerType.id().equals(ResourceId.NULL)) {
+                jsonObject.addProperty(serializerField.getID(), serializerType.serializerId().toString());
+            }
+        });
+    }
+
     public record FormSetup(
             List<IEditorFormField<?>> editorFields,
             Form form,

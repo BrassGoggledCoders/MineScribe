@@ -35,8 +35,30 @@ public class ObjectField extends Field<ObjectField> {
             this.formSetup = this.createForm();
             this.formSetup.serializerFieldOpt()
                     .ifPresent(serializerField -> this.reloadForm(serializerField.getSelection()));
+            this.formSetup.form()
+                    .changedProperty()
+                    .addListener(this::formChanged);
+            this.formSetup.form()
+                    .validProperty()
+                    .addListener(this::formValid);
         }
         return this.formSetup;
+    }
+
+    private void formChanged(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        boolean changed = this.getForm().hasChanged();
+        if (!changed && this.getSerializerForm() != null) {
+            changed = this.getSerializerForm().hasChanged();
+        }
+        this.changedProperty().set(changed);
+    }
+
+    private void formValid(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        boolean valid = this.getForm().isValid();
+        if (valid && this.getSerializerForm() != null) {
+            valid = this.getSerializerForm().isValid();
+        }
+        this.validProperty().set(valid);
     }
 
     public Form getForm() {
@@ -64,6 +86,14 @@ public class ObjectField extends Field<ObjectField> {
                     () -> Registries.getSerializerTypes()
                             .getFor(newSerializerType)
             ));
+            this.serializerSetup.get()
+                    .form()
+                    .validProperty()
+                    .addListener(this::formValid);
+            this.serializerSetup.get()
+                    .form()
+                    .changedProperty()
+                    .addListener(this::formChanged);
         } else {
             this.serializerSetup.set(null);
         }
@@ -94,10 +124,18 @@ public class ObjectField extends Field<ObjectField> {
 
     @Override
     public void persist() {
-        this.getForm()
-                .persist();
-        if (this.getSerializerForm() != null) {
-            this.getSerializerForm().persist();
+        if (this.validate()) {
+            this.getForm()
+                    .persist();
+
+            JsonObject jsonObject = new JsonObject();
+            FormUtils.trySaveForm(this.getFormSetup(), jsonObject);
+
+            if (this.getSerializerForm() != null) {
+                this.getSerializerForm().persist();
+                FormUtils.trySaveForm(this.serializerSetup.get(), jsonObject);
+            }
+            this.persistedObject.set(jsonObject);
         }
     }
 
@@ -117,6 +155,9 @@ public class ObjectField extends Field<ObjectField> {
     public void setValue(JsonObject jsonObject) {
         this.persistedObject.setValue(jsonObject);
         FormUtils.tryLoadForm(this.getFormSetup(), jsonObject);
+        if (this.serializerSetup.get() != null) {
+            FormUtils.tryLoadForm(this.serializerSetup.get(), jsonObject);
+        }
     }
 
     public JsonObject getPersistedValue() {
