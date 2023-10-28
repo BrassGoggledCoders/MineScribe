@@ -190,7 +190,7 @@ public class MineScribeCommonEventHandler {
                                 "Ingredient",
                                 "ingredient",
                                 2,
-                                new ResourceId("minecraft", "types/object/ingredient")
+                                new ResourceId("minecraft", "ingredient")
                         ),
                         new SingleSelectionFileField(
                                 "Result",

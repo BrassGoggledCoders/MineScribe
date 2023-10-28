@@ -5,7 +5,7 @@
         "type": "object_ref",
         "field": "ingredient",
         "label": "Ingredient",
-        "objectId": "minecraft:types/object/ingredient",
+        "objectId": "minecraft:ingredient",
         "sortOrder": 2
       },
       {
