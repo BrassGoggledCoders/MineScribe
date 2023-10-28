@@ -5,15 +5,15 @@
       "defaultFields": [
         {
           "type": "single_selection",
-          "field": "Item",
-          "label": "item",
+          "field": "item",
+          "label": "Item",
           "list": "minecraft:registry/item",
           "sortOrder": 1
         },
         {
           "type": "single_selection",
-          "field": "Item Tag",
-          "label": "tag",
+          "field": "tag",
+          "label": "Item Tag",
           "list": "minecraft:tag/item",
           "sortOrder": 2
         }

@@ -7,10 +7,13 @@ public record ResourceId(
         String namespace,
         String path
 ) {
+
     public static final Codec<ResourceId> CODEC = Codec.STRING.flatXmap(
             ResourceId::fromString,
             resourceId -> DataResult.success(resourceId.toString())
     );
+
+    public static final ResourceId NULL = new ResourceId("null", "null");
 
     @Override
     public String toString() {

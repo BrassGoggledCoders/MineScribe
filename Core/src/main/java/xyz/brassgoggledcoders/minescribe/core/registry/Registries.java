@@ -6,7 +6,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.NumberFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 
@@ -72,6 +71,15 @@ public class Registries {
     private static final Supplier<SerializerTypeRegistry> SERIALIZER_TYPES =
             Suppliers.memoize(SerializerTypeRegistry::new);
 
+    private static final Supplier<BasicJsonRegistry<ResourceId, ObjectType>> OBJECT_TYPES =
+            Suppliers.memoize(() -> new BasicJsonRegistry<>(
+                    "objectTypes",
+                    Path.of("types", "object"),
+                    ResourceId.CODEC,
+                    ObjectType.CODEC,
+                    ObjectType::id
+            ));
+
     public static BasicStaticRegistry<String, Codec<? extends IFileField>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
     }
@@ -100,6 +108,10 @@ public class Registries {
         return SERIALIZER_TYPES.get();
     }
 
+    public static BasicJsonRegistry<ResourceId, ObjectType> getObjectTypes() {
+        return OBJECT_TYPES.get();
+    }
+
     public static void load(Path mineScribeRoot) {
         PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
         PACK_TYPES.get().load(mineScribeRoot);
@@ -107,5 +119,6 @@ public class Registries {
         CONTENT_PARENT_TYPES.get().load(mineScribeRoot);
         CONTENT_CHILD_TYPES.get().load(mineScribeRoot);
         SERIALIZER_TYPES.get().load(mineScribeRoot);
+        OBJECT_TYPES.get().load(mineScribeRoot);
     }
 }

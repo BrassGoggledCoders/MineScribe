@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.AnchorPane;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.validator.StringRegexValidator;
 
 public class NewDirectoryFormDialog extends Dialog<String> {
@@ -38,7 +39,7 @@ public class NewDirectoryFormDialog extends Dialog<String> {
                         )
         ));
 
-        FormRenderer formRenderer = new FormRenderer(form);
+        FormRenderer formRenderer = new ZeroPaddedFormRenderer(form);
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setMinWidth(600);
         anchorPane.setMaxHeight(80);

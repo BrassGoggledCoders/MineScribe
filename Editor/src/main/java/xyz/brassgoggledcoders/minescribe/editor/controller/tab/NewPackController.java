@@ -18,6 +18,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.SmallerSimpleListViewControl;
 
 import java.io.File;
@@ -65,7 +66,7 @@ public class NewPackController {
                         .multiline(true)
                         .validate(StringLengthValidator.atLeast(1, "Description Cannot be Empty"))
         ));
-        FormRenderer formRenderer = new FormRenderer(form);
+        FormRenderer formRenderer = new ZeroPaddedFormRenderer(form);
 
         AnchorPane.setTopAnchor(formRenderer, 0D);
         AnchorPane.setBottomAnchor(formRenderer, 0D);

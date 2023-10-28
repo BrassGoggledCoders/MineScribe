@@ -19,6 +19,7 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
 import xyz.brassgoggledcoders.minescribe.editor.validator.StringRegexValidator;
 
@@ -106,7 +107,7 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                         ))
         ));
 
-        FormRenderer formRenderer = new FormRenderer(form);
+        FormRenderer formRenderer = new ZeroPaddedFormRenderer(form);
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setMinWidth(600);
         anchorPane.setMaxHeight(80);

@@ -163,14 +163,14 @@ public class MineScribeCommonEventHandler {
                                 "type",
                                 "Type",
                                 new SingleSelectionFileField(
-                                        "item",
                                         "Item",
+                                        "item",
                                         1,
                                         new ResourceId("minecraft", "registry/item")
                                 ),
                                 new SingleSelectionFileField(
-                                        "tag",
                                         "Item Tag",
+                                        "tag",
                                         2,
                                         new ResourceId("minecraft", "tag/item")
                                 )
@@ -186,6 +186,12 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("types/parent/recipe"),
                 Component.literal("Blasting"),
                 FileForm.of(
+                        new ReferencedObjectFileField(
+                                "Ingredient",
+                                "ingredient",
+                                2,
+                                new ResourceId("minecraft", "types/object/ingredient")
+                        ),
                         new SingleSelectionFileField(
                                 "Result",
                                 "result",

@@ -30,6 +30,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.IEditorFormField;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
 import xyz.brassgoggledcoders.minescribe.editor.util.FormUtils;
 
@@ -117,7 +118,7 @@ public class FormController {
 
         this.currentForm = Form.of(Group.of(fields.toArray(Field[]::new)));
 
-        FormRenderer renderer = new FormRenderer(this.currentForm);
+        FormRenderer renderer = new ZeroPaddedFormRenderer(this.currentForm);
         this.formPane.setContent(renderer);
         this.formPane.autosize();
         if (Files.exists(this.filePath)) {
@@ -230,7 +231,7 @@ public class FormController {
 
             FormUtils.tryLoadForm(this.serializerForm, this.serializeEditorFormFieldList, this.existingObject);
 
-            this.serializerFormPane.setContent(new FormRenderer(this.serializerForm));
+            this.serializerFormPane.setContent(new ZeroPaddedFormRenderer(this.serializerForm));
         } else {
             this.serializerForm = null;
             this.serializerFormPane.setContent(null);

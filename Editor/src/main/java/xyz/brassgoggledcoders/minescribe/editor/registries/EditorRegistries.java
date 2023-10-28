@@ -9,6 +9,7 @@ import javafx.beans.property.IntegerProperty;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileField;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.*;
 
 import java.util.function.Supplier;
@@ -54,6 +55,10 @@ public class EditorRegistries {
                                         .start()
                                 )
                         )
+                ));
+                registry.register("object_ref", new EditorFormFieldTransform<>(
+                        ReferencedObjectFileField.class,
+                        ObjectEditorFormField::new
                 ));
                 registry.validate();
                 return registry;

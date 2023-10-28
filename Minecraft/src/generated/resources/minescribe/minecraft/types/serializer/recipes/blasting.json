@@ -2,6 +2,13 @@
   "form": {
     "fields": [
       {
+        "type": "object_ref",
+        "field": "ingredient",
+        "label": "Ingredient",
+        "objectId": "minecraft:types/object/ingredient",
+        "sortOrder": 2
+      },
+      {
         "type": "single_selection",
         "field": "result",
         "label": "Result",
