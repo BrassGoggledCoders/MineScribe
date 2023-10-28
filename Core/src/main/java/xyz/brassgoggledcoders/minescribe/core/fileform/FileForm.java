@@ -2,7 +2,6 @@ package xyz.brassgoggledcoders.minescribe.core.fileform;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
 
 import java.util.*;
@@ -34,11 +33,11 @@ public class FileForm {
         return Optional.ofNullable(this.serializer);
     }
 
-    public static FileForm of(FileField... fileFields) {
+    public static FileForm of(IFileField... fileFields) {
         return new FileForm(Arrays.asList(fileFields), null);
     }
 
-    public static FileForm of(SerializerInfo serializerField, FileField... fileFields) {
+    public static FileForm of(SerializerInfo serializerField, IFileField... fileFields) {
         return new FileForm(Arrays.asList(fileFields), serializerField);
     }
 }
