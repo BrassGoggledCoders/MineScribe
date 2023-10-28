@@ -44,7 +44,7 @@ public class ListOfFields extends DataField<ListProperty<Field<?>>, ObservableLi
         if (maximumFields < this.getMinimumFields()) {
             throw new IllegalStateException("Maximum Fields must be great than %s (minimum value)".formatted(this.getMinimumFields()));
         }
-        this.minimumFields.set(maximumFields);
+        this.maximumFields.set(maximumFields);
         return this;
     }
 
