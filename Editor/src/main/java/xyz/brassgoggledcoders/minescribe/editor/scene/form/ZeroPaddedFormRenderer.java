@@ -21,4 +21,8 @@ public class ZeroPaddedFormRenderer extends FormRenderer {
         this.sections.forEach(section -> section.getStyleClass().add("no-borders"));
         getChildren().setAll(sections);
     }
+
+    public Form getForm() {
+        return this.form;
+    }
 }

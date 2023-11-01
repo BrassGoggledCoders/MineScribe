@@ -147,6 +147,10 @@ public class FormUtils {
             Form form,
             Optional<SingleSelectionField<SerializerType>> serializerFieldOpt
     ) {
+        public void reset() {
+            this.form()
+                    .reset();
+        }
 
     }
 }

@@ -2,20 +2,17 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.control.TitledPane?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController"
             prefHeight="400.0" prefWidth="600.0">
+
     <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-        <TitledPane fx:id="formPane" VBox.vgrow="ALWAYS">
-            <text>Primary Fields</text>
-        </TitledPane>
-        <TitledPane fx:id="serializerFormPane" VBox.vgrow="SOMETIMES">
-            <text>Serializer Fields</text>
-            <visible>false</visible>
-        </TitledPane>
+        <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true" fitToHeight="true">
+            <VBox fx:id="formPane"/>
+        </ScrollPane>
         <HBox VBox.vgrow="NEVER">
             <padding>
                 <Insets bottom="10" left="10" right="10" top="10"/>
