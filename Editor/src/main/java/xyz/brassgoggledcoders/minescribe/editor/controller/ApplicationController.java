@@ -13,12 +13,10 @@ import xyz.brassgoggledcoders.minescribe.core.info.InfoKey;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.event.page.RequestPageEvent;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.prefs.BackingStoreException;
@@ -43,14 +41,10 @@ public class ApplicationController {
 
         Preferences preferences = Preferences.userNodeForPackage(Application.class);
 
-        String previousProject = preferences.get("previous_project", "");
-        if (!previousProject.isEmpty()) {
-            Path previousProjectPath = Path.of(previousProject);
-            if (Files.isDirectory(previousProjectPath)) {
-                Project project = new Project(previousProjectPath);
-                InfoRepository.getInstance().setValue(Project.KEY, project);
-                this.content.fireEvent(new RequestPageEvent("loading"));
-            }
+        Project project = Project.tryLoad(preferences);
+        if (project != null) {
+            InfoRepository.getInstance().setValue(Project.KEY, project);
+            this.content.fireEvent(new RequestPageEvent("loading"));
         }
 
         if (InfoRepository.getInstance().getValue(Project.KEY) == null) {
