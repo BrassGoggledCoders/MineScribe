@@ -6,7 +6,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
-import xyz.brassgoggledcoders.minescribe.editor.event.page.RequestPageEvent;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
 import java.nio.file.Files;

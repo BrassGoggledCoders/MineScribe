@@ -15,11 +15,11 @@ import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.event.page.RequestPageEvent;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.function.Consumer;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class ApplicationController {
@@ -78,19 +78,17 @@ public class ApplicationController {
     public void openProject(ActionEvent ignoredActionEvent) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Open Project");
-        Path projectPath = directoryChooser.showDialog(this.content.getScene().getWindow()).toPath();
-        if (projectPath.endsWith(".minescribe")) {
-            projectPath = projectPath.getParent();
+        File projectFile = directoryChooser.showDialog(this.content.getScene().getWindow());
+        if (projectFile != null) {
+            Path projectPath = projectFile.toPath();
+            if (projectPath.endsWith(".minescribe")) {
+                projectPath = projectPath.getParent();
+            }
+            Project project = new Project(projectPath);
+            InfoRepository.getInstance().setValue(Project.KEY, project);
+            project.trySave(Preferences.userNodeForPackage(Application.class));
+            this.content.fireEvent(new RequestPageEvent("loading"));
         }
-        Project project = new Project(projectPath);
-        InfoRepository.getInstance().setValue(Project.KEY, project);
-        Preferences preferences = Preferences.userNodeForPackage(Application.class);
-        preferences.put("previous_project", projectPath.toString());
-        try {
-            preferences.flush();
-        } catch (BackingStoreException e) {
-            LOGGER.error("Failed to save Project location", e);
-        }
-        this.content.fireEvent(new RequestPageEvent("loading"));
+
     }
 }

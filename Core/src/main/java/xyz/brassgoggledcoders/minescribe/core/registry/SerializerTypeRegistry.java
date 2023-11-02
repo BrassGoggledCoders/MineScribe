@@ -24,10 +24,10 @@ public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, Serial
         ));
     }
 
-    public List<SerializerType> getFor(PackContentChildType parentType) {
+    public List<SerializerType> getFor(PackContentChildType childType) {
         return getFor(new ResourceId(
-                parentType.getId().namespace(),
-                "types/child/" + parentType.getId().path()
+                childType.getId().namespace(),
+                "types/child/" + childType.getId().path()
         ));
     }
 

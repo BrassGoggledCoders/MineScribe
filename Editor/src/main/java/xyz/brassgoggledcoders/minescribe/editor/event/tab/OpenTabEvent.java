@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.event.tab;
 
+import com.mojang.datafixers.util.Pair;
 import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -32,7 +34,7 @@ public class OpenTabEvent<T> extends TabEvent {
         return this.tabName;
     }
 
-    public Node createTabContent(UUID tabId) {
+    public Pair<Node, Object> createTabContent(UUID tabId) {
         try {
             FXMLLoader loader = new FXMLLoader(Application.class.getResource(fxmlFile + ".fxml"));
             Node node = loader.load();
@@ -40,7 +42,7 @@ public class OpenTabEvent<T> extends TabEvent {
             if (controller != null) {
                 setControllerData.accept(controller, tabId.toString());
             }
-            return node;
+            return Pair.of(node, controller);
         } catch (IOException e) {
             LOGGER.error("Failed to Create Tab: {}", this.tabName, e);
             return null;

@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
+import javafx.event.Event;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class FormFileEditorItem extends EditorItem {
     private final List<NodeTracker> nodes;
@@ -42,32 +44,30 @@ public class FormFileEditorItem extends EditorItem {
     public @NotNull ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem = new MenuItem("Open File");
-        menuItem.setOnAction(event -> treeCell.fireEvent(
-                new OpenTabEvent<NoFormController>(
-                        treeCell.getItem().getName(),
-                        "tab/no_form",
-                        (controller, tabId) -> controller.setPathToFile(treeCell.getItem().getPath()))
-        ));
+        menuItem.setOnAction(event -> openTabFor(treeCell::fireEvent));
         contextMenu.getItems().add(menuItem);
         return contextMenu;
     }
 
-    @Override
-    public void onDoubleClick(TreeCell<EditorItem> treeCell) {
+    public void openTabFor(Consumer<Event> eventConsumer) {
         this.nodes.stream()
                 .filter(node -> node.getForm().isPresent())
                 .findFirst()
-                .ifPresent(nodeTracker -> treeCell.fireEvent(
+                .ifPresent(nodeTracker -> eventConsumer.accept(
                         new OpenTabEvent<FormController>(
-                                treeCell.getItem().getName(),
+                                this.getName(),
                                 "tab/form",
                                 (controller, tabId) -> controller.setFormInfo(
-                                        treeCell.getItem().getPath(),
+                                        this.getPath(),
                                         nodeTracker.parentType(),
                                         nodeTracker.childTypeOpt()
                                                 .orElse(null)
                                 ))
                 ));
-        ;
+    }
+
+    @Override
+    public void onDoubleClick(TreeCell<EditorItem> treeCell) {
+        openTabFor(treeCell::fireEvent);
     }
 }

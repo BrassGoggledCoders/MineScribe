@@ -8,8 +8,10 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.PackRepositoryEditorItem;
 
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.function.Predicate;
 
 public class FileHandler {
@@ -29,7 +31,7 @@ public class FileHandler {
     public void reloadClosestNode(@NotNull Path path, TreeItem<EditorItem> treeItem) {
         List<TreeItem<EditorItem>> children = treeItem.getChildren();
         boolean foundNode = false;
-        for (TreeItem<EditorItem> child: children) {
+        for (TreeItem<EditorItem> child : children) {
             if (path.startsWith(child.getValue().getPath())) {
                 reloadClosestNode(path, child);
                 foundNode = true;
@@ -39,6 +41,35 @@ public class FileHandler {
         if (!foundNode && treeItem.getValue() != null) {
             reloadDirectory(treeItem.getValue(), treeItem);
         }
+    }
+
+    public TreeItem<EditorItem> getClosestNode(@NotNull Path path, boolean expand) {
+        Queue<TreeItem<EditorItem>> queue = this.getNodePath(path, this.rootItem);
+        TreeItem<EditorItem> closestNode = null;
+        while (!queue.isEmpty()) {
+            closestNode = queue.poll();
+            if (closestNode != null && expand) {
+                closestNode.expandedProperty()
+                        .set(true);
+            }
+        }
+        return closestNode;
+    }
+
+    public Queue<TreeItem<EditorItem>> getNodePath(Path path, TreeItem<EditorItem> treeItem) {
+        List<TreeItem<EditorItem>> children = treeItem.getChildren();
+
+        for (TreeItem<EditorItem> child : children) {
+            if (path.startsWith(child.getValue().getPath())) {
+                Queue<TreeItem<EditorItem>> queue = new LinkedList<>();
+                queue.add(child);
+                queue.addAll(getNodePath(path, child));
+
+                return queue;
+            }
+        }
+
+        return new LinkedList<>();
     }
 
     public void reloadDirectory(@NotNull EditorItem editorItem) {
@@ -74,6 +105,7 @@ public class FileHandler {
     public TreeItem<EditorItem> getRootModel() {
         return this.rootItem;
     }
+
 
     public static void initialize() {
         INSTANCE = new FileHandler();

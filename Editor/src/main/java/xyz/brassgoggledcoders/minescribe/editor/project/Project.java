@@ -45,7 +45,7 @@ public class Project {
     public void trySave(Preferences preferences) {
         try {
             Preferences projectNode = preferences.node("last_project");
-            projectNode.put("path", this.mineScribeFolder.toString());
+            projectNode.put("path", this.getRootPath().toString());
             if (!this.openTabs.isEmpty()) {
                 Preferences openTabsNode = projectNode.node("open_tabs");
                 for (Map.Entry<UUID, Path> entry: this.openTabs.entrySet()) {
@@ -72,6 +72,9 @@ public class Project {
                     String projectPath = projectNode.get("path", "");
                     if (!projectPath.isEmpty()) {
                         Path path = Path.of(projectPath);
+                        while (path != null && path.endsWith(".minescribe")) {
+                            path = path.getParent();
+                        }
                         Project project = new Project(path);
 
                         if (projectNode.nodeExists("open_tabs")) {

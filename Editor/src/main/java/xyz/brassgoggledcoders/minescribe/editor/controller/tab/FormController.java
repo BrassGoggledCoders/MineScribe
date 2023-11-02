@@ -10,18 +10,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
-import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.util.FormUtils;
 import xyz.brassgoggledcoders.minescribe.editor.util.FormUtils.FormSetup;
@@ -35,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class FormController {
+public class FormController implements IFileEditorController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FormController.class);
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
@@ -50,10 +49,6 @@ public class FormController {
     private JsonObject existingObject;
 
     public void setFormInfo(Path filePath, PackContentParentType parentType, @Nullable PackContentChildType childType) {
-        Project project = InfoRepository.getInstance().getValue(Project.KEY);
-        if (project != null) {
-            project.addOpenTab(filePath);
-        }
         FileForm fileForm = parentType.getForm()
                 .or(() -> Optional.ofNullable(childType)
                         .flatMap(PackContentType::getForm)
@@ -162,5 +157,10 @@ public class FormController {
             });
             this.serializerFormSetup = null;
         }
+    }
+
+    @Override
+    public @Nullable Path getPath() {
+        return this.filePath;
     }
 }
