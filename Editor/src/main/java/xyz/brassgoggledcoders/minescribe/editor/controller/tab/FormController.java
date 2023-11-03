@@ -10,7 +10,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +70,7 @@ public class FormController implements IFileEditorController {
         this.filePath = filePath;
 
         FormRenderer renderer = new ZeroPaddedFormRenderer(this.formSetup.form());
+        renderer.getStyleClass().add("top-border-padding");
         this.formPane.getChildren().add(renderer);
         this.formSetup.serializerFieldOpt()
                 .ifPresent(serializerField -> this.reloadForm(serializerField.getSelection()));

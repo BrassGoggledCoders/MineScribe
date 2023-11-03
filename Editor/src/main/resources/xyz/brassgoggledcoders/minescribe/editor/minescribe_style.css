@@ -1,9 +1,3 @@
-.formsfx-group .no-borders {
-    -fx-border-width: 0px;
-    -fx-border-insets: -10px;
-    -fx-padding: 5px 10px 5px 10px;
-}
-
 .borders {
     -fx-border-image-width: 1px;
     -fx-border-color: rgb(200, 200, 200);
@@ -15,4 +9,10 @@
 
 .bottom-border-padding {
     -fx-padding: 0px 0px 10px 0px;
+}
+
+.no-borders {
+    -fx-border-width: 0px !important;
+    -fx-border-insets: -10px !important;
+    -fx-padding: 5px 10px 5px 10px !important;
 }
