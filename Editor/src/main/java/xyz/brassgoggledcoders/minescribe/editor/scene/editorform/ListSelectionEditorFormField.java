@@ -29,7 +29,7 @@ public class ListSelectionEditorFormField implements IEditorFormField<MultiSelec
     }
 
     @Override
-    public IFileFieldDefinition getFileField() {
+    public IFileFieldDefinition getFileFieldDefinition() {
         return this.fileField;
     }
 

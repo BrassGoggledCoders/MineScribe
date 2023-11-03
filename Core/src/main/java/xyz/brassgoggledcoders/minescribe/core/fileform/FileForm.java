@@ -13,19 +13,19 @@ public class FileForm {
     ).apply(instance, (fields, serializer) -> new FileForm(fields, serializer.orElse(null))));
 
     private final SerializerInfo serializer;
-    private final TreeSet<FileField> fields;
+    private final TreeSet<FileField<?>> fields;
 
-    public FileForm(Collection<FileField> fields, SerializerInfo serializer) {
+    public FileForm(Collection<FileField<?>> fields, SerializerInfo serializer) {
         this.serializer = serializer;
         this.fields = new TreeSet<>(Comparable::compareTo);
         this.fields.addAll(fields);
     }
 
-    public Collection<FileField> getFields() {
+    public Collection<FileField<?>> getFields() {
         return fields;
     }
 
-    private List<FileField> getFieldsForCodec() {
+    private List<FileField<?>> getFieldsForCodec() {
         return new ArrayList<>(this.getFields());
     }
 
@@ -33,11 +33,11 @@ public class FileForm {
         return Optional.ofNullable(this.serializer);
     }
 
-    public static FileForm of(FileField... fileFields) {
+    public static FileForm of(FileField<?>... fileFields) {
         return new FileForm(Arrays.asList(fileFields), null);
     }
 
-    public static FileForm of(SerializerInfo serializerField, FileField... fileFields) {
+    public static FileForm of(SerializerInfo serializerField, FileField<?>... fileFields) {
         return new FileForm(Arrays.asList(fileFields), serializerField);
     }
 }

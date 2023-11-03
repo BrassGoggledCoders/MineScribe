@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
@@ -26,7 +27,7 @@ public class SingleSelectionEditorFormField implements IEditorFormField<SingleSe
     }
 
     @Override
-    public IFileFieldDefinition getFileField() {
+    public SingleSelectionFileFieldDefinition getFileFieldDefinition() {
         return this.fileField;
     }
 

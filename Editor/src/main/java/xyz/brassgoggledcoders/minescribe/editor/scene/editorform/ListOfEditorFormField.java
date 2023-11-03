@@ -22,7 +22,6 @@ public class ListOfEditorFormField implements IEditorFormField<ListOfFields> {
         this.fileField = fileField;
         this.childFields = new HashMap<>();
         this.field = new ListOfFields()
-                .label(this.fileField.getLabel())
                 .minimumFields(fileField.getMinimum())
                 .maximumFields(fileField.getMaximum())
                 .fieldSupplier(this::createField);
@@ -37,7 +36,7 @@ public class ListOfEditorFormField implements IEditorFormField<ListOfFields> {
     }
 
     @Override
-    public IFileFieldDefinition getFileField() {
+    public IFileFieldDefinition getFileFieldDefinition() {
         return this.fileField;
     }
 

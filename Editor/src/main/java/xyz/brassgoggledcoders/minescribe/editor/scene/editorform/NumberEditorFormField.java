@@ -4,7 +4,6 @@ import com.dlsc.formsfx.model.structure.DataField;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import javafx.beans.property.Property;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.NumberFileFieldDefinition;
 
 import java.util.function.Function;
@@ -20,7 +19,7 @@ public class NumberEditorFormField<N extends NumberFileFieldDefinition<T>, T ext
     }
 
     @Override
-    public IFileFieldDefinition getFileField() {
+    public N getFileFieldDefinition() {
         return this.fileField;
     }
 

@@ -6,8 +6,10 @@ import com.dlsc.formsfx.model.structure.Group;
 import com.dlsc.formsfx.model.structure.SingleSelectionField;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
@@ -22,14 +24,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class FormUtils {
-    public static List<IEditorFormField<?>> getFields(FileForm form) {
-        List<IEditorFormField<?>> editorFormFieldList = new ArrayList<>();
-        for (IFileFieldDefinition field : form.getFields()) {
+    public static List<Pair<FileFieldInfo, IEditorFormField<?>>> getFields(FileForm form) {
+        List<Pair<FileFieldInfo, IEditorFormField<?>>> editorFormFieldList = new ArrayList<>();
+        for (FileField<?> field : form.getFields()) {
             IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
-                    .createEditorFieldFor(field);
+                    .createEditorFieldFor(field.definition());
 
             if (editorFormField != null) {
-                editorFormFieldList.add(editorFormField);
+                editorFormFieldList.add(Pair.of(field.info(), editorFormField));
             }
         }
 
@@ -37,11 +39,16 @@ public class FormUtils {
     }
 
     public static FormSetup setupForm(FileForm fileForm, Supplier<List<SerializerType>> gatherTypes) {
-        List<IEditorFormField<?>> editorFormFields = getFields(fileForm);
+        List<Pair<FileFieldInfo, IEditorFormField<?>>> editorFormFields = getFields(fileForm);
         List<Field<?>> fields = editorFormFields.stream()
-                .map(editorFormField -> editorFormField.asField()
-                        .label(editorFormField.getFileField().getLabel())
-                        .id(editorFormField.getFileField().getField())
+                .map(editorFormField -> editorFormField.getSecond()
+                        .asField()
+                        .label(editorFormField.getFirst()
+                                .label()
+                        )
+                        .id(editorFormField.getFirst()
+                                .field()
+                        )
                 )
                 .collect(Collectors.toList());
 
@@ -56,7 +63,7 @@ public class FormUtils {
                                 ResourceId.NULL,
                                 "Default",
                                 FileForm.of(serializerInfo.defaultFields()
-                                        .toArray(IFileFieldDefinition[]::new)
+                                        .toArray(FileField[]::new)
                                 )
                         );
                         serializerTypes.add(0, defaultFieldsType);
@@ -110,11 +117,11 @@ public class FormUtils {
         });
     }
 
-    public static void tryLoadForm(Form form, List<IEditorFormField<?>> editorFormFields, JsonObject jsonObject) {
+    public static void tryLoadForm(Form form, List<Pair<FileFieldInfo, IEditorFormField<?>>> editorFormFields, JsonObject jsonObject) {
         if (form != null && editorFormFields != null && jsonObject != null) {
-            for (IEditorFormField<?> editorFormField : editorFormFields) {
-                if (jsonObject.has(editorFormField.getFileField().getField())) {
-                    editorFormField.loadFromJson(jsonObject.get(editorFormField.getFileField().getField()));
+            for (Pair<FileFieldInfo, IEditorFormField<?>> editorFormField : editorFormFields) {
+                if (jsonObject.has(editorFormField.getFirst().field())) {
+                    editorFormField.getSecond().loadFromJson(jsonObject.get(editorFormField.getFirst().field()));
                 }
             }
             form.persist();
@@ -123,12 +130,13 @@ public class FormUtils {
     }
 
     public static void trySaveForm(FormSetup formSetup, JsonObject jsonObject) {
-        for (IEditorFormField<?> editorFormField : formSetup.editorFields()) {
-            JsonElement savedJson = editorFormField.saveAsJson();
+        for (Pair<FileFieldInfo, IEditorFormField<?>> editorFormField : formSetup.editorFields()) {
+            JsonElement savedJson = editorFormField.getSecond()
+                    .saveAsJson();
             if (savedJson != null && !savedJson.isJsonNull()) {
                 jsonObject.add(
-                        editorFormField.getFileField()
-                                .getField(),
+                        editorFormField.getFirst()
+                                .field(),
                         savedJson
                 );
             }
@@ -143,7 +151,7 @@ public class FormUtils {
     }
 
     public record FormSetup(
-            List<IEditorFormField<?>> editorFields,
+            List<Pair<FileFieldInfo, IEditorFormField<?>>> editorFields,
             Form form,
             Optional<SingleSelectionField<SerializerType>> serializerFieldOpt
     ) {

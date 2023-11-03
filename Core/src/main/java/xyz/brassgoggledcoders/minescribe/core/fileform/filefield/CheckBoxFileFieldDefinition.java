@@ -5,20 +5,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 
-public class CheckBoxFileFieldDefinition implements IFileFieldDefinition {
+public record CheckBoxFileFieldDefinition(boolean defaultValue) implements IFileFieldDefinition {
     public static final Codec<CheckBoxFileFieldDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.BOOL.optionalFieldOf(JsonFieldNames.DEFAULT_VALUE, false).forGetter(CheckBoxFileFieldDefinition::getDefaultValue)
+            Codec.BOOL.optionalFieldOf(JsonFieldNames.DEFAULT_VALUE, false).forGetter(CheckBoxFileFieldDefinition::defaultValue)
     ).apply(instance, CheckBoxFileFieldDefinition::new));
-
-    private final boolean defaultValue;
-
-    public CheckBoxFileFieldDefinition(boolean defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public boolean getDefaultValue() {
-        return this.defaultValue;
-    }
 
     @Override
     public @NotNull Codec<? extends IFileFieldDefinition> getCodec() {

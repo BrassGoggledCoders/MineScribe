@@ -4,7 +4,7 @@ import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.model.structure.StringField;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileFieldDefinition;
 
 public class StringEditorFormField implements IEditorFormField<StringField> {
@@ -13,12 +13,11 @@ public class StringEditorFormField implements IEditorFormField<StringField> {
 
     public StringEditorFormField(StringFileFieldDefinition fileField) {
         this.fileField = fileField;
-        this.field = Field.ofStringType(fileField.defaultValue())
-                .label(fileField.getLabel());
+        this.field = Field.ofStringType(fileField.defaultValue());
     }
 
     @Override
-    public IFileFieldDefinition getFileField() {
+    public StringFileFieldDefinition getFileFieldDefinition() {
         return this.fileField;
     }
 

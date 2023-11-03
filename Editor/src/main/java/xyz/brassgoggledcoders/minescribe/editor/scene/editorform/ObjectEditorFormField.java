@@ -1,7 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform;
 
 import com.google.gson.JsonElement;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.field.ObjectField;
@@ -18,7 +17,7 @@ public class ObjectEditorFormField implements IEditorFormField<ObjectField> {
     }
 
     @Override
-    public IFileFieldDefinition getFileField() {
+    public ReferencedObjectFileFieldDefinition getFileFieldDefinition() {
         return this.fileField;
     }
 
