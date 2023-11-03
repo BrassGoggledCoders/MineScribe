@@ -7,9 +7,9 @@ import com.google.common.base.Suppliers;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.*;
 
 import java.util.function.Supplier;
@@ -19,27 +19,27 @@ public class EditorRegistries {
             Suppliers.memoize(() -> {
                 EditorFormFieldRegistry registry = new EditorFormFieldRegistry();
                 registry.register("checkbox", new EditorFormFieldTransform<>(
-                        CheckBoxFileField.class,
+                        CheckBoxFileFieldDefinition.class,
                         CheckBoxEditorFormField::new
                 ));
                 registry.register("list_selection", new EditorFormFieldTransform<>(
-                        ListSelectionFileField.class,
+                        ListSelectionFileFieldDefinition.class,
                         ListSelectionEditorFormField::new
                 ));
                 registry.register("string", new EditorFormFieldTransform<>(
-                        StringFileField.class,
+                        StringFileFieldDefinition.class,
                         StringEditorFormField::new
                 ));
                 registry.register("list_of_fields", new EditorFormFieldTransform<>(
-                        ListOfFileField.class,
+                        ListOfFileFieldDefinition.class,
                         ListOfEditorFormField::new
                 ));
                 registry.register("single_selection", new EditorFormFieldTransform<>(
-                        SingleSelectionFileField.class,
+                        SingleSelectionFileFieldDefinition.class,
                         SingleSelectionEditorFormField::new
                 ));
-                registry.register("integer", new EditorFormFieldTransform<IntegerFileField, NumberEditorFormField<IntegerFileField, Integer, IntegerProperty, IntegerField>, IntegerField>(
-                        IntegerFileField.class,
+                registry.register("integer", new EditorFormFieldTransform<IntegerFileFieldDefinition, NumberEditorFormField<IntegerFileFieldDefinition, Integer, IntegerProperty, IntegerField>, IntegerField>(
+                        IntegerFileFieldDefinition.class,
                         integerFileField -> new NumberEditorFormField<>(
                                 integerFileField,
                                 fileField -> Field.ofIntegerType(fileField.getRange()
@@ -47,8 +47,8 @@ public class EditorRegistries {
                                 )
                         )
                 ));
-                registry.register("double", new EditorFormFieldTransform<DoubleFileField, NumberEditorFormField<DoubleFileField, Double, DoubleProperty, DoubleField>, DoubleField>(
-                        DoubleFileField.class,
+                registry.register("double", new EditorFormFieldTransform<DoubleFileFieldDefinition, NumberEditorFormField<DoubleFileFieldDefinition, Double, DoubleProperty, DoubleField>, DoubleField>(
+                        DoubleFileFieldDefinition.class,
                         doubleFileField -> new NumberEditorFormField<>(
                                 doubleFileField,
                                 fileField -> Field.ofDoubleType(fileField.getRange()
@@ -57,7 +57,7 @@ public class EditorRegistries {
                         )
                 ));
                 registry.register("object_ref", new EditorFormFieldTransform<>(
-                        ReferencedObjectFileField.class,
+                        ReferencedObjectFileFieldDefinition.class,
                         ObjectEditorFormField::new
                 ));
                 registry.validate();

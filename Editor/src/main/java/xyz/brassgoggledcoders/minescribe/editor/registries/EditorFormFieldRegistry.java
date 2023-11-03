@@ -4,7 +4,7 @@ import com.dlsc.formsfx.model.structure.Field;
 import com.mojang.serialization.Codec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.IEditorFormField;
@@ -16,13 +16,13 @@ public class EditorFormFieldRegistry extends Registry<String, EditorFormFieldTra
         super("editorFormField", Codec.STRING);
     }
 
-    public <T extends IFileField, U extends IEditorFormField<F>, F extends Field<F>> void register(
+    public <T extends IFileFieldDefinition, U extends IEditorFormField<F>, F extends Field<F>> void register(
             String name, EditorFormFieldTransform<T, U, F> transforms
     ) {
         this.getMap().put(name, transforms);
     }
 
-    public IEditorFormField<?> createEditorFieldFor(IFileField fileField) {
+    public IEditorFormField<?> createEditorFieldFor(IFileFieldDefinition fileField) {
         String key = Registries.getFileFieldCodecRegistry().getKey(fileField.getCodec());
         if (key != null) {
             EditorFormFieldTransform<?, ?, ?> transform = this.getValue(key);

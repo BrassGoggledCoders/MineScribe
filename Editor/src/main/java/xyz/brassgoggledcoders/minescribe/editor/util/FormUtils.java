@@ -7,7 +7,7 @@ import com.dlsc.formsfx.model.structure.SingleSelectionField;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class FormUtils {
     public static List<IEditorFormField<?>> getFields(FileForm form) {
         List<IEditorFormField<?>> editorFormFieldList = new ArrayList<>();
-        for (IFileField field : form.getFields()) {
+        for (IFileFieldDefinition field : form.getFields()) {
             IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
                     .createEditorFieldFor(field);
 
@@ -56,7 +56,7 @@ public class FormUtils {
                                 ResourceId.NULL,
                                 "Default",
                                 FileForm.of(serializerInfo.defaultFields()
-                                        .toArray(IFileField[]::new)
+                                        .toArray(IFileFieldDefinition[]::new)
                                 )
                         );
                         serializerTypes.add(0, defaultFieldsType);

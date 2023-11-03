@@ -1,25 +1,27 @@
 package xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
 
-public abstract class FileField implements IFileField {
-    private final String label;
-    private final String field;
-    private final int sortOrder;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.NotNull;
 
-    public FileField(String label, String field, int sortOrder) {
-        this.label = label;
-        this.field = field;
-        this.sortOrder = sortOrder;
-    }
+import java.util.List;
 
-    public String getLabel() {
-        return label;
-    }
+public record FileField(
+        IFileFieldDefinition definition,
+        FileFieldInfo info
+) implements Comparable<FileField> {
+    public static final Codec<FileField> CODEC = Codec.pair(
+            IFileFieldDefinition.CODEC,
+            FileFieldInfo.CODEC
+    ).xmap(
+            pair -> new FileField(pair.getFirst(), pair.getSecond()),
+            fileField -> Pair.of(fileField.definition(), fileField.info())
+    );
 
-    public String getField() {
-        return field;
-    }
+    public static final Codec<List<FileField>> LIST_CODEC = CODEC.listOf();
 
-    public int getSortOrder() {
-        return sortOrder;
+    @Override
+    public int compareTo(@NotNull FileField o) {
+        return this.info().compareTo(o.info());
     }
 }

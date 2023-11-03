@@ -16,9 +16,9 @@ import xyz.brassgoggledcoders.minescribe.api.data.SerializerTypeData;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 
@@ -98,14 +98,14 @@ public class MineScribeCommonEventHandler {
                 Path.of("test"),
                 MineScribeAPI.PACK_TYPE,
                 Optional.of(FileForm.of(
-                        new StringFileField("String Field", "string", 0, ""),
-                        new ListOfFileField(
+                        new StringFileFieldDefinition("String Field", "string", 0, ""),
+                        new ListOfFileFieldDefinition(
                                 "String List",
                                 "stringList",
                                 1,
                                 2,
                                 5,
-                                new StringFileField(
+                                new StringFileFieldDefinition(
                                         "",
                                         "",
                                         1,
@@ -123,8 +123,8 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Block Tags"),
                 Path.of("blocks"),
                 Optional.of(FileForm.of(
-                        new CheckBoxFileField("Replace", "replace", 0, false),
-                        new ListSelectionFileField(
+                        new CheckBoxFileFieldDefinition("Replace", "replace", 0, false),
+                        new ListSelectionFileFieldDefinition(
                                 "Values",
                                 "values",
                                 1,
@@ -141,8 +141,8 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Item Tags"),
                 Path.of("items"),
                 Optional.of(FileForm.of(
-                        new CheckBoxFileField("Replace", "replace", 0, false),
-                        new ListSelectionFileField(
+                        new CheckBoxFileFieldDefinition("Replace", "replace", 0, false),
+                        new ListSelectionFileFieldDefinition(
                                 "Values",
                                 "values",
                                 1,
@@ -162,13 +162,13 @@ public class MineScribeCommonEventHandler {
                         SerializerInfo.of(
                                 "type",
                                 "Type",
-                                new SingleSelectionFileField(
+                                new SingleSelectionFileFieldDefinition(
                                         "Item",
                                         "item",
                                         1,
                                         new ResourceId("minecraft", "registry/item")
                                 ),
-                                new SingleSelectionFileField(
+                                new SingleSelectionFileFieldDefinition(
                                         "Item Tag",
                                         "tag",
                                         2,
@@ -186,19 +186,19 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("types/parent/recipe"),
                 Component.literal("Blasting"),
                 FileForm.of(
-                        new ReferencedObjectFileField(
+                        new ReferencedObjectFileFieldDefinition(
                                 "Ingredient",
                                 "ingredient",
                                 2,
                                 new ResourceId("minecraft", "ingredient")
                         ),
-                        new SingleSelectionFileField(
+                        new SingleSelectionFileFieldDefinition(
                                 "Result",
                                 "result",
                                 3,
                                 new ResourceId("minecraft", "registry/item")
                         ),
-                        new DoubleFileField(
+                        new DoubleFileFieldDefinition(
                                 "Experience",
                                 "experience",
                                 4,
@@ -208,7 +208,7 @@ public class MineScribeCommonEventHandler {
                                         Double.MAX_VALUE
                                 )
                         ),
-                        new IntegerFileField(
+                        new IntegerFileFieldDefinition(
                                 "Cooking Ticks",
                                 "cookingtime",
                                 5,
@@ -227,13 +227,13 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("types/object/ingredient"),
                 Component.literal("Compound"),
                 FileForm.of(
-                        new ListOfFileField(
+                        new ListOfFileFieldDefinition(
                                 "Children",
                                 "children",
                                 1,
                                 1,
                                 Integer.MAX_VALUE,
-                                new ReferencedObjectFileField(
+                                new ReferencedObjectFileFieldDefinition(
                                         "",
                                         "",
                                         1,
