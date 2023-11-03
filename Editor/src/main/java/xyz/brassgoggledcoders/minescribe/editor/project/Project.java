@@ -46,8 +46,9 @@ public class Project {
         try {
             Preferences projectNode = preferences.node("last_project");
             projectNode.put("path", this.getRootPath().toString());
+            Preferences openTabsNode = projectNode.node("open_tabs");
+            openTabsNode.clear();
             if (!this.openTabs.isEmpty()) {
-                Preferences openTabsNode = projectNode.node("open_tabs");
                 for (Map.Entry<UUID, Path> entry: this.openTabs.entrySet()) {
                     openTabsNode.put(entry.getKey().toString(), entry.getValue().toString());
                 }

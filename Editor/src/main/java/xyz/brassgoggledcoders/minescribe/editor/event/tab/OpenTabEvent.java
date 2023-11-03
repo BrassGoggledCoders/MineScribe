@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -18,7 +17,6 @@ public class OpenTabEvent<T> extends TabEvent {
 
     public static final EventType<OpenTabEvent<?>> OPEN_TAB_EVENT_TYPE = new EventType<>(TAB_EVENT_TYPE, "open");
 
-    //Note: This is from the xyz.brassgoggledcoders.minescribe.editor package
     private final String fxmlFile;
     private final String tabName;
     private final BiConsumer<T, String> setControllerData;

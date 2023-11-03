@@ -4,7 +4,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
-import xyz.brassgoggledcoders.minescribe.editor.controller.ApplicationController;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
 import java.io.IOException;
