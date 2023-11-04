@@ -20,7 +20,10 @@ import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListe
 import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
 import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
@@ -167,6 +170,10 @@ public class ForgeCommonEventHandler {
                     .map(registry -> {
                         ResourceLocation registryId = registry.key().location();
                         ResourceLocation id = new ResourceLocation(registryId.getNamespace(), "tag/" + registryId.getPath());
+                        Path tagPath = Path.of(TagManager.getTagDir(registry.key()));
+                        if (tagPath.startsWith("tags")) {
+                            tagPath = tagPath.subpath(1, tagPath.getNameCount());
+                        }
                         return new PackContentChildData(
                                 id,
                                 new ResourceLocation("tag"),
@@ -174,7 +181,7 @@ public class ForgeCommonEventHandler {
                                         .replace("_", " ")
                                         .replace("/", " ")
                                 ) + " Tags"),
-                                Path.of(TagManager.getTagDir(registry.key())),
+                                tagPath,
                                 Optional.of(FileForm.of(
                                         new FileField<>(
                                                 new CheckBoxFileFieldDefinition(false),
