@@ -13,6 +13,8 @@ import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
 import xyz.brassgoggledcoders.minescribe.core.codec.ErroringOptionalFieldCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -34,6 +36,17 @@ public record PackContentChildData(
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentChildData::path),
             ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentChildData::form)
     ).apply(instance, PackContentChildData::new));
+
+    public PackContentChildType toType() {
+        return new PackContentChildType(
+                new ResourceId(this.id().getNamespace(), this.id().getPath()),
+                this.label().getString(),
+                this.path(),
+                this.form().orElse(null),
+                new ResourceId(this.parentId().getNamespace(), this.parentId().getPath())
+        );
+    }
+
 
     public static JsonCodecProvider<PackContentChildData> createProvider(
             DataGenerator dataGenerator,

@@ -16,14 +16,13 @@ import xyz.brassgoggledcoders.minescribe.api.data.SerializerTypeData;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -98,18 +97,26 @@ public class MineScribeCommonEventHandler {
                 Path.of("test"),
                 MineScribeAPI.PACK_TYPE,
                 Optional.of(FileForm.of(
-                        new StringFileField("String Field", "string", 0, ""),
-                        new ListOfFileField(
-                                "String List",
-                                "stringList",
-                                1,
-                                2,
-                                5,
-                                new StringFileField(
-                                        "",
-                                        "",
+                        new FileField<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfo(
+                                        "String Field",
+                                        "string",
+                                        0,
+                                        false
+                                )
+                        ),
+                        new FileField<>(
+                                new ListOfFileFieldDefinition(
+                                        2,
+                                        5,
+                                        new StringFileFieldDefinition("")
+                                ),
+                                new FileFieldInfo(
+                                        "String List",
+                                        "stringList",
                                         1,
-                                        ""
+                                        false
                                 )
                         )
                 ))
@@ -117,42 +124,7 @@ public class MineScribeCommonEventHandler {
     }
 
     private static void generateChildTypes(Consumer<PackContentChildData> consumer) {
-        consumer.accept(new PackContentChildData(
-                new ResourceLocation("tag/blocks"),
-                new ResourceLocation("tag"),
-                Component.literal("Block Tags"),
-                Path.of("blocks"),
-                Optional.of(FileForm.of(
-                        new CheckBoxFileField("Replace", "replace", 0, false),
-                        new ListSelectionFileField(
-                                "Values",
-                                "values",
-                                1,
-                                List.of(
-                                        new ResourceId("minecraft", "registry/block"),
-                                        new ResourceId("minecraft", "tag/block")
-                                )
-                        )
-                ))
-        ));
-        consumer.accept(new PackContentChildData(
-                new ResourceLocation("tag/items"),
-                new ResourceLocation("tag"),
-                Component.literal("Item Tags"),
-                Path.of("items"),
-                Optional.of(FileForm.of(
-                        new CheckBoxFileField("Replace", "replace", 0, false),
-                        new ListSelectionFileField(
-                                "Values",
-                                "values",
-                                1,
-                                List.of(
-                                        new ResourceId("minecraft", "registry/item"),
-                                        new ResourceId("minecraft", "tag/item")
-                                )
-                        )
-                ))
-        ));
+
     }
 
     private static void generateObjectTypes(Consumer<ObjectTypeData> consumer) {
@@ -162,17 +134,27 @@ public class MineScribeCommonEventHandler {
                         SerializerInfo.of(
                                 "type",
                                 "Type",
-                                new SingleSelectionFileField(
-                                        "Item",
-                                        "item",
-                                        1,
-                                        new ResourceId("minecraft", "registry/item")
+                                new FileField<>(
+                                        new SingleSelectionFileFieldDefinition(
+                                                new ResourceId("minecraft", "registry/item")
+                                        ),
+                                        new FileFieldInfo(
+                                                "Item",
+                                                "item",
+                                                1,
+                                                false
+                                        )
                                 ),
-                                new SingleSelectionFileField(
-                                        "Item Tag",
-                                        "tag",
-                                        2,
-                                        new ResourceId("minecraft", "tag/item")
+                                new FileField<>(
+                                        new SingleSelectionFileFieldDefinition(
+                                                new ResourceId("minecraft", "tag/item")
+                                        ),
+                                        new FileFieldInfo(
+                                                "Item Tag",
+                                                "tag",
+                                                2,
+                                                false
+                                        )
                                 )
                         )
                 )
@@ -186,60 +168,82 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("types/parent/recipe"),
                 Component.literal("Blasting"),
                 FileForm.of(
-                        new ReferencedObjectFileField(
-                                "Ingredient",
-                                "ingredient",
-                                2,
-                                new ResourceId("minecraft", "ingredient")
-                        ),
-                        new SingleSelectionFileField(
-                                "Result",
-                                "result",
-                                3,
-                                new ResourceId("minecraft", "registry/item")
-                        ),
-                        new DoubleFileField(
-                                "Experience",
-                                "experience",
-                                4,
-                                new Range<>(
-                                        0.0,
-                                        0.7,
-                                        Double.MAX_VALUE
+                        new FileField<>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId("minecraft", "ingredient")
+                                ),
+                                new FileFieldInfo(
+                                        "Ingredient",
+                                        "ingredient",
+                                        2,
+                                        true
                                 )
                         ),
-                        new IntegerFileField(
-                                "Cooking Ticks",
-                                "cookingtime",
-                                5,
-                                new Range<>(
-                                        1,
-                                        100,
-                                        Integer.MAX_VALUE
+                        new FileField<>(
+                                new SingleSelectionFileFieldDefinition(
+                                        new ResourceId("minecraft", "registry/item")
+                                ),
+                                new FileFieldInfo(
+                                        "Result",
+                                        "result",
+                                        3,
+                                        true
+                                )
+                        ),
+                        new FileField<>(
+                                new DoubleFileFieldDefinition(
+                                        new Range<>(
+                                                0.0,
+                                                0.7,
+                                                Double.MAX_VALUE
+                                        )
+                                ),
+                                new FileFieldInfo(
+                                        "Experience",
+                                        "experience",
+                                        4,
+                                        false
+                                )
+                        ),
+                        new FileField<>(
+                                new IntegerFileFieldDefinition(
+                                        new Range<>(
+                                                1,
+                                                100,
+                                                Integer.MAX_VALUE
+                                        )
+                                ),
+                                new FileFieldInfo(
+                                        "Cooking Ticks",
+                                        "cookingtime",
+                                        5,
+                                        false
                                 )
                         )
                 )
         ));
-
         consumer.accept(new SerializerTypeData(
                 new ResourceLocation("forge", "ingredients/compound"),
                 new ResourceLocation("forge", "compound"),
                 new ResourceLocation("types/object/ingredient"),
                 Component.literal("Compound"),
                 FileForm.of(
-                        new ListOfFileField(
-                                "Children",
-                                "children",
-                                1,
-                                1,
-                                Integer.MAX_VALUE,
-                                new ReferencedObjectFileField(
-                                        "",
-                                        "",
+                        new FileField<>(
+                                new ListOfFileFieldDefinition(
                                         1,
-                                        new ResourceId("minecraft", "ingredient")
+                                        Integer.MAX_VALUE,
+                                        new ReferencedObjectFileFieldDefinition(
+                                                new ResourceId("minecraft", "ingredient")
+                                        )
+                                ),
+                                new FileFieldInfo(
+                                        "Children",
+                                        "children",
+                                        1,
+                                        true
                                 )
                         )
+
                 )
         ));
     }

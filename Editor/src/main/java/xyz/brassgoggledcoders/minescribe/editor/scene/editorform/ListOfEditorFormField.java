@@ -4,8 +4,8 @@ import com.dlsc.formsfx.model.structure.Field;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import javafx.collections.ListChangeListener;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.field.ListOfFields;
 
@@ -14,15 +14,14 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ListOfEditorFormField implements IEditorFormField<ListOfFields> {
-    private final ListOfFileField fileField;
+    private final ListOfFileFieldDefinition fileField;
     private final ListOfFields field;
     private final Map<String, IEditorFormField<?>> childFields;
 
-    public ListOfEditorFormField(ListOfFileField fileField) {
+    public ListOfEditorFormField(ListOfFileFieldDefinition fileField) {
         this.fileField = fileField;
         this.childFields = new HashMap<>();
         this.field = new ListOfFields()
-                .label(this.fileField.getLabel())
                 .minimumFields(fileField.getMinimum())
                 .maximumFields(fileField.getMaximum())
                 .fieldSupplier(this::createField);
@@ -37,7 +36,7 @@ public class ListOfEditorFormField implements IEditorFormField<ListOfFields> {
     }
 
     @Override
-    public IFileField getFileField() {
+    public IFileFieldDefinition getFileFieldDefinition() {
         return this.fileField;
     }
 

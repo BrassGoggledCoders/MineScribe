@@ -3,16 +3,14 @@
     "fields": [
       {
         "type": "list_of_fields",
+        "field": "children",
+        "label": "Children",
+        "required": true,
+        "sortOrder": 1,
         "value": {
-          "field": "children",
-          "label": "Children",
-          "sortOrder": 1,
           "valueField": {
             "type": "object_ref",
-            "field": "",
-            "label": "",
-            "objectId": "minecraft:ingredient",
-            "sortOrder": 1
+            "objectId": "minecraft:ingredient"
           }
         }
       }

@@ -99,7 +99,7 @@ public class FormController implements IFileEditorController {
             Optional<Form> serializerFormOpt = Optional.ofNullable(this.serializerFormSetup)
                     .map(FormSetup::form);
 
-            if (form.isValid() && serializerFormOpt.map(Form::isValid).orElse(false)) {
+            if (form.isValid() && serializerFormOpt.map(Form::isValid).orElse(true)) {
                 JsonObject jsonObject = new JsonObject();
                 FormUtils.trySaveForm(formSetup, jsonObject);
                 serializerFormOpt.ifPresent(serializerForm -> FormUtils.tryLoadForm(formSetup, jsonObject));

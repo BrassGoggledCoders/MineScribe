@@ -4,28 +4,28 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
 public class Registries {
-    private static final Supplier<BasicStaticRegistry<String, Codec<? extends IFileField>>> FILE_FIELD_CODECS =
+    private static final Supplier<BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>>> FILE_FIELD_CODECS =
             Suppliers.memoize(() -> new BasicStaticRegistry<>(
                     "fileFields",
                     Codec.STRING,
                     initializer -> {
-                        initializer.accept("checkbox", CheckBoxFileField.CODEC);
-                        initializer.accept("list_selection", ListSelectionFileField.CODEC);
-                        initializer.accept("list_of_fields", ListOfFileField.CODEC);
-                        initializer.accept("string", StringFileField.CODEC);
-                        initializer.accept("single_selection", SingleSelectionFileField.CODEC);
-                        initializer.accept("integer", IntegerFileField.CODEC);
-                        initializer.accept("double", DoubleFileField.CODEC);
-                        initializer.accept("object_ref", ReferencedObjectFileField.CODEC);
+                        initializer.accept("checkbox", CheckBoxFileFieldDefinition.CODEC);
+                        initializer.accept("list_selection", ListSelectionFileFieldDefinition.CODEC);
+                        initializer.accept("list_of_fields", ListOfFileFieldDefinition.CODEC);
+                        initializer.accept("string", StringFileFieldDefinition.CODEC);
+                        initializer.accept("single_selection", SingleSelectionFileFieldDefinition.CODEC);
+                        initializer.accept("integer", IntegerFileFieldDefinition.CODEC);
+                        initializer.accept("double", DoubleFileFieldDefinition.CODEC);
+                        initializer.accept("object_ref", ReferencedObjectFileFieldDefinition.CODEC);
                     }
             ));
 
@@ -80,7 +80,7 @@ public class Registries {
                     ObjectType::id
             ));
 
-    public static BasicStaticRegistry<String, Codec<? extends IFileField>> getFileFieldCodecRegistry() {
+    public static BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
     }
 
