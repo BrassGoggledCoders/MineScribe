@@ -19,8 +19,10 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<Map<ResourceLocation, JsonElement>, Map<ResourceLocation, U>> {
@@ -33,9 +35,16 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
     private final Codec<U> prepareCodec;
     private final Codec<U> finalizeCodec;
     private final boolean attemptAddId;
+    private final Supplier<Map<ResourceLocation, U>> gatherAdditional;
 
     public CodecMineScribeReloadListener(String packDirectory, String editorDirectory, Codec<U> prepareCodec,
                                          Codec<U> finalizeCodec, boolean attemptAddId) {
+        this(packDirectory, editorDirectory, prepareCodec, finalizeCodec, attemptAddId, Collections::emptyMap);
+    }
+
+    public CodecMineScribeReloadListener(String packDirectory, String editorDirectory, Codec<U> prepareCodec,
+                                         Codec<U> finalizeCodec, boolean attemptAddId,
+                                         Supplier<Map<ResourceLocation, U>> gatherAdditional) {
         this.editorDirectory = editorDirectory;
         this.attemptAddId = attemptAddId;
         this.gson = new GsonBuilder()
@@ -44,6 +53,7 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
         this.packDirectory = packDirectory;
         this.prepareCodec = prepareCodec;
         this.finalizeCodec = finalizeCodec;
+        this.gatherAdditional = gatherAdditional;
     }
 
     protected Map<ResourceLocation, JsonElement> prepare(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
@@ -81,6 +91,8 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
 
     @Override
     protected Map<ResourceLocation, U> apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
+
+
         final Map<ResourceLocation, U> values = pObject.entrySet()
                 .stream()
                 .flatMap(jsonEntry -> {
@@ -95,6 +107,15 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
                             .stream();
                 })
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        Map<ResourceLocation, U> additional = this.gatherAdditional.get();
+        if (additional.isEmpty()) {
+            LOGGER.info("Loaded {} values for {}", values.size(), this.packDirectory);
+        } else {
+            values.putAll(additional);
+            LOGGER.info("Loaded {} values from JSON and {} from Event for {}", values.size(), additional.size(), this.packDirectory);
+        }
+
 
         LOGGER.info("Loaded {} values for {}", values.size(), this.packDirectory);
         return values;
