@@ -1,8 +1,10 @@
 package xyz.brassgoggledcoders.minescribe.event;
 
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tags.TagManager;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,11 +12,15 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
+import xyz.brassgoggledcoders.minescribe.api.data.PackContentChildData;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherFormListsEvent;
+import xyz.brassgoggledcoders.minescribe.api.event.GatherPackContentChildTypes;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherPackRepositoryLocationsEvent;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
 import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
 import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
@@ -22,6 +28,7 @@ import xyz.brassgoggledcoders.minescribe.data.GameGatheredMineScribeReloadListen
 import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -58,7 +65,8 @@ public class ForgeCommonEventHandler {
                 () -> {
                     GatherFormListsEvent formListsEvent = new GatherFormListsEvent();
                     MinecraftForge.EVENT_BUS.post(formListsEvent);
-                    return formListsEvent.getFormLists()
+                    return formListsEvent.getValues()
+                            .values()
                             .stream();
                 }
         ));
@@ -74,7 +82,12 @@ public class ForgeCommonEventHandler {
                 "registry/types/child",
                 MineScribeCodecs.PACK_CONTENT_CHILD_TYPE,
                 PackContentChildType.CODEC,
-                true
+                true,
+                () -> {
+                    GatherPackContentChildTypes gatherEvent = new GatherPackContentChildTypes();
+                    MinecraftForge.EVENT_BUS.post(gatherEvent);
+                    return gatherEvent.getValues();
+                }
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
                 "types/object",
@@ -142,6 +155,53 @@ public class ForgeCommonEventHandler {
                         );
                     })
                     .forEach(formListsEvent::register);
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerChildTypes(GatherPackContentChildTypes gatherPackContentChildTypes) {
+        MinecraftServer minecraftServer = ServerLifecycleHooks.getCurrentServer();
+        if (minecraftServer != null) {
+            RegistryAccess registryAccess = minecraftServer.registryAccess();
+            registryAccess.registries()
+                    .map(registry -> {
+                        ResourceLocation registryId = registry.key().location();
+                        ResourceLocation id = new ResourceLocation(registryId.getNamespace(), "tag/" + registryId.getPath());
+                        return new PackContentChildData(
+                                id,
+                                new ResourceLocation("tag"),
+                                Component.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
+                                        .replace("_", " ")
+                                        .replace("/", " ")
+                                ) + " Tags"),
+                                Path.of(TagManager.getTagDir(registry.key())),
+                                Optional.of(FileForm.of(
+                                        new FileField<>(
+                                                new CheckBoxFileFieldDefinition(false),
+                                                new FileFieldInfo(
+                                                        "Replace",
+                                                        "replace",
+                                                        0,
+                                                        false
+                                                )
+                                        ),
+                                        new FileField<>(
+                                                new ListSelectionFileFieldDefinition(List.of(
+                                                        new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath()),
+                                                        new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath())
+                                                )),
+                                                new FileFieldInfo(
+                                                        "Values",
+                                                        "values",
+                                                        1,
+                                                        false
+                                                )
+                                        )
+                                ))
+                        );
+                    })
+                    .forEach(gatherPackContentChildTypes::register);
+
         }
     }
 }

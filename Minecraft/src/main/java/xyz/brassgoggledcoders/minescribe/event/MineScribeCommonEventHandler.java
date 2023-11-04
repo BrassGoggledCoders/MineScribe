@@ -222,7 +222,6 @@ public class MineScribeCommonEventHandler {
                         )
                 )
         ));
-
         consumer.accept(new SerializerTypeData(
                 new ResourceLocation("forge", "ingredients/compound"),
                 new ResourceLocation("forge", "compound"),

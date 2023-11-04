@@ -6,6 +6,7 @@
         "field": "ingredient",
         "label": "Ingredient",
         "objectId": "minecraft:ingredient",
+        "required": true,
         "sortOrder": 2
       },
       {
@@ -13,6 +14,7 @@
         "field": "result",
         "label": "Result",
         "list": "minecraft:registry/item",
+        "required": true,
         "sortOrder": 3
       },
       {

@@ -8,17 +8,14 @@
       },
       {
         "type": "list_of_fields",
+        "field": "stringList",
+        "label": "String List",
+        "sortOrder": 1,
         "value": {
-          "field": "stringList",
-          "label": "String List",
           "maximum": 5,
           "minimum": 2,
-          "sortOrder": 1,
           "valueField": {
-            "type": "string",
-            "field": "",
-            "label": "",
-            "sortOrder": 1
+            "type": "string"
           }
         }
       }
