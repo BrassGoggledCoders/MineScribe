@@ -1,15 +1,13 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeCell;
+import javafx.scene.control.*;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.IPackContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
+import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
 
 import java.nio.file.Files;
@@ -63,12 +61,36 @@ public class PackContentTypeEditorItem extends EditorItem {
                                     .flatMap(PackContentType::getForm)
                             );
 
-                    if (fileForm.isPresent()) {
+                    Optional<NamespaceEditorItem> namespaceEditorItem = FileHandler.getInstance()
+                            .getNodePath(this.getPath())
+                            .stream()
+                            .map(TreeItem::getValue)
+                            .filter(NamespaceEditorItem.class::isInstance)
+                            .map(NamespaceEditorItem.class::cast)
+                            .findFirst();
+
+                    if (fileForm.isPresent() && namespaceEditorItem.isPresent()) {
+                        Path filePath = namespaceEditorItem.get()
+                                .getPath()
+                                .resolve(newFileResult.parentType()
+                                        .getPath()
+                                );
+
+                        filePath = newFileResult.childTypeOpt()
+                                .map(PackContentType::getPath)
+                                .map(filePath::resolve)
+                                .orElse(filePath);
+
+                        if (filePath.compareTo(this.getPath()) < 0) {
+                            filePath = this.getPath();
+                        }
+
+                        Path finalFilePath = filePath.resolve(newFileResult.fileName());
                         treeCell.fireEvent(new OpenTabEvent<FormController>(
                                 newFileResult.fileName(),
                                 "tab/form",
                                 (controller, tabId) -> controller.setFormInfo(
-                                        this.getPath().resolve(newFileResult.fileName()),
+                                        finalFilePath,
                                         newFileResult.parentType(),
                                         newFileResult.childTypeOpt()
                                                 .orElse(null)

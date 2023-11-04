@@ -56,7 +56,11 @@ public class FileHandler {
         return closestNode;
     }
 
-    public Queue<TreeItem<EditorItem>> getNodePath(Path path, TreeItem<EditorItem> treeItem) {
+    public Queue<TreeItem<EditorItem>> getNodePath(Path path) {
+        return this.getNodePath(path, this.rootItem);
+    }
+
+    private Queue<TreeItem<EditorItem>> getNodePath(Path path, TreeItem<EditorItem> treeItem) {
         List<TreeItem<EditorItem>> children = treeItem.getChildren();
 
         for (TreeItem<EditorItem> child : children) {
