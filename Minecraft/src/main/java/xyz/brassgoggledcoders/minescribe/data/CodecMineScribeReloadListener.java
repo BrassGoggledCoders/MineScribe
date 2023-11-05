@@ -112,12 +112,10 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
         if (additional.isEmpty()) {
             LOGGER.info("Loaded {} values for {}", values.size(), this.packDirectory);
         } else {
-            values.putAll(additional);
             LOGGER.info("Loaded {} values from JSON and {} from Event for {}", values.size(), additional.size(), this.packDirectory);
+            values.putAll(additional);
         }
 
-
-        LOGGER.info("Loaded {} values for {}", values.size(), this.packDirectory);
         return values;
     }
 

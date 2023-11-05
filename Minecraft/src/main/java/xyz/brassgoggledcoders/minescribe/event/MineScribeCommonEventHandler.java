@@ -14,6 +14,7 @@ import xyz.brassgoggledcoders.minescribe.api.data.PackContentChildData;
 import xyz.brassgoggledcoders.minescribe.api.data.PackContentParentData;
 import xyz.brassgoggledcoders.minescribe.api.data.SerializerTypeData;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
@@ -63,14 +64,68 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Parent Type"),
                 Path.of("types", "parent"),
                 MineScribeAPI.PACK_TYPE,
-                Optional.empty()
+                Optional.of(FileForm.of(
+                        new FileField<>(
+                                new ListOfFileFieldDefinition(
+                                        0,
+                                        Integer.MAX_VALUE,
+                                        new ReferencedObjectFileFieldDefinition(
+                                                new ResourceId(MineScribe.ID, "file_field")
+                                        )
+                                ),
+                                new FileFieldInfo(
+                                        "Fields",
+                                        "fields",
+                                        0,
+                                        false
+                                )
+                        ),
+                        new FileField<IFileFieldDefinition>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "serializer_info")
+                                ),
+                                new FileFieldInfo(
+                                        "Serializer Info",
+                                        "serializer",
+                                        1,
+                                        false
+                                )
+                        )
+                ))
         ));
         consumer.accept(new PackContentParentData(
                 MineScribe.rl("child_type"),
                 Component.literal("Child Type"),
                 Path.of("types", "child"),
                 MineScribeAPI.PACK_TYPE,
-                Optional.empty()
+                Optional.of(FileForm.of(
+                        new FileField<>(
+                                new ListOfFileFieldDefinition(
+                                        0,
+                                        Integer.MAX_VALUE,
+                                        new ReferencedObjectFileFieldDefinition(
+                                                new ResourceId(MineScribe.ID, "file_field")
+                                        )
+                                ),
+                                new FileFieldInfo(
+                                        "Fields",
+                                        "fields",
+                                        0,
+                                        false
+                                )
+                        ),
+                        new FileField<IFileFieldDefinition>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "serializer_info")
+                                ),
+                                new FileFieldInfo(
+                                        "Serializer Info",
+                                        "serializer",
+                                        1,
+                                        false
+                                )
+                        )
+                ))
         ));
         consumer.accept(new PackContentParentData(
                 new ResourceLocation("tag"),
@@ -155,6 +210,138 @@ public class MineScribeCommonEventHandler {
                                                 2,
                                                 false
                                         )
+                                )
+                        )
+                )
+        ));
+
+        consumer.accept(new ObjectTypeData(
+                new ResourceLocation(MineScribe.ID, "file_field_info"),
+                FileForm.of(
+                        new FileField<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfo(
+                                        "Label",
+                                        "label",
+                                        0,
+                                        true
+                                )
+                        ),
+                        new FileField<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfo(
+                                        "Field",
+                                        "field",
+                                        1,
+                                        true
+                                )
+                        ),
+                        new FileField<>(
+                                new IntegerFileFieldDefinition(new Range<>(
+                                        0,
+                                        0,
+                                        Integer.MAX_VALUE
+                                )),
+                                new FileFieldInfo(
+                                        "Sort Order",
+                                        "sortOrder",
+                                        2,
+                                        true
+                                )
+                        ),
+                        new FileField<>(
+                                new CheckBoxFileFieldDefinition(false),
+                                new FileFieldInfo(
+                                        "Required",
+                                        "required",
+                                        3,
+                                        false
+                                )
+                        )
+                )
+        ));
+
+        consumer.accept(new ObjectTypeData(
+                new ResourceLocation(MineScribe.ID, "file_field_definition"),
+                FileForm.of(
+                        SerializerInfo.of(
+                                "type",
+                                "Type"
+                        )
+                )
+        ));
+
+        consumer.accept(new ObjectTypeData(
+                new ResourceLocation(MineScribe.ID, "serializer_info"),
+                FileForm.of(
+                        new FileField<>(
+                                new StringFileFieldDefinition("type"),
+                                new FileFieldInfo(
+                                        "Field",
+                                        "field",
+                                        0,
+                                        true
+                                )
+                        ),
+                        new FileField<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfo(
+                                        "Label",
+                                        "label",
+                                        1,
+                                        true
+                                )
+                        ),
+                        new FileField<>(
+                                new ListOfFileFieldDefinition(
+                                        1,
+                                        Integer.MAX_VALUE,
+                                        new ReferencedObjectFileFieldDefinition(
+                                                new ResourceId(MineScribe.ID, "file_field")
+                                        )
+                                ),
+                                new FileFieldInfo(
+                                        "Default Field",
+                                        "defaultField",
+                                        2,
+                                        true
+                                )
+                        ),
+                        new FileField<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfo(
+                                        "Default Type",
+                                        "defaultType",
+                                        3,
+                                        true
+                                )
+                        )
+                )
+        ));
+
+        consumer.accept(new ObjectTypeData(
+                new ResourceLocation(MineScribe.ID, "file_field"),
+                FileForm.of(
+                        new FileField<>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "file_field_definition")
+                                ),
+                                new FileFieldInfo(
+                                        "Definition",
+                                        "fields",
+                                        0,
+                                        true
+                                )
+                        ),
+                        new FileField<IFileFieldDefinition>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "file_field_info")
+                                ),
+                                new FileFieldInfo(
+                                        "Info",
+                                        "info",
+                                        1,
+                                        true
                                 )
                         )
                 )
@@ -244,6 +431,23 @@ public class MineScribeCommonEventHandler {
                                 )
                         )
 
+                )
+        ));
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "file_field_definitions/checkbox"),
+                new ResourceLocation(MineScribe.ID, "checkbox"),
+                new ResourceLocation(MineScribe.ID, "types/object/file_field_definition"),
+                Component.literal("Check Box"),
+                FileForm.of(
+                        new FileField<>(
+                                new CheckBoxFileFieldDefinition(false),
+                                new FileFieldInfo(
+                                        "Default Value",
+                                        JsonFieldNames.DEFAULT_VALUE,
+                                        0,
+                                        false
+                                )
+                        )
                 )
         ));
     }

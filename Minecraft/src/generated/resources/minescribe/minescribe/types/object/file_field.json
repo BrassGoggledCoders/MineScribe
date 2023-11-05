@@ -1,0 +1,30 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "object_ref",
+          "objectId": "minescribe:file_field_definition"
+        },
+        "info": {
+          "field": "fields",
+          "label": "Definition",
+          "required": true
+        }
+      },
+      {
+        "definition": {
+          "type": "object_ref",
+          "objectId": "minescribe:file_field_info"
+        },
+        "info": {
+          "field": "info",
+          "label": "Info",
+          "required": true,
+          "sortOrder": 1
+        }
+      }
+    ]
+  },
+  "id": "minescribe:file_field"
+}

@@ -49,6 +49,9 @@ public class FormUtils {
                         .id(editorFormField.getFirst()
                                 .field()
                         )
+                        .required(editorFormField.getFirst()
+                                .required()
+                        )
                 )
                 .collect(Collectors.toList());
 

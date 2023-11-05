@@ -1,0 +1,21 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "checkbox"
+        },
+        "info": {
+          "field": "defaultValue",
+          "label": "Default Value"
+        }
+      }
+    ]
+  },
+  "id": "minescribe:file_field_definitions/checkbox",
+  "label": {
+    "text": "Check Box"
+  },
+  "parentId": "minescribe:types/object/file_field_definition",
+  "serializerId": "minescribe:checkbox"
+}

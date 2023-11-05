@@ -1,0 +1,57 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "string",
+          "defaultValue": "type"
+        },
+        "info": {
+          "field": "field",
+          "label": "Field",
+          "required": true
+        }
+      },
+      {
+        "definition": {
+          "type": "string"
+        },
+        "info": {
+          "field": "label",
+          "label": "Label",
+          "required": true,
+          "sortOrder": 1
+        }
+      },
+      {
+        "definition": {
+          "type": "list_of_fields",
+          "value": {
+            "valueField": {
+              "type": "object_ref",
+              "objectId": "minescribe:file_field"
+            }
+          }
+        },
+        "info": {
+          "field": "defaultField",
+          "label": "Default Field",
+          "required": true,
+          "sortOrder": 2
+        }
+      },
+      {
+        "definition": {
+          "type": "string"
+        },
+        "info": {
+          "field": "defaultType",
+          "label": "Default Type",
+          "required": true,
+          "sortOrder": 3
+        }
+      }
+    ]
+  },
+  "id": "minescribe:serializer_info"
+}
