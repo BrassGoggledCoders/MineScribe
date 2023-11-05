@@ -6,19 +6,12 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.field.ObjectField;
 
 public class ObjectEditorFormField implements IEditorFormField<ObjectField> {
-    private final ReferencedObjectFileFieldDefinition fileField;
     private final ObjectField field;
 
     public ObjectEditorFormField(ReferencedObjectFileFieldDefinition fileField) {
-        this.fileField = fileField;
         this.field = new ObjectField(Registries.getObjectTypes()
                 .getValue(fileField.objectId())
         );
-    }
-
-    @Override
-    public ReferencedObjectFileFieldDefinition getFileFieldDefinition() {
-        return this.fileField;
     }
 
     @Override

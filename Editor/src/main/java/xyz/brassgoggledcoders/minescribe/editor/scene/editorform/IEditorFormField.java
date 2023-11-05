@@ -7,8 +7,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefin
 
 public interface IEditorFormField<F extends Field<F>> {
 
-    IFileFieldDefinition getFileFieldDefinition();
-
     F asField();
 
     void loadFromJson(JsonElement jsonElement);

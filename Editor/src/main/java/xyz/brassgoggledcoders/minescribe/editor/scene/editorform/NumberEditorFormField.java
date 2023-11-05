@@ -19,11 +19,6 @@ public class NumberEditorFormField<N extends NumberFileFieldDefinition<T>, T ext
     }
 
     @Override
-    public N getFileFieldDefinition() {
-        return this.fileField;
-    }
-
-    @Override
     public F asField() {
         return this.field;
     }

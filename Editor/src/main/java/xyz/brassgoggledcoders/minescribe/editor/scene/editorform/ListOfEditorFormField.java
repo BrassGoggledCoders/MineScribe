@@ -4,8 +4,8 @@ import com.dlsc.formsfx.model.structure.Field;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import javafx.collections.ListChangeListener;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.field.ListOfFields;
 
@@ -33,11 +33,6 @@ public class ListOfEditorFormField implements IEditorFormField<ListOfFields> {
                 }
             }
         });
-    }
-
-    @Override
-    public IFileFieldDefinition getFileFieldDefinition() {
-        return this.fileField;
     }
 
     @Override
@@ -73,17 +68,18 @@ public class ListOfEditorFormField implements IEditorFormField<ListOfFields> {
     }
 
     private Field<?> createField() {
-        IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
-                .createEditorFieldFor(this.fileField.getChildField());
+        try {
+            IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
+                    .createEditorFieldFor(this.fileField.getChildField());
 
-        if (editorFormField != null) {
             Field<?> childField = editorFormField.asField();
             String id = UUID.randomUUID().toString();
             childField.id(id);
             this.childFields.put(id, editorFormField);
             return childField;
-        } else {
-            return null;
+        } catch (FormException formException) {
+            throw new RuntimeException("Failed to Create Field for ListOfEditorForm");
         }
+
     }
 }
