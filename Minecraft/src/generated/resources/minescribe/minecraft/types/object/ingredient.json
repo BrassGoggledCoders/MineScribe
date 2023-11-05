@@ -4,18 +4,26 @@
     "serializer": {
       "defaultFields": [
         {
-          "type": "single_selection",
-          "field": "item",
-          "label": "Item",
-          "list": "minecraft:registry/item",
-          "sortOrder": 1
+          "definition": {
+            "type": "single_selection",
+            "list": "minecraft:registry/item"
+          },
+          "info": {
+            "field": "item",
+            "label": "Item",
+            "sortOrder": 1
+          }
         },
         {
-          "type": "single_selection",
-          "field": "tag",
-          "label": "Item Tag",
-          "list": "minecraft:tag/item",
-          "sortOrder": 2
+          "definition": {
+            "type": "single_selection",
+            "list": "minecraft:tag/item"
+          },
+          "info": {
+            "field": "tag",
+            "label": "Item Tag",
+            "sortOrder": 2
+          }
         }
       ],
       "label": "Type"

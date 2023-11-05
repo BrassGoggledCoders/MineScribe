@@ -2,21 +2,29 @@
   "form": {
     "fields": [
       {
-        "type": "string",
-        "field": "string",
-        "label": "String Field"
+        "definition": {
+          "type": "string"
+        },
+        "info": {
+          "field": "string",
+          "label": "String Field"
+        }
       },
       {
-        "type": "list_of_fields",
-        "field": "stringList",
-        "label": "String List",
-        "sortOrder": 1,
-        "value": {
-          "maximum": 5,
-          "minimum": 2,
-          "valueField": {
-            "type": "string"
+        "definition": {
+          "type": "list_of_fields",
+          "value": {
+            "maximum": 5,
+            "minimum": 2,
+            "valueField": {
+              "type": "string"
+            }
           }
+        },
+        "info": {
+          "field": "stringList",
+          "label": "String List",
+          "sortOrder": 1
         }
       }
     ]

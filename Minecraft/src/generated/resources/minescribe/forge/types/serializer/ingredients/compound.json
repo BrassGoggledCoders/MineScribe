@@ -2,16 +2,20 @@
   "form": {
     "fields": [
       {
-        "type": "list_of_fields",
-        "field": "children",
-        "label": "Children",
-        "required": true,
-        "sortOrder": 1,
-        "value": {
-          "valueField": {
-            "type": "object_ref",
-            "objectId": "minecraft:ingredient"
+        "definition": {
+          "type": "list_of_fields",
+          "value": {
+            "valueField": {
+              "type": "object_ref",
+              "objectId": "minecraft:ingredient"
+            }
           }
+        },
+        "info": {
+          "field": "children",
+          "label": "Children",
+          "required": true,
+          "sortOrder": 1
         }
       }
     ]

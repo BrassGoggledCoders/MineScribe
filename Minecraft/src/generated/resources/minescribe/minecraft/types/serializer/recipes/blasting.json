@@ -2,39 +2,55 @@
   "form": {
     "fields": [
       {
-        "type": "object_ref",
-        "field": "ingredient",
-        "label": "Ingredient",
-        "objectId": "minecraft:ingredient",
-        "required": true,
-        "sortOrder": 2
-      },
-      {
-        "type": "single_selection",
-        "field": "result",
-        "label": "Result",
-        "list": "minecraft:registry/item",
-        "required": true,
-        "sortOrder": 3
-      },
-      {
-        "type": "double",
-        "field": "experience",
-        "label": "Experience",
-        "range": {
-          "start": 0.7
+        "definition": {
+          "type": "object_ref",
+          "objectId": "minecraft:ingredient"
         },
-        "sortOrder": 4
+        "info": {
+          "field": "ingredient",
+          "label": "Ingredient",
+          "required": true,
+          "sortOrder": 2
+        }
       },
       {
-        "type": "integer",
-        "field": "cookingtime",
-        "label": "Cooking Ticks",
-        "range": {
-          "min": 1,
-          "start": 100
+        "definition": {
+          "type": "single_selection",
+          "list": "minecraft:registry/item"
         },
-        "sortOrder": 5
+        "info": {
+          "field": "result",
+          "label": "Result",
+          "required": true,
+          "sortOrder": 3
+        }
+      },
+      {
+        "definition": {
+          "type": "double",
+          "range": {
+            "start": 0.7
+          }
+        },
+        "info": {
+          "field": "experience",
+          "label": "Experience",
+          "sortOrder": 4
+        }
+      },
+      {
+        "definition": {
+          "type": "integer",
+          "range": {
+            "min": 1,
+            "start": 100
+          }
+        },
+        "info": {
+          "field": "cookingtime",
+          "label": "Cooking Ticks",
+          "sortOrder": 5
+        }
       }
     ]
   },
