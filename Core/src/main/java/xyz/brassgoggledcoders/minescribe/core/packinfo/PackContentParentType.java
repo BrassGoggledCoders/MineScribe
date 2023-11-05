@@ -9,7 +9,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
 import java.nio.file.Path;
 
-public class PackContentParentType extends PackContentType {
+public class PackContentParentType extends PackContentType implements IFullName {
     public static final Codec<PackContentParentType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceId.CODEC.fieldOf("id").forGetter(PackContentType::getId),
             Codec.STRING.fieldOf("label").forGetter(PackContentType::getLabel),
@@ -27,5 +27,13 @@ public class PackContentParentType extends PackContentType {
 
     public MineScribePackType getPackType() {
         return packType;
+    }
+
+    @Override
+    public ResourceId getFullName() {
+        return new ResourceId(
+                this.getId().namespace(),
+                "types/parent/" + this.getId().path()
+        );
     }
 }

@@ -58,7 +58,7 @@ public class EditorRegistries {
                 ));
                 registry.register("object_ref", new EditorFormFieldTransform<>(
                         ReferencedObjectFileFieldDefinition.class,
-                        ObjectEditorFormField::new
+                        ObjectEditorFormField::of
                 ));
                 registry.validate();
                 return registry;

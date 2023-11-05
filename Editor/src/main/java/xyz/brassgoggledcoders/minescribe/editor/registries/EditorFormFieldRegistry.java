@@ -2,12 +2,14 @@ package xyz.brassgoggledcoders.minescribe.editor.registries;
 
 import com.dlsc.formsfx.model.structure.Field;
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
+import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.IEditorFormField;
 
 public class EditorFormFieldRegistry extends Registry<String, EditorFormFieldTransform<?, ?, ?>> {
@@ -23,7 +25,8 @@ public class EditorFormFieldRegistry extends Registry<String, EditorFormFieldTra
         this.getMap().put(name, transforms);
     }
 
-    public IEditorFormField<?> createEditorFieldFor(IFileFieldDefinition fileFieldDefinition) {
+    @NotNull
+    public IEditorFormField<?> createEditorFieldFor(IFileFieldDefinition fileFieldDefinition) throws FormException {
         String key = Registries.getFileFieldCodecRegistry()
                 .getKey(fileFieldDefinition.getCodec());
         if (key != null) {
@@ -31,13 +34,11 @@ public class EditorFormFieldRegistry extends Registry<String, EditorFormFieldTra
             if (transform != null) {
                 return transform.transformField(fileFieldDefinition);
             } else {
-                LOGGER.error("No Transform found for key {}", key);
+                throw new FormException("No Transform found for key: %s".formatted(key));
             }
         } else {
-            LOGGER.error("No key found for File Field Definition {}", fileFieldDefinition);
+            throw new FormException("No key found for File Field Definition: %s".formatted(fileFieldDefinition));
         }
-
-        return null;
     }
 
     public void validate() {
