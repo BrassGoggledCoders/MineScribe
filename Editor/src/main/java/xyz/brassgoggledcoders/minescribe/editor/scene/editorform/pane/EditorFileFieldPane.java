@@ -57,6 +57,18 @@ public class EditorFileFieldPane<F extends Field<F>> extends EditorFieldPane<F> 
         return this.fieldInfo.field();
     }
 
+    @Override
+    public int getSortOrder() {
+        return this.fieldInfo.sortOrder();
+    }
+
+    @Override
+    public String toString() {
+        return "EditorFileFieldPane{" +
+                "fieldInfo=" + fieldInfo +
+                '}';
+    }
+
     public static EditorFileFieldPane<?> of(FileForm form, FileField<?> field) throws FormException {
         IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
                 .createEditorFieldFor(field.definition());

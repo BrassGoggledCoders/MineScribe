@@ -97,6 +97,18 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         return this.serializerInfo.fieldName();
     }
 
+    @Override
+    public int getSortOrder() {
+        return 10000;
+    }
+
+    @Override
+    public String toString() {
+        return "SerializerEditorFieldPane{" +
+                "serializerInfo=" + serializerInfo +
+                '}';
+    }
+
     public static Optional<SerializerEditorFieldPane> of(FileForm fileForm, Supplier<List<SerializerType>> gatherTypes) {
         return fileForm.getSerializer()
                 .map(serializerInfo -> {
