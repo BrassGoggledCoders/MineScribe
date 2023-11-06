@@ -3,11 +3,10 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 import com.dlsc.formsfx.model.structure.Field;
 import com.dlsc.formsfx.view.controls.SimpleControl;
 import com.google.gson.JsonElement;
-import javafx.beans.property.BooleanProperty;
-import javafx.scene.layout.Pane;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
+import xyz.brassgoggledcoders.minescribe.editor.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.IEditorFormField;
@@ -36,6 +35,7 @@ public class EditorFileFieldPane<F extends Field<F>> extends EditorFieldPane<F> 
 
         SimpleControl<F> control = this.field.getRenderer();
         control.setField(field);
+        SceneUtils.setAnchors(control);
         this.getChildren().add(control);
     }
 

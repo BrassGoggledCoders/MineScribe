@@ -4,10 +4,11 @@ import com.dlsc.formsfx.model.structure.Field;
 import com.google.gson.JsonElement;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.layout.Pane;
+import javafx.geometry.Insets;
+import javafx.scene.layout.AnchorPane;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 
-public abstract class EditorFieldPane<F extends Field<F>> extends Pane {
+public abstract class EditorFieldPane<F extends Field<F>> extends AnchorPane {
     private final FileForm fileForm;
     private final BooleanProperty changed;
     private final BooleanProperty valid;
@@ -18,6 +19,8 @@ public abstract class EditorFieldPane<F extends Field<F>> extends Pane {
         this.fileForm = fileForm;
         this.changed = new SimpleBooleanProperty(false);
         this.valid = new SimpleBooleanProperty(true);
+
+        this.setPadding(new Insets(5));
     }
 
     public FileForm getFileForm() {

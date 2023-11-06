@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
 import com.dlsc.formsfx.model.structure.SingleSelectionField;
+import com.dlsc.formsfx.view.controls.SimpleControl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
@@ -10,6 +11,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.editor.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
 
 import java.util.ArrayList;
@@ -35,6 +37,11 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
         this.changedProperty().bind(this.selectionField.changedProperty());
         this.validProperty().bind(this.selectionField.validProperty());
+
+        SimpleControl<SingleSelectionField<SerializerType>> simpleControl = this.selectionField.getRenderer();
+        simpleControl.setField(this.selectionField);
+        SceneUtils.setAnchors(simpleControl);
+        this.getChildren().add(simpleControl);
     }
 
     private void reloadSerializerType(SerializerType newValue) {
