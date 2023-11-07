@@ -5,6 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MineScribeJsonHelper {
     public static String getAsString(JsonObject pJson, String pMemberName) {
@@ -49,5 +52,19 @@ public class MineScribeJsonHelper {
         } else {
             throw new JsonSyntaxException("Expected " + pMemberName + " to be a JsonArray");
         }
+    }
+
+    public static List<String> getAsStrings(JsonElement jsonElement) {
+        List<String> stringList = new ArrayList<>();
+        if (jsonElement.isJsonArray()) {
+            for (JsonElement arrayElement : jsonElement.getAsJsonArray()) {
+                if (arrayElement.isJsonPrimitive()) {
+                    stringList.add(arrayElement.getAsString());
+                }
+            }
+        } else if (jsonElement.isJsonPrimitive()) {
+            stringList.add(jsonElement.getAsString());
+        }
+        return stringList;
     }
 }

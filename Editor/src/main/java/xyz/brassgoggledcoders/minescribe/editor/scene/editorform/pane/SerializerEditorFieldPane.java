@@ -1,47 +1,42 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
-import com.dlsc.formsfx.model.structure.SingleSelectionField;
-import com.dlsc.formsfx.view.controls.SimpleControl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
+import javafx.beans.property.ObjectProperty;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
-import xyz.brassgoggledcoders.minescribe.editor.SceneUtils;
-import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.SingleSelectionFieldControl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionField<SerializerType>> {
-    private final SingleSelectionField<SerializerType> selectionField;
+public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFieldControl<SerializerType>> {
+    private final SingleSelectionFieldControl<SerializerType> fieldControl;
     private final SerializerInfo serializerInfo;
 
-    private SerializerEditorFieldPane(FileForm fileForm, SerializerInfo serializerInfo, SingleSelectionField<SerializerType> selectionField) {
+    private SerializerEditorFieldPane(FileForm fileForm, SerializerInfo serializerInfo,
+                                      SingleSelectionFieldControl<SerializerType> fieldControl) {
         super(fileForm);
         this.serializerInfo = serializerInfo;
-        this.selectionField = selectionField;
+        this.fieldControl = fieldControl;
 
         setup();
     }
 
     private void setup() {
-        this.selectionField.selectionProperty()
+        this.fieldControl.valueProperty()
                 .addListener((observable, oldValue, newValue) -> reloadSerializerType(newValue));
 
-        this.changedProperty().bind(this.selectionField.changedProperty());
-        this.validProperty().bind(this.selectionField.validProperty());
-
-        SimpleControl<SingleSelectionField<SerializerType>> simpleControl = this.selectionField.getRenderer();
-        simpleControl.setField(this.selectionField);
-        SceneUtils.setAnchors(simpleControl);
-        this.getChildren().add(simpleControl);
+        this.changedProperty().bind(this.fieldControl.changedProperty());
+        this.validProperty().bind(this.fieldControl.validProperty());
+        this.getChildren().add(this.fieldControl.getNode());
     }
 
     private void reloadSerializerType(SerializerType newValue) {
@@ -58,8 +53,8 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
     }
 
     @Override
-    public SingleSelectionField<SerializerType> getField() {
-        return this.selectionField;
+    public SingleSelectionFieldControl<SerializerType> getContent() {
+        return this.fieldControl;
     }
 
     @Override
@@ -68,23 +63,25 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
             ResourceId.fromString(jsonElement.getAsString())
                     .result()
                     .map(Registries.getSerializerTypes()::getValue)
-                    .ifPresent(this.getField().selectionProperty()::set);
+                    .ifPresent(this.getContent().valueProperty()::set);
         }
 
-        if (this.getField().getSelection() == null && !this.getField().getItems().isEmpty()) {
-            this.getField()
-                    .selectionProperty()
-                    .set(this.getField()
-                            .itemsProperty()
-                            .get(0)
-                    );
+        ObjectProperty<SerializerType> selected = this.getContent()
+                .valueProperty();
+        List<SerializerType> items = this.getContent()
+                .itemsProperty()
+                .get();
+
+        if (selected.get() == null && !items.isEmpty()) {
+            selected.set(items.get(0));
         }
     }
 
     @Override
     public JsonElement getValue() {
-        SerializerType serializerType = this.getField()
-                .getSelection();
+        SerializerType serializerType = this.getContent()
+                .valueProperty()
+                .get();
         if (serializerType != null && !serializerType.id().equals(ResourceId.NULL)) {
             return new JsonPrimitive(serializerType.serializerId().toString());
         } else {
@@ -127,18 +124,20 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                         serializerTypes.add(0, defaultFieldsType);
                     }
 
-                    SingleSelectionField<SerializerType> field = SingleSelectionField.ofSingleSelectionType(serializerTypes)
-                            .id(serializerInfo.fieldName())
-                            .label(serializerInfo.label())
-                            .render(() -> new CellFactoryComboBoxControl<>(SerializerType::label))
-                            .required(true);
+                    SingleSelectionFieldControl<SerializerType> field = SingleSelectionFieldControl.of(
+                                    serializerTypes,
+                                    serializerType -> serializerType.id().toString()
+                            )
+                            .withId(serializerInfo.fieldName())
+                            .withLabel(serializerInfo.label())
+                            .withRequired(true);
 
                     serializerInfo.defaultType()
                             .map(Registries.getSerializerTypes()::getValue)
-                            .ifPresent(field.selectionProperty()::set);
+                            .ifPresent(field.valueProperty()::set);
 
-                    if (field.getSelection() == null && defaultFieldsType != null) {
-                        field.selectionProperty().set(defaultFieldsType);
+                    if (field.valueProperty().get() == null && defaultFieldsType != null) {
+                        field.valueProperty().set(defaultFieldsType);
                     }
                     return new SerializerEditorFieldPane(fileForm, serializerInfo, field);
                 });

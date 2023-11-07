@@ -58,7 +58,7 @@ public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, Serial
         return serializerTypes;
     }
 
-    public Supplier<List<SerializerType>> getFor(IFullName... values) {
+    public Supplier<List<SerializerType>> supplyList(IFullName... values) {
         return () -> {
             List<SerializerType> serializerTypes = new ArrayList<>();
             for (IFullName fullName : values) {

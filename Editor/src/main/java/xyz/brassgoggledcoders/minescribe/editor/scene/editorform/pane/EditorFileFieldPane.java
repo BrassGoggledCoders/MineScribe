@@ -1,55 +1,45 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
-import com.dlsc.formsfx.model.structure.Field;
-import com.dlsc.formsfx.view.controls.SimpleControl;
-import com.google.gson.JsonElement;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
-import xyz.brassgoggledcoders.minescribe.editor.SceneUtils;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
-import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.IEditorFormField;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
-public class EditorFileFieldPane<F extends Field<F>> extends EditorFieldPane<F> {
+public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldPane<F> {
     private final FileFieldInfo fieldInfo;
-    private final IEditorFormField<F> editorField;
-    private final F field;
+    private final F content;
 
-    public EditorFileFieldPane(FileForm fileForm, FileFieldInfo fieldInfo, IEditorFormField<F> editorField) {
+    public EditorFileFieldPane(FileForm fileForm, FileFieldInfo fieldInfo, F content) {
         super(fileForm);
         this.fieldInfo = fieldInfo;
-        this.editorField = editorField;
-        this.field = editorField.asField();
+        this.content = content;
 
         setup();
     }
 
     private void setup() {
-        this.field.id(this.fieldInfo.field())
-                .required(this.fieldInfo.required())
-                .label(this.fieldInfo.label());
+        this.content.withId(this.fieldInfo.field());
+        if (this.content instanceof IValueContent<?> valueControl) {
+            valueControl.withRequired(this.fieldInfo.required());
 
-        this.changedProperty().bind(this.field.changedProperty());
-        this.validProperty().bind(this.field.validProperty());
+            this.changedProperty().bind(valueControl.changedProperty());
+            this.validProperty().bind(valueControl.validProperty());
+        }
+        if (this.content instanceof ILabeledContent<?> labeledControl) {
+            labeledControl.withLabel(this.fieldInfo.label());
+        }
 
-        SimpleControl<F> control = this.field.getRenderer();
-        control.setField(field);
-        SceneUtils.setAnchors(control);
-        this.getChildren().add(control);
+        this.getChildren().add(content.getNode());
     }
 
     @Override
-    public F getField() {
-        return field;
-    }
-
-    public void setValue(JsonElement jsonElement) {
-        this.editorField.loadFromJson(jsonElement);
-    }
-
-    public JsonElement getValue() {
-        return this.editorField.saveAsJson();
+    public F getContent() {
+        return content;
     }
 
     @Override
@@ -69,10 +59,12 @@ public class EditorFileFieldPane<F extends Field<F>> extends EditorFieldPane<F> 
                 '}';
     }
 
-    public static EditorFileFieldPane<?> of(FileForm form, FileField<?> field) throws FormException {
-        IEditorFormField<?> editorFormField = EditorRegistries.getEditorFormFieldRegistry()
+    public static <C extends FieldContent<C>, U extends IFileFieldDefinition> EditorFileFieldPane<C> of(
+            FileForm form, FileField<U> field
+    ) throws FormException {
+        C fieldContent = EditorRegistries.getEditorFormFieldRegistry()
                 .createEditorFieldFor(field.definition());
 
-        return new EditorFileFieldPane<>(form, field.info(), editorFormField);
+        return new EditorFileFieldPane<>(form, field.info(), fieldContent);
     }
 }
