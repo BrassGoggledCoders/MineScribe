@@ -64,20 +64,34 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
     @Override
     public void setValue(JsonElement jsonElement) {
+        ObjectProperty<SerializerType> selected = this.getContent()
+                .valueProperty();
         if (jsonElement != null && jsonElement.isJsonPrimitive()) {
             ResourceId.fromString(jsonElement.getAsString())
                     .result()
                     .map(Registries.getSerializerTypes()::getValue)
-                    .ifPresent(this.getContent().valueProperty()::set);
+                    .ifPresent(selected::set);
         }
 
-        ObjectProperty<SerializerType> selected = this.getContent()
-                .valueProperty();
+        if (selected.get() == null) {
+            serializerInfo.defaultType()
+                    .map(Registries.getSerializerTypes()::getValue)
+                    .ifPresent(selected::set);
+        }
+
         List<SerializerType> items = this.getContent()
                 .itemsProperty()
                 .get();
 
-        if (selected.get() == null && !items.isEmpty()) {
+        if (selected.get() == null) {
+            items.stream()
+                    .filter(serializerType -> serializerType.id().equals(ResourceId.NULL))
+                    .findFirst()
+                    .ifPresent(selected::set);
+        }
+
+        if (selected.get() == null) {
+
             selected.set(items.get(0));
         }
     }

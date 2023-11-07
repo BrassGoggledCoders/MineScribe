@@ -81,9 +81,9 @@ public class FieldListControl extends TitledPane {
             FieldContent<?> fieldContent = EditorRegistries.getEditorFormFieldRegistry()
                     .createEditorFieldFor(this.fieldDefinition);
 
-            int size = this.getChildren()
+            int size = this.fieldPane.getChildren()
                     .size();
-            this.getChildren()
+            this.fieldPane.getChildren()
                     .add(size - 1, createFieldNode(fieldContent));
             return fieldContent;
         } catch (FormException formException) {

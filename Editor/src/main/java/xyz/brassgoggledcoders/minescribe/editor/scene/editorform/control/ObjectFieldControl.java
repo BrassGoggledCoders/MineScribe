@@ -63,6 +63,18 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ObjectP
         return false;
     }
 
+    @Override
+    public void persist() {
+        this.formPane.persist();
+        super.persist();
+    }
+
+    @Override
+    public void reset() {
+        this.formPane.reset();
+        super.reset();
+    }
+
     public static ObjectFieldControl of(ReferencedObjectFileFieldDefinition definition) throws FormException {
         ObjectType objectType = Registries.getObjectTypes()
                 .getValue(definition.objectId());

@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
@@ -25,12 +26,15 @@ public class NumberFieldControl<N extends Number> extends FieldControl<NumberFie
 
     @Override
     protected JsonElement saveControl() {
-        return null;
+        return new JsonPrimitive(this.spinner.getValue());
     }
 
     @Override
     protected void loadControl(JsonElement jsonElement) {
-
+        if (jsonElement != null) {
+            this.spinner.getValueFactory()
+                    .setValue(this.definition.convertNumber(jsonElement.getAsNumber()));
+        }
     }
 
     @Override

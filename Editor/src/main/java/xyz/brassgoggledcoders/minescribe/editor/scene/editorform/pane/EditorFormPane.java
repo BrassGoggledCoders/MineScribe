@@ -70,7 +70,7 @@ public class EditorFormPane extends GridPane {
 
         //These can alter the list
         for (SerializerEditorFieldPane serializerEditorFieldPane : serializerEditorFieldPanes) {
-            setField(serializerEditorFieldPane, jsonObject);
+            serializerEditorFieldPane.setValue(jsonObject.get(serializerEditorFieldPane.getFieldName()));
         }
 
         for (EditorFieldPane<?> editorFieldPane : this.getEditorFieldPanes().toList()) {
@@ -112,7 +112,7 @@ public class EditorFormPane extends GridPane {
             this.getEditorFieldPanes().forEach(editorFieldPane -> {
                 editorFieldPane.persist();
                 JsonElement jsonElement = editorFieldPane.getValue();
-                if (jsonElement != null) {
+                if (jsonElement != null && !jsonElement.isJsonNull()) {
                     newPersisted.add(editorFieldPane.getFieldName(), jsonElement);
                 }
             });
