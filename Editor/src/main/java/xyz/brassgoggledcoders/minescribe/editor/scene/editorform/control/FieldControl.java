@@ -73,6 +73,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     @Override
     public void load(JsonElement jsonElement) {
         this.persistedValue.set(jsonElement);
+        this.loadControl(jsonElement);
     }
 
     @Override

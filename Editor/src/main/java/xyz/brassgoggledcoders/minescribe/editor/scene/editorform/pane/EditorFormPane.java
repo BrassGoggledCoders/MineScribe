@@ -256,10 +256,7 @@ public class EditorFormPane extends GridPane {
     private void setField(EditorFieldPane<?> editorFieldPane, JsonObject jsonObject) {
         if (jsonObject.has(editorFieldPane.getFieldName())) {
             editorFieldPane.setValue(jsonObject.get(editorFieldPane.getFieldName()));
-            editorFieldPane.persist();
-            editorFieldPane.reset();
         }
-
     }
 
     public static EditorFormPane of(FileForm form, Supplier<List<SerializerType>> gatherTypes,
