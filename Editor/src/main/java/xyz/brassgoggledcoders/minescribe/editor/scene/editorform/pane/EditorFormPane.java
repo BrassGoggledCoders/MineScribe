@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.beans.property.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
@@ -158,6 +159,7 @@ public class EditorFormPane extends GridPane {
                     Label label = editorFieldPane.labelProperty().get();
                     if (label != null) {
                         this.add(label, 0, currentRow);
+                        label.setAlignment(Pos.CENTER_LEFT);
                     }
 
                     this.add(editorFieldPane, 1, currentRow++);

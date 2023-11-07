@@ -11,6 +11,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.SingleSelectionFieldControl;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
         this.changedProperty().bind(this.fieldControl.changedProperty());
         this.validProperty().bind(this.fieldControl.validProperty());
+
+        SceneUtils.setAnchors(this.fieldControl.getNode());
         this.getChildren().add(this.fieldControl.getNode());
     }
 

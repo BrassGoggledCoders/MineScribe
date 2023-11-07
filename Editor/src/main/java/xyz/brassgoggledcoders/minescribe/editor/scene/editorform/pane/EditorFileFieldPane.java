@@ -6,6 +6,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
+import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
@@ -35,6 +36,7 @@ public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldP
             this.labelProperty().set(labeledControl.getLabel());
         }
 
+        SceneUtils.setAnchors(content.getNode());
         this.getChildren().add(content.getNode());
     }
 
