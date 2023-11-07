@@ -8,11 +8,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.util.Callback;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
 import java.util.List;
 import java.util.function.Function;
@@ -71,6 +75,11 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
     @Override
     protected boolean fulfillsRequired(T value) {
         return value != null;
+    }
+
+    public void setLabelMaker(Function<T, String> labelMaker) {
+        this.comboBox.setConverter(new LabeledCellConverter<>(labelMaker));
+        this.comboBox.setCellFactory(new LabeledCellFactory<>(labelMaker));
     }
 
     public static SingleSelectionFieldControl<String> of(SingleSelectionFileFieldDefinition definition) throws FormException {

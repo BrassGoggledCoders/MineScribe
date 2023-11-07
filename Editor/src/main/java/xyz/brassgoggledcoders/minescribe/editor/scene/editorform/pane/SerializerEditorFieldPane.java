@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import javafx.beans.property.ObjectProperty;
+import javafx.scene.control.Label;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
@@ -26,6 +27,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         super(fileForm);
         this.serializerInfo = serializerInfo;
         this.fieldControl = fieldControl;
+        this.labelProperty().set(new Label(serializerInfo.label()));
 
         setup();
     }
@@ -132,6 +134,9 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                             .withLabel(serializerInfo.label())
                             .withRequired(true);
 
+
+                    field.setLabelMaker(SerializerType::label);
+
                     serializerInfo.defaultType()
                             .map(Registries.getSerializerTypes()::getValue)
                             .ifPresent(field.valueProperty()::set);
@@ -139,6 +144,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                     if (field.valueProperty().get() == null && defaultFieldsType != null) {
                         field.valueProperty().set(defaultFieldsType);
                     }
+
                     return new SerializerEditorFieldPane(fileForm, serializerInfo, field);
                 });
     }

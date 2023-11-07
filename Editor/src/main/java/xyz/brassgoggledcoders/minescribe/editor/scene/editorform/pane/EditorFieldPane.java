@@ -1,9 +1,9 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
 import com.google.gson.JsonElement;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.*;
 import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
@@ -13,6 +13,7 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
     private final FileForm fileForm;
     private final BooleanProperty changed;
     private final BooleanProperty valid;
+    private final ObjectProperty<Label> label;
 
     private EditorFormPane formPane;
 
@@ -20,6 +21,7 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
         this.fileForm = fileForm;
         this.changed = new SimpleBooleanProperty(false);
         this.valid = new SimpleBooleanProperty(true);
+        this.label = new SimpleObjectProperty<>();
 
         this.setPadding(new Insets(5));
     }
@@ -79,6 +81,10 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
     public boolean isChanged() {
         return this.changedProperty()
                 .get();
+    }
+
+    public ObjectProperty<Label> labelProperty() {
+        return this.label;
     }
 
     public abstract String getFieldName();

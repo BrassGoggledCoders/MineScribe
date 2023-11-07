@@ -32,6 +32,7 @@ public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldP
         }
         if (this.content instanceof ILabeledContent<?> labeledControl) {
             labeledControl.withLabel(this.fieldInfo.label());
+            this.labelProperty().set(labeledControl.getLabel());
         }
 
         this.getChildren().add(content.getNode());
