@@ -52,6 +52,13 @@ public class ListOfEditorFormField implements IEditorFormField<ListOfFields> {
                 IEditorFormField<?> editorFormField = this.childFields.get(childField.getID());
                 editorFormField.loadFromJson(array.get(i));
             }
+        } else if (jsonElement.isJsonObject()) {
+            if (this.field.valueProperty().isEmpty()) {
+                this.field.requestNewField();
+            }
+            Field<?> childField = this.field.getValue().get(0);
+            IEditorFormField<?> editorFormField = this.childFields.get(childField.getID());
+            editorFormField.loadFromJson(jsonElement.getAsJsonObject());
         }
     }
 
