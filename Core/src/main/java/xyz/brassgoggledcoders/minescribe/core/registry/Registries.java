@@ -8,6 +8,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFi
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
@@ -80,6 +81,13 @@ public class Registries {
                     ObjectType::id
             ));
 
+    private static final Supplier<ScriptLoadedRegistry<ResourceId, Codec<? extends Validation<?>>>> VALIDATION_GENERATORS =
+            Suppliers.memoize(() -> new ScriptLoadedRegistry<>(
+                    "validations",
+                    ResourceId.CODEC,
+                    Path.of("validation", "generators")
+            ));
+
     public static BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
     }
@@ -112,9 +120,14 @@ public class Registries {
         return OBJECT_TYPES.get();
     }
 
+    public static ScriptLoadedRegistry<ResourceId, Codec<? extends Validation<?>>> getValidations() {
+        return VALIDATION_GENERATORS.get();
+    }
+
     public static void load(Path mineScribeRoot) {
         PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
         PACK_TYPES.get().load(mineScribeRoot);
+        VALIDATION_GENERATORS.get().load(mineScribeRoot);
         FORM_LISTS.get().setMineScribePath(mineScribeRoot);
         CONTENT_PARENT_TYPES.get().load(mineScribeRoot);
         CONTENT_CHILD_TYPES.get().load(mineScribeRoot);

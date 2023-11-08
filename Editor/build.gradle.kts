@@ -1,9 +1,9 @@
 plugins {
     java
     application
-    id("org.javamodularity.moduleplugin") version("1.8.12")
-    id("org.openjfx.javafxplugin") version("0.1.0")
-    id("org.beryx.jlink") version("2.25.0")
+    id("org.javamodularity.moduleplugin") version ("1.8.12")
+    id("org.openjfx.javafxplugin") version ("0.1.0")
+    id("org.beryx.jlink") version ("2.25.0")
 }
 
 val junitVersion: String = "5.9.2"
@@ -51,6 +51,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("org.slf4j:slf4j-simple:2.0.9")
+    implementation("org.slf4j:jul-to-slf4j:2.0.9")
+
     implementation("org.jetbrains:annotations:24.0.0")
 
     implementation("com.mojang:datafixerupper:5.0.28")

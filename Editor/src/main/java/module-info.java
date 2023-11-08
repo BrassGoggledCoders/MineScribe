@@ -5,6 +5,7 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires java.prefs;
 
     requires org.slf4j;
+    requires jul.to.slf4j;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;

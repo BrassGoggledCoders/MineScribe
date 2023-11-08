@@ -12,6 +12,7 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.*;
 import java.util.function.Supplier;
 
 public class EditorRegistries {
+    @SuppressWarnings("Convert2Diamond")
     private static final Supplier<EditorFormFieldRegistry> EDITOR_FORM_FIELD_TRANSFORMS =
             Suppliers.memoize(() -> {
                 EditorFormFieldRegistry registry = new EditorFormFieldRegistry();
@@ -36,7 +37,7 @@ public class EditorRegistries {
                         SingleSelectionFileFieldDefinition.class,
                         SingleSelectionFieldControl::of
                 ));
-                registry.register("integer", new EditorFormFieldTransform<>(
+                registry.register("integer", new EditorFormFieldTransform<IntegerFileFieldDefinition, NumberFieldControl<Integer>>(
                         IntegerFileFieldDefinition.class,
                         integerFileField -> {
                             Range<Integer> range = integerFileField.getRange();
@@ -50,7 +51,7 @@ public class EditorRegistries {
                             );
                         }
                 ));
-                registry.register("double", new EditorFormFieldTransform<>(
+                registry.register("double", new EditorFormFieldTransform<DoubleFileFieldDefinition, NumberFieldControl<Double>>(
                         DoubleFileFieldDefinition.class,
                         doubleFileField -> {
                             Range<Double> doubleRange = doubleFileField.getRange();
