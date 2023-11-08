@@ -91,7 +91,6 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         }
 
         if (selected.get() == null) {
-
             selected.set(items.get(0));
         }
     }
@@ -129,9 +128,8 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         return fileForm.getSerializer()
                 .map(serializerInfo -> {
                     List<SerializerType> serializerTypes = new ArrayList<>(gatherTypes.get());
-                    SerializerType defaultFieldsType = null;
                     if (!serializerInfo.defaultFields().isEmpty()) {
-                        defaultFieldsType = new SerializerType(
+                        SerializerType defaultFieldsType = new SerializerType(
                                 ResourceId.NULL,
                                 ResourceId.NULL,
                                 ResourceId.NULL,
@@ -153,14 +151,6 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
 
                     field.setLabelMaker(SerializerType::label);
-
-                    serializerInfo.defaultType()
-                            .map(Registries.getSerializerTypes()::getValue)
-                            .ifPresent(field.valueProperty()::set);
-
-                    if (field.valueProperty().get() == null && defaultFieldsType != null) {
-                        field.valueProperty().set(defaultFieldsType);
-                    }
 
                     return new SerializerEditorFieldPane(fileForm, serializerInfo, field);
                 });
