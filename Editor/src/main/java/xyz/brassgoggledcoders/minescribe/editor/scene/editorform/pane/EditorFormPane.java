@@ -4,8 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.beans.property.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -14,14 +17,19 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class EditorFormPane extends VBox {
+public class EditorFormPane extends GridPane {
+    private static final ColumnConstraints LABEL = SceneUtils.createConstraintsForPercent(15D);
+    private static final ColumnConstraints CONTENT = SceneUtils.createConstraintsForPercent(85D);
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EditorFormPane.class);
     private final ReadOnlyObjectProperty<FileForm> primaryForm;
     private final ObjectProperty<FileForm> serializerForm;
@@ -40,10 +48,14 @@ public class EditorFormPane extends VBox {
         this.persistable = new SimpleBooleanProperty(false);
 
         this.serializerForm.addListener((observable, oldValue, newValue) -> reloadSerializerForm(oldValue, newValue));
+
+        this.getColumnConstraints().setAll(LABEL, CONTENT);
+
         fieldPanes.forEach(this::addFieldPanel);
 
         updateValidProperty();
         updateChangedProperty();
+
 
         this.getStyleClass().add("borders");
         this.setPadding(new Insets(10));
@@ -58,7 +70,7 @@ public class EditorFormPane extends VBox {
 
         //These can alter the list
         for (SerializerEditorFieldPane serializerEditorFieldPane : serializerEditorFieldPanes) {
-            setField(serializerEditorFieldPane, jsonObject);
+            serializerEditorFieldPane.setValue(jsonObject.get(serializerEditorFieldPane.getFieldName()));
         }
 
         for (EditorFieldPane<?> editorFieldPane : this.getEditorFieldPanes().toList()) {
@@ -79,10 +91,12 @@ public class EditorFormPane extends VBox {
         return this.persistedObject;
     }
 
+    @SuppressWarnings("unused")
     public ReadOnlyBooleanProperty changedProperty() {
         return this.changed;
     }
 
+    @SuppressWarnings("unused")
     public ReadOnlyBooleanProperty validProperty() {
         return this.valid;
     }
@@ -98,7 +112,7 @@ public class EditorFormPane extends VBox {
             this.getEditorFieldPanes().forEach(editorFieldPane -> {
                 editorFieldPane.persist();
                 JsonElement jsonElement = editorFieldPane.getValue();
-                if (jsonElement != null) {
+                if (jsonElement != null && !jsonElement.isJsonNull()) {
                     newPersisted.add(editorFieldPane.getFieldName(), jsonElement);
                 }
             });
@@ -131,12 +145,26 @@ public class EditorFormPane extends VBox {
         }
 
         List<Node> children = new ArrayList<>(this.getChildren());
+
         if (children.contains(newField)) {
             LOGGER.error("Editor Form already contains: " + newField);
         } else {
             children.add(newField);
             children.sort(this::sortChildren);
-            this.getChildren().setAll(children);
+            this.getChildren().clear();
+
+            int currentRow = 0;
+            for (Node node : children) {
+                if (node instanceof EditorFieldPane<?> editorFieldPane) {
+                    Label label = editorFieldPane.labelProperty().get();
+                    if (label != null) {
+                        this.add(label, 0, currentRow);
+                        label.setAlignment(Pos.CENTER_LEFT);
+                    }
+
+                    this.add(editorFieldPane, 1, currentRow++);
+                }
+            }
         }
 
     }
@@ -182,13 +210,34 @@ public class EditorFormPane extends VBox {
     }
 
     private void reloadSerializerForm(FileForm oldValue, FileForm newValue) {
-        this.getChildren().removeIf(child -> {
-            if (child instanceof EditorFieldPane<?> editorFieldPane) {
-                return editorFieldPane.getFileForm() == oldValue;
-            }
+        int[] rowsToRemove = this.getChildren()
+                .stream()
+                .flatMapToInt(child -> {
+                    if (child instanceof EditorFieldPane<?> editorFieldPane) {
+                        if (editorFieldPane.getFileForm() == oldValue) {
+                            Integer index = GridPane.getRowIndex(editorFieldPane);
+                            if (index != null) {
+                                return IntStream.of(index);
+                            }
+                        }
+                    }
+                    return IntStream.empty();
+                })
+                .distinct()
+                .toArray();
 
-            return false;
-        });
+        if (rowsToRemove.length > 0) {
+            this.getChildren()
+                    .removeIf(node -> {
+                        Integer integer = GridPane.getRowIndex(node);
+                        if (integer != null) {
+                            return IntStream.of(rowsToRemove)
+                                    .anyMatch(integer::equals);
+                        } else {
+                            return false;
+                        }
+                    });
+        }
 
         if (newValue != null) {
             for (FileField<?> field : newValue.getFields()) {
@@ -207,10 +256,7 @@ public class EditorFormPane extends VBox {
     private void setField(EditorFieldPane<?> editorFieldPane, JsonObject jsonObject) {
         if (jsonObject.has(editorFieldPane.getFieldName())) {
             editorFieldPane.setValue(jsonObject.get(editorFieldPane.getFieldName()));
-            editorFieldPane.persist();
-            editorFieldPane.reset();
         }
-
     }
 
     public static EditorFormPane of(FileForm form, Supplier<List<SerializerType>> gatherTypes,

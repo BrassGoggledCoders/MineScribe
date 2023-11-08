@@ -65,7 +65,7 @@ public class FormController implements IFileEditorController {
             this.editorForm = EditorFormPane.of(
                     fileForm,
                     Registries.getSerializerTypes()
-                            .getFor(parentType, childType),
+                            .supplyList(parentType, childType),
                     persistableObject
             );
             this.editorForm.persistedObjectProperty()
