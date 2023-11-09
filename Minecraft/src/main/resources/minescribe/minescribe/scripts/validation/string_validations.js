@@ -6,7 +6,7 @@ const regexValidation = validationHelper.create(
         if (regex.test(fieldValue)) {
             return validationHelper.createValidResult();
         } else {
-            return validationHelper.createErrorResult(object + " did not match " + storedValues.regex)
+            return validationHelper.createErrorResult(fieldValue + " did not match " + storedValues.regex)
         }
     },
     [
