@@ -1,30 +1,36 @@
-package xyz.brassgoggledcoders.minescribe.core.validation;
+package xyz.brassgoggledcoders.minescribe.editor.javascript;
 
+import com.google.common.base.Suppliers;
 import org.graalvm.polyglot.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.io.Closeable;
+import java.util.function.Supplier;
 
 public class ScriptHandler implements Closeable {
-    private static final ScriptHandler INSTANCE = new ScriptHandler();
+    private static final Supplier<ScriptHandler> INSTANCE = Suppliers.memoize(ScriptHandler::new);
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptHandler.class);
 
     private final Engine engine;
     private final Context context;
+    private final SLF4JBridgeHandler handler;
 
     public ScriptHandler() {
         this.engine = Engine.newBuilder()
                 .build();
+        this.handler = new SLF4JBridgeHandler();
         this.context = buildContext(engine);
+        this.context.getBindings("js")
+                .putMember("minescribe", new MineScribeJSHelper());
     }
 
     private Context buildContext(Engine engine) {
-        SLF4JBridgeHandler bridgeHandler = new SLF4JBridgeHandler();
         return Context.newBuilder("js")
                 .engine(engine)
-                .logHandler(bridgeHandler)
+                .logHandler(handler)
                 .allowHostClassLookup(s -> true)
                 .allowHostAccess(HostAccess.ALL)
                 .build();
@@ -55,6 +61,6 @@ public class ScriptHandler implements Closeable {
     }
 
     public static ScriptHandler getInstance() {
-        return INSTANCE;
+        return INSTANCE.get();
     }
 }

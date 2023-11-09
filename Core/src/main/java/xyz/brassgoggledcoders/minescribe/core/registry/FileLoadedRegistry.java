@@ -26,7 +26,7 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
     protected abstract void handleFileInFolder(String fileName, String fileContents);
 
     public void load(Path root) {
-        Path registryPath = root.resolve("registry");
+        Path registryPath = root;
         if (this.directory == null) {
             registryPath = registryPath.resolve(this.getName());
         } else {

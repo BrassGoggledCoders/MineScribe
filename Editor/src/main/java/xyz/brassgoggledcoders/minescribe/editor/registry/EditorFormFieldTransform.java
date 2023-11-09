@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.registries;
+package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.functional.ThrowingFunction;

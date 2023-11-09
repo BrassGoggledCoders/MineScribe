@@ -1,14 +1,18 @@
-package xyz.brassgoggledcoders.minescribe.editor.registries;
+package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import com.google.common.base.Suppliers;
+import com.mojang.serialization.Codec;
 import javafx.scene.control.SpinnerValueFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
+import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.*;
 
+import java.nio.file.Path;
 import java.util.function.Supplier;
 
 public class EditorRegistries {
@@ -73,7 +77,22 @@ public class EditorRegistries {
                 return registry;
             });
 
+    private static final Supplier<ScriptLoadedRegistry<ResourceId, Codec<? extends Validation<?>>>> VALIDATION_CODECS =
+            Suppliers.memoize(() -> new ScriptLoadedRegistry<>(
+                    "validations",
+                    ResourceId.CODEC,
+                    Path.of("validation")
+            ));
+
     public static EditorFormFieldRegistry getEditorFormFieldRegistry() {
         return EDITOR_FORM_FIELD_TRANSFORMS.get();
+    }
+
+    public static ScriptLoadedRegistry<ResourceId, Codec<? extends Validation<?>>> getValidationRegistry() {
+        return VALIDATION_CODECS.get();
+    }
+
+    public static void load(Path mineScribeFolder) {
+        VALIDATION_CODECS.get().load(mineScribeFolder);
     }
 }

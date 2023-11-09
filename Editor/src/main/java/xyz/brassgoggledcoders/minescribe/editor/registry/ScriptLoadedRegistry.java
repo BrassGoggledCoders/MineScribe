@@ -1,19 +1,15 @@
-package xyz.brassgoggledcoders.minescribe.core.registry;
+package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import com.mojang.serialization.Codec;
-import org.graalvm.polyglot.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
-import xyz.brassgoggledcoders.minescribe.core.validation.ScriptHandler;
+import xyz.brassgoggledcoders.minescribe.core.registry.FileLoadedRegistry;
+import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 
 import java.nio.file.Path;
 
 public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
-    private final Logger LOGGER = LoggerFactory.getLogger(ScriptLoadedRegistry.class);
 
     public ScriptLoadedRegistry(String name, Codec<K> kCodec, Path directory) {
-        super(name, kCodec, directory, "js");
+        super(name, kCodec, Path.of("scripts").resolve(directory), "js");
         ScriptHandler.getInstance()
                 .putBinding(name, this);
     }

@@ -11,6 +11,7 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class Registries {
@@ -81,12 +82,7 @@ public class Registries {
                     ObjectType::id
             ));
 
-    private static final Supplier<ScriptLoadedRegistry<ResourceId, Codec<? extends Validation<?>>>> VALIDATION_GENERATORS =
-            Suppliers.memoize(() -> new ScriptLoadedRegistry<>(
-                    "validations",
-                    ResourceId.CODEC,
-                    Path.of("validation", "generators")
-            ));
+    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations;
 
     public static BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
@@ -120,14 +116,14 @@ public class Registries {
         return OBJECT_TYPES.get();
     }
 
-    public static ScriptLoadedRegistry<ResourceId, Codec<? extends Validation<?>>> getValidations() {
-        return VALIDATION_GENERATORS.get();
+    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidations() {
+        return Objects.requireNonNull(validations);
     }
 
-    public static void load(Path mineScribeRoot) {
+    public static void load(Path mineScribeRoot, Registry<ResourceId, Codec<? extends Validation<?>>> validations) {
+        Registries.validations = validations;
         PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
         PACK_TYPES.get().load(mineScribeRoot);
-        VALIDATION_GENERATORS.get().load(mineScribeRoot);
         FORM_LISTS.get().setMineScribePath(mineScribeRoot);
         CONTENT_PARENT_TYPES.get().load(mineScribeRoot);
         CONTENT_CHILD_TYPES.get().load(mineScribeRoot);

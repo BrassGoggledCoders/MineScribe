@@ -10,7 +10,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
-import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;

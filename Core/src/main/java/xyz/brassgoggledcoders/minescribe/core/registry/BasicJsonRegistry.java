@@ -7,10 +7,6 @@ import com.mojang.serialization.JsonOps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Function;
@@ -23,10 +19,19 @@ public class BasicJsonRegistry<K, V> extends FileLoadedRegistry<K, V> {
     private final Function<V, K> valueName;
 
     public BasicJsonRegistry(String name, Path directory, Codec<K> kCodec, Codec<V> vCodec, Function<V, K> valueName) {
-        super(name, kCodec, directory, "json");
+        super(name, kCodec, setPath(directory), "json");
         this.vCodec = vCodec;
         this.vCodecList = vCodec.listOf();
         this.valueName = valueName;
+    }
+
+    private static Path setPath(Path directory) {
+        if (directory == null) {
+            return null;
+        } else {
+            return Path.of("registry")
+                    .resolve(directory);
+        }
     }
 
     @Override

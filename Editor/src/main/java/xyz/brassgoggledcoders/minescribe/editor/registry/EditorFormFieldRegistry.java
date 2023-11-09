@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.registries;
+package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;

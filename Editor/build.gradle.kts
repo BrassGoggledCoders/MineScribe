@@ -53,6 +53,9 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.9")
     implementation("org.slf4j:jul-to-slf4j:2.0.9")
 
+    implementation("org.graalvm.polyglot:polyglot:23.1.0")
+    implementation("org.graalvm.polyglot:js-community:23.1.0")
+
     implementation("org.jetbrains:annotations:24.0.0")
 
     implementation("com.mojang:datafixerupper:5.0.28")

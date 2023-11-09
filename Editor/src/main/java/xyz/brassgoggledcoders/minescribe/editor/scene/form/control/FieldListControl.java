@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
-import xyz.brassgoggledcoders.minescribe.editor.registries.EditorRegistries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 
 public class FieldListControl extends TitledPane {

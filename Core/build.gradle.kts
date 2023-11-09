@@ -20,10 +20,6 @@ dependencies {
     implementation("com.mojang:datafixerupper:5.0.28")
 
     implementation("org.slf4j:slf4j-api:1.8.0-beta4")
-    implementation("org.slf4j:jul-to-slf4j:1.8.0-beta4")
-
-    implementation("org.graalvm.polyglot:polyglot:23.1.0")
-    implementation("org.graalvm.polyglot:js-community:23.1.0")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")

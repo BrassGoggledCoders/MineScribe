@@ -27,6 +27,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFi
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
 import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
+import xyz.brassgoggledcoders.minescribe.data.FileCopyMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.data.GameGatheredMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
 
@@ -105,6 +106,11 @@ public class ForgeCommonEventHandler {
                 MineScribeCodecs.SERIALIZER_TYPE,
                 SerializerType.CODEC,
                 true
+        ));
+        event.registerReloadListener(new FileCopyMineScribeReloadListener(
+                "scripts/validation",
+                "scripts/validation",
+                ".js"
         ));
     }
 
