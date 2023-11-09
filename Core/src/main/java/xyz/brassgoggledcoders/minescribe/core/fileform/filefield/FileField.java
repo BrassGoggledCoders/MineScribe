@@ -1,6 +1,5 @@
 package xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;

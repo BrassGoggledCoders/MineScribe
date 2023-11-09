@@ -15,6 +15,13 @@ public record ResourceId(
 
     public static final ResourceId NULL = new ResourceId("null", "null");
 
+    public ResourceId(String id) {
+        this(
+                id.indexOf(':') != -1 ? id.substring(0, id.indexOf(':') - 1) : "minescribe",
+                id.indexOf(':') != -1 ? id.substring(id.indexOf(':')) : id
+        );
+    }
+
     @Override
     public String toString() {
         return this.namespace() + ":" + this.path();

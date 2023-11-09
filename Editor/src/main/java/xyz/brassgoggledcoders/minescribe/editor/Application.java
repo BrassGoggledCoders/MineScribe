@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
-import xyz.brassgoggledcoders.minescribe.core.validation.ScriptHandler;
+import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
 import java.io.IOException;
