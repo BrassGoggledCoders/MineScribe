@@ -1,6 +1,6 @@
 const validationHelper = minescribe.validationHelper
 
-const regexValidation = validationHelper.create(
+const regexValidation = validationHelper.createForField(
     function (fieldValue, storedValues) {
         const regex = new RegExp(storedValues.regex)
         if (regex.test(fieldValue)) {
