@@ -1,14 +1,14 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.SetChangeListener;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
@@ -20,19 +20,12 @@ public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldP
     private final FileFieldInfo fieldInfo;
     private final F content;
 
-    private final ListProperty<String> errorList;
-
     public EditorFileFieldPane(FileForm fileForm, FileFieldInfo fieldInfo, F content) {
         super(fileForm);
         this.fieldInfo = fieldInfo;
         this.content = content;
-        this.errorList = new SimpleListProperty<>(FXCollections.observableArrayList());
 
         setup();
-    }
-
-    public ListProperty<String> errorListProperty() {
-        return this.errorList;
     }
 
     private void setup() {
@@ -43,14 +36,26 @@ public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldP
 
             this.changedProperty().bind(valueControl.changedProperty());
             this.validProperty().bind(valueControl.validProperty());
+            this.errorListProperty().bind(valueControl.errorListProperty());
         }
         if (this.content instanceof ILabeledContent<?> labeledControl) {
             labeledControl.withLabel(this.fieldInfo.label());
             this.labelProperty().set(labeledControl.getLabel());
         }
 
+        this.errorListProperty().addListener((SetChangeListener<? super String>) c -> handleStyle());
+        this.errorListProperty().addListener((observable, oldValue, newValue) -> handleStyle());
+
         SceneUtils.setAnchors(content.getNode());
         this.getChildren().add(content.getNode());
+    }
+
+    private void handleStyle() {
+        if (!this.errorListProperty().isEmpty()) {
+            this.content.getNode().getStyleClass().add("invalid");
+        } else {
+            this.content.getNode().getStyleClass().remove("invalid");
+        }
     }
 
     @Override
