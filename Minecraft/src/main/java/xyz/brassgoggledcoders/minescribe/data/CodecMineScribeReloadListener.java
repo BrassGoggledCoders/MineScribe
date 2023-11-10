@@ -91,8 +91,6 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
 
     @Override
     protected Map<ResourceLocation, U> apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
-
-
         final Map<ResourceLocation, U> values = pObject.entrySet()
                 .stream()
                 .flatMap(jsonEntry -> {

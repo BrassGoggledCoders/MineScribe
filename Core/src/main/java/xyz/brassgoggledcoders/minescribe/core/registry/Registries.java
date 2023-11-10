@@ -82,7 +82,7 @@ public class Registries {
                     ObjectType::id
             ));
 
-    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations;
+    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations = new PretendValidationRegistry();
 
     public static BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
