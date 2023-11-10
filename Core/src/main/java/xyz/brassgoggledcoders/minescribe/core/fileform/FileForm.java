@@ -8,8 +8,8 @@ import java.util.*;
 
 public class FileForm {
     public static final Codec<FileForm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            FileField.LIST_CODEC.fieldOf("fields").forGetter(FileForm::getFieldsForCodec),
-            SerializerInfo.CODEC.optionalFieldOf("serializer").forGetter(FileForm::getSerializer)
+            FileField.LIST_CODEC.fieldOf(JsonFieldNames.FIELDS).forGetter(FileForm::getFieldsForCodec),
+            SerializerInfo.CODEC.optionalFieldOf(JsonFieldNames.SERIALIZER).forGetter(FileForm::getSerializer)
     ).apply(instance, (fields, serializer) -> new FileForm(fields, serializer.orElse(null))));
 
     private final SerializerInfo serializer;
@@ -25,7 +25,7 @@ public class FileForm {
         return fields;
     }
 
-    private List<FileField<?>> getFieldsForCodec() {
+    public List<FileField<?>> getFieldsForCodec() {
         return new ArrayList<>(this.getFields());
     }
 

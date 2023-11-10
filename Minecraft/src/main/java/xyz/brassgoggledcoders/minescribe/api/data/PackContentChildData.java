@@ -12,7 +12,6 @@ import xyz.brassgoggledcoders.minescribe.api.MineScribeAPI;
 import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
 import xyz.brassgoggledcoders.minescribe.core.codec.ErroringOptionalFieldCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
-import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
@@ -27,14 +26,14 @@ public record PackContentChildData(
         ResourceLocation parentId,
         Component label,
         Path path,
-        Optional<FileForm> form
+        Optional<FileFormData> form
 ) {
     public static final Codec<PackContentChildData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(PackContentChildData::id),
             ResourceLocation.CODEC.fieldOf("parentId").forGetter(PackContentChildData::parentId),
             MineScribeCodecs.COMPONENT.fieldOf("label").forGetter(PackContentChildData::label),
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentChildData::path),
-            ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentChildData::form)
+            ErroringOptionalFieldCodec.of("form", FileFormData.CODEC).forGetter(PackContentChildData::form)
     ).apply(instance, PackContentChildData::new));
 
     public PackContentChildType toType() {
@@ -42,7 +41,9 @@ public record PackContentChildData(
                 new ResourceId(this.id().getNamespace(), this.id().getPath()),
                 this.label().getString(),
                 this.path(),
-                this.form().orElse(null),
+                this.form()
+                        .map(FileFormData::toFileForm)
+                        .orElse(null),
                 new ResourceId(this.parentId().getNamespace(), this.parentId().getPath())
         );
     }

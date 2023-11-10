@@ -9,11 +9,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 import xyz.brassgoggledcoders.minescribe.api.MineScribeAPI;
-import xyz.brassgoggledcoders.minescribe.api.data.ObjectTypeData;
-import xyz.brassgoggledcoders.minescribe.api.data.PackContentChildData;
-import xyz.brassgoggledcoders.minescribe.api.data.PackContentParentData;
-import xyz.brassgoggledcoders.minescribe.api.data.SerializerTypeData;
-import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.api.data.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
@@ -24,6 +20,7 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -64,8 +61,8 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Parent Type"),
                 Path.of("types", "parent"),
                 MineScribeAPI.PACK_TYPE,
-                Optional.of(FileForm.of(
-                        new FileField<>(
+                Optional.of(FileFormData.of(
+                        new FileFieldData<>(
                                 new ListOfFileFieldDefinition(
                                         0,
                                         Integer.MAX_VALUE,
@@ -73,18 +70,18 @@ public class MineScribeCommonEventHandler {
                                                 new ResourceId(MineScribe.ID, "file_field")
                                         )
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Fields",
                                         "fields",
                                         0,
                                         false
                                 )
                         ),
-                        new FileField<IFileFieldDefinition>(
+                        new FileFieldData<IFileFieldDefinition>(
                                 new ReferencedObjectFileFieldDefinition(
                                         new ResourceId(MineScribe.ID, "serializer_info")
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Serializer Info",
                                         "serializer",
                                         1,
@@ -98,8 +95,8 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Child Type"),
                 Path.of("types", "child"),
                 MineScribeAPI.PACK_TYPE,
-                Optional.of(FileForm.of(
-                        new FileField<>(
+                Optional.of(FileFormData.of(
+                        new FileFieldData<>(
                                 new ListOfFileFieldDefinition(
                                         0,
                                         Integer.MAX_VALUE,
@@ -107,18 +104,18 @@ public class MineScribeCommonEventHandler {
                                                 new ResourceId(MineScribe.ID, "file_field")
                                         )
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Fields",
                                         "fields",
                                         0,
                                         false
                                 )
                         ),
-                        new FileField<IFileFieldDefinition>(
+                        new FileFieldData<IFileFieldDefinition>(
                                 new ReferencedObjectFileFieldDefinition(
                                         new ResourceId(MineScribe.ID, "serializer_info")
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Serializer Info",
                                         "serializer",
                                         1,
@@ -139,7 +136,7 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Recipe"),
                 Path.of("recipes"),
                 PackType.SERVER_DATA,
-                Optional.of(FileForm.of(
+                Optional.of(FileFormData.of(
                         SerializerInfo.of(
                                 "type",
                                 "Type"
@@ -151,23 +148,23 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Testing Lists of Fields"),
                 Path.of("test"),
                 MineScribeAPI.PACK_TYPE,
-                Optional.of(FileForm.of(
-                        new FileField<>(
+                Optional.of(FileFormData.of(
+                        new FileFieldData<>(
                                 new StringFileFieldDefinition(""),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "String Field",
                                         "string",
                                         0,
                                         false
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new ListOfFileFieldDefinition(
                                         2,
                                         5,
                                         new StringFileFieldDefinition("")
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "String List",
                                         "stringList",
                                         1,
@@ -185,7 +182,7 @@ public class MineScribeCommonEventHandler {
     private static void generateObjectTypes(Consumer<ObjectTypeData> consumer) {
         consumer.accept(new ObjectTypeData(
                 new ResourceLocation("ingredient"),
-                FileForm.of(
+                FileFormData.of(
                         SerializerInfo.of(
                                 "type",
                                 "Type",
@@ -217,41 +214,41 @@ public class MineScribeCommonEventHandler {
 
         consumer.accept(new ObjectTypeData(
                 new ResourceLocation(MineScribe.ID, "file_field_info"),
-                FileForm.of(
-                        new FileField<>(
+                FileFormData.of(
+                        new FileFieldData<>(
                                 new StringFileFieldDefinition(""),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Label",
                                         "label",
                                         0,
                                         true
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new StringFileFieldDefinition(""),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Field",
                                         "field",
                                         1,
                                         true
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new IntegerFileFieldDefinition(new Range<>(
                                         0,
                                         0,
                                         Integer.MAX_VALUE
                                 )),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Sort Order",
                                         "sortOrder",
                                         2,
                                         true
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new CheckBoxFileFieldDefinition(false),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Required",
                                         "required",
                                         3,
@@ -263,7 +260,7 @@ public class MineScribeCommonEventHandler {
 
         consumer.accept(new ObjectTypeData(
                 new ResourceLocation(MineScribe.ID, "file_field_definition"),
-                FileForm.of(
+                FileFormData.of(
                         SerializerInfo.of(
                                 "type",
                                 "Type"
@@ -273,26 +270,26 @@ public class MineScribeCommonEventHandler {
 
         consumer.accept(new ObjectTypeData(
                 new ResourceLocation(MineScribe.ID, "serializer_info"),
-                FileForm.of(
-                        new FileField<>(
+                FileFormData.of(
+                        new FileFieldData<>(
                                 new StringFileFieldDefinition("type"),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Field",
                                         "field",
                                         0,
                                         true
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new StringFileFieldDefinition(""),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Label",
                                         "label",
                                         1,
                                         true
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new ListOfFileFieldDefinition(
                                         1,
                                         Integer.MAX_VALUE,
@@ -300,20 +297,28 @@ public class MineScribeCommonEventHandler {
                                                 new ResourceId(MineScribe.ID, "file_field")
                                         )
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Default Field",
                                         "defaultField",
                                         2,
                                         true
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new StringFileFieldDefinition(""),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Default Type",
                                         "defaultType",
                                         3,
-                                        true
+                                        false,
+                                        List.of(
+                                                new FieldValidationData(
+                                                        new ResourceLocation(MineScribe.ID, "regex"),
+                                                        JsonBuilder.forObject()
+                                                                .withString("regex", "^[a-z0-9\\.\\-_]+$")
+                                                                .build()
+                                                )
+                                        )
                                 )
                         )
                 )
@@ -321,23 +326,23 @@ public class MineScribeCommonEventHandler {
 
         consumer.accept(new ObjectTypeData(
                 new ResourceLocation(MineScribe.ID, "file_field"),
-                FileForm.of(
-                        new FileField<>(
+                FileFormData.of(
+                        new FileFieldData<>(
                                 new ReferencedObjectFileFieldDefinition(
                                         new ResourceId(MineScribe.ID, "file_field_definition")
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Definition",
                                         "fields",
                                         0,
                                         true
                                 )
                         ),
-                        new FileField<IFileFieldDefinition>(
+                        new FileFieldData<IFileFieldDefinition>(
                                 new ReferencedObjectFileFieldDefinition(
                                         new ResourceId(MineScribe.ID, "file_field_info")
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Info",
                                         "info",
                                         1,
@@ -354,30 +359,30 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("blasting"),
                 new ResourceLocation("types/parent/recipe"),
                 Component.literal("Blasting"),
-                FileForm.of(
-                        new FileField<>(
+                FileFormData.of(
+                        new FileFieldData<>(
                                 new ReferencedObjectFileFieldDefinition(
                                         new ResourceId("minecraft", "ingredient")
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Ingredient",
                                         "ingredient",
                                         2,
                                         true
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new SingleSelectionFileFieldDefinition(
                                         new ResourceId("minecraft", "registry/item")
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Result",
                                         "result",
                                         3,
                                         true
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new DoubleFileFieldDefinition(
                                         new Range<>(
                                                 0.0,
@@ -385,14 +390,14 @@ public class MineScribeCommonEventHandler {
                                                 Double.MAX_VALUE
                                         )
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Experience",
                                         "experience",
                                         4,
                                         false
                                 )
                         ),
-                        new FileField<>(
+                        new FileFieldData<>(
                                 new IntegerFileFieldDefinition(
                                         new Range<>(
                                                 1,
@@ -400,7 +405,7 @@ public class MineScribeCommonEventHandler {
                                                 Integer.MAX_VALUE
                                         )
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Cooking Ticks",
                                         "cookingtime",
                                         5,
@@ -414,8 +419,8 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("forge", "compound"),
                 new ResourceLocation("types/object/ingredient"),
                 Component.literal("Compound"),
-                FileForm.of(
-                        new FileField<>(
+                FileFormData.of(
+                        new FileFieldData<>(
                                 new ListOfFileFieldDefinition(
                                         1,
                                         Integer.MAX_VALUE,
@@ -423,7 +428,7 @@ public class MineScribeCommonEventHandler {
                                                 new ResourceId("minecraft", "ingredient")
                                         )
                                 ),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Children",
                                         "children",
                                         1,
@@ -438,10 +443,10 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation(MineScribe.ID, "checkbox"),
                 new ResourceLocation(MineScribe.ID, "types/object/file_field_definition"),
                 Component.literal("Check Box"),
-                FileForm.of(
-                        new FileField<>(
+                FileFormData.of(
+                        new FileFieldData<>(
                                 new CheckBoxFileFieldDefinition(false),
-                                new FileFieldInfo(
+                                new FileFieldInfoData(
                                         "Default Value",
                                         JsonFieldNames.DEFAULT_VALUE,
                                         0,

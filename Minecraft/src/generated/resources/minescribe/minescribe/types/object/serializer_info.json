@@ -47,8 +47,13 @@
         "info": {
           "field": "defaultType",
           "label": "Default Type",
-          "required": true,
-          "sortOrder": 3
+          "sortOrder": 3,
+          "validations": [
+            {
+              "type": "minescribe:regex",
+              "regex": "^[a-z0-9\\.\\-_]+$"
+            }
+          ]
         }
       }
     ]

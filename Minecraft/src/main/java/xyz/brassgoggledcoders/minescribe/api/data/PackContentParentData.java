@@ -26,14 +26,14 @@ public record PackContentParentData(
         Component label,
         Path path,
         PackType packType,
-        Optional<FileForm> form
+        Optional<FileFormData> form
 ) {
     public static final Codec<PackContentParentData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(PackContentParentData::id),
             MineScribeCodecs.COMPONENT.fieldOf("label").forGetter(PackContentParentData::label),
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentParentData::path),
             MineScribeCodecs.PACK_TYPE.fieldOf("packType").forGetter(PackContentParentData::packType),
-            ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentParentData::form)
+            ErroringOptionalFieldCodec.of("form", FileFormData.CODEC).forGetter(PackContentParentData::form)
     ).apply(instance, PackContentParentData::new));
 
     public static JsonCodecProvider<PackContentParentData> createProvider(

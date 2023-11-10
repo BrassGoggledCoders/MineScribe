@@ -12,17 +12,17 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
+import xyz.brassgoggledcoders.minescribe.api.data.FileFieldData;
+import xyz.brassgoggledcoders.minescribe.api.data.FileFieldInfoData;
+import xyz.brassgoggledcoders.minescribe.api.data.FileFormData;
 import xyz.brassgoggledcoders.minescribe.api.data.PackContentChildData;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherFormListsEvent;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherPackContentChildTypes;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherPackRepositoryLocationsEvent;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
 import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
-import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
@@ -188,22 +188,22 @@ public class ForgeCommonEventHandler {
                                         .replace("/", " ")
                                 ) + " Tags"),
                                 tagPath,
-                                Optional.of(FileForm.of(
-                                        new FileField<>(
+                                Optional.of(FileFormData.of(
+                                        new FileFieldData<>(
                                                 new CheckBoxFileFieldDefinition(false),
-                                                new FileFieldInfo(
+                                                new FileFieldInfoData(
                                                         "Replace",
                                                         "replace",
                                                         0,
                                                         false
                                                 )
                                         ),
-                                        new FileField<>(
+                                        new FileFieldData<>(
                                                 new ListSelectionFileFieldDefinition(List.of(
                                                         new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath()),
                                                         new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath())
                                                 )),
-                                                new FileFieldInfo(
+                                                new FileFieldInfoData(
                                                         "Values",
                                                         "values",
                                                         1,
