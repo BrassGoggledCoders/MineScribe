@@ -82,7 +82,7 @@ public class Registries {
                     ObjectType::id
             ));
 
-    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations = new PretendValidationRegistry();
+    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations = null;
 
     public static BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
@@ -118,6 +118,10 @@ public class Registries {
 
     public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidations() {
         return Objects.requireNonNull(validations);
+    }
+
+    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidationsNullable() {
+        return validations;
     }
 
     public static void load(Path mineScribeRoot, Registry<ResourceId, Codec<? extends Validation<?>>> validations) {

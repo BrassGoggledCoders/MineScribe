@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.codec.ValidationCodec;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 
@@ -21,7 +22,7 @@ public record FileFieldInfo(
             Codec.STRING.fieldOf(JsonFieldNames.FIELD).forGetter(FileFieldInfo::field),
             Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(FileFieldInfo::sortOrder),
             Codec.BOOL.optionalFieldOf(JsonFieldNames.REQUIRED, false).forGetter(FileFieldInfo::required),
-            FieldValidation.LIST_CODEC.optionalFieldOf("validations", Collections.emptyList()).forGetter(FileFieldInfo::validations)
+            ValidationCodec.FIELD_CODEC.listOf().optionalFieldOf("validations", Collections.emptyList()).forGetter(FileFieldInfo::validations)
     ).apply(instance, FileFieldInfo::new));
 
     public FileFieldInfo(

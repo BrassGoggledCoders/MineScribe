@@ -1,14 +1,13 @@
 package xyz.brassgoggledcoders.minescribe.core.validation;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 
-public class PretendValidation extends Validation<Object> {
+public class PretendFieldValidation extends FieldValidation {
     private final JsonElement internals;
-    private final Codec<? extends Validation<?>> codec;
+    private final Codec<? extends FieldValidation> codec;
 
-    public PretendValidation(JsonElement internals, Codec<PretendValidation> codec) {
+    public PretendFieldValidation(JsonElement internals, Codec<FieldValidation> codec) {
         this.internals = internals;
         this.codec = codec;
     }
@@ -23,7 +22,7 @@ public class PretendValidation extends Validation<Object> {
     }
 
     @Override
-    public Codec<? extends Validation<?>> getCodec() {
+    public Codec<? extends FieldValidation> getCodec() {
         return this.codec;
     }
 }

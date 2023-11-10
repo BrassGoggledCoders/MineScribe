@@ -5,5 +5,5 @@ import com.mojang.serialization.Codec;
 public abstract class Validation<T> {
     public abstract ValidationResult validate(T value);
 
-    public abstract Codec<? extends Validation<T>> getCodec();
+    public abstract Codec<? extends Validation<?>> getCodec();
 }
