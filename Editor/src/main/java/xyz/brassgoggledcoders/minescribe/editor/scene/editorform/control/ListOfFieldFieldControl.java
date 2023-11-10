@@ -39,7 +39,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     protected JsonElement saveControl() {
         JsonArray jsonArray = new JsonArray();
         for (FieldContent<?> fieldContent : this.fieldContents) {
-            if (fieldContent instanceof IValueContent<?> valueContent) {
+            if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                 jsonArray.add(valueContent.save());
             }
         }
@@ -65,7 +65,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
                 fieldContent = this.fieldListControl.addNewContent();
             }
 
-            if (fieldContent instanceof IValueContent<?> valueContent) {
+            if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                 valueContent.load(jsonElementList.get(x));
             }
         }
@@ -77,7 +77,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     }
 
     @Override
-    protected boolean fulfillsRequired(ObservableList<FieldContent<?>> value) {
+    public boolean fulfillsRequired(ObservableList<FieldContent<?>> value) {
         return !value.isEmpty();
     }
 

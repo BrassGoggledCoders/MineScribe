@@ -16,3 +16,8 @@
     -fx-border-insets: -10px !important;
     -fx-padding: 5px 10px 5px 10px !important;
 }
+
+.invalid {
+    -fx-control-inner-background: white;
+    -fx-border-color: transparent red transparent transparent;
+}

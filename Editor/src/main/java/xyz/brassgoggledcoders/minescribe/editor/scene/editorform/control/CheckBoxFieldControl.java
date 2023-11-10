@@ -53,7 +53,7 @@ public class CheckBoxFieldControl extends FieldControl<CheckBoxFieldControl, Boo
     }
 
     @Override
-    protected boolean fulfillsRequired(Boolean value) {
+    public boolean fulfillsRequired(Boolean value) {
         return value != null;
     }
 

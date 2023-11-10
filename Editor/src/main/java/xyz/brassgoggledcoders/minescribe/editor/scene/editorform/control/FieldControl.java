@@ -9,7 +9,7 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabele
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
 public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends ReadOnlyProperty<V>, V>
-        extends FieldContent<C> implements IValueContent<C>, ILabeledContent<C> {
+        extends FieldContent<C> implements IValueContent<C, P, V>, ILabeledContent<C> {
     private final BooleanProperty valid;
     private final BooleanProperty changed;
     private final BooleanProperty required;
@@ -98,7 +98,5 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
     protected abstract void loadControl(JsonElement jsonElement);
 
-    public abstract P valueProperty();
-
-    protected abstract boolean fulfillsRequired(V value);
+    public abstract boolean fulfillsRequired(V value);
 }

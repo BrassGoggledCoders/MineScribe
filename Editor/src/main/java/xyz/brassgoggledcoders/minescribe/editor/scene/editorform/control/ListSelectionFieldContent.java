@@ -82,7 +82,7 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
     }
 
     @Override
-    protected boolean fulfillsRequired(ObservableList<T> value) {
+    public boolean fulfillsRequired(ObservableList<T> value) {
         return !value.isEmpty();
     }
 

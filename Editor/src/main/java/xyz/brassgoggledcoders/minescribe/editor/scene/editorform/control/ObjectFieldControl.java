@@ -54,7 +54,7 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ObjectP
     }
 
     @Override
-    protected boolean fulfillsRequired(JsonElement value) {
+    public boolean fulfillsRequired(JsonElement value) {
         if (value != null && value.isJsonObject()) {
             return !value.getAsJsonObject()
                     .isEmpty();

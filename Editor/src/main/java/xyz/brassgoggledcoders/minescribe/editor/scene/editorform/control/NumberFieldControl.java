@@ -48,7 +48,7 @@ public class NumberFieldControl<N extends Number> extends FieldControl<NumberFie
     }
 
     @Override
-    protected boolean fulfillsRequired(N value) {
+    public boolean fulfillsRequired(N value) {
         return false;
     }
 }

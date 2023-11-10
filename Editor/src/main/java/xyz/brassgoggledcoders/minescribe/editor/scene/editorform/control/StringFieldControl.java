@@ -55,7 +55,7 @@ public class StringFieldControl extends FieldControl<StringFieldControl, StringP
     }
 
     @Override
-    protected boolean fulfillsRequired(String value) {
+    public boolean fulfillsRequired(String value) {
         return value != null && !value.isEmpty();
     }
 

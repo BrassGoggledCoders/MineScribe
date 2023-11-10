@@ -1,7 +1,10 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
 import com.google.gson.JsonElement;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -33,13 +36,13 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
     public abstract F getContent();
 
     public void setValue(JsonElement jsonElement) {
-        if (this.getContent() instanceof IValueContent<?> valueControl) {
+        if (this.getContent() instanceof IValueContent<?, ?, ?> valueControl) {
             valueControl.load(jsonElement);
         }
     }
 
     public JsonElement getValue() {
-        if (this.getContent() instanceof IValueContent<?> valueControl) {
+        if (this.getContent() instanceof IValueContent<?, ?, ?> valueControl) {
             return valueControl.save();
         }
         return null;
@@ -54,13 +57,13 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
     }
 
     public void reset() {
-        if (this.getContent() instanceof IValueContent<?> valueControl) {
+        if (this.getContent() instanceof IValueContent<?, ?, ?> valueControl) {
             valueControl.reset();
         }
     }
 
     public void persist() {
-        if (this.getContent() instanceof IValueContent<?> valueControl) {
+        if (this.getContent() instanceof IValueContent<?, ?, ?> valueControl) {
             valueControl.persist();
         }
     }

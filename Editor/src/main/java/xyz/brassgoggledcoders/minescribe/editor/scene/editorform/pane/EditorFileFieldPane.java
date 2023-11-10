@@ -15,7 +15,6 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
-import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.FieldControl;
 
 public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldPane<F> {
     private final FileFieldInfo fieldInfo;
@@ -38,25 +37,12 @@ public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldP
 
     private void setup() {
         this.content.withId(this.fieldInfo.field());
-        if (this.content instanceof IValueContent<?> valueControl) {
-            valueControl.withRequired(this.fieldInfo.required());
+        if (this.content instanceof IValueContent<?, ?, ?> valueControl) {
+            valueControl.withRequired(this.fieldInfo.required())
+                    .withValidations(this.fieldInfo.validations());
 
             this.changedProperty().bind(valueControl.changedProperty());
-            this.validProperty().bind(Bindings.and(
-                    valueControl.validProperty(),
-                    Bindings.isEmpty(this.errorListProperty())
-            ));
-            if (this.content instanceof FieldControl<?, ?, ?> control && !this.fieldInfo.validations().isEmpty()) {
-                control.valueProperty().addListener((observable, old, newValue) -> {
-                    this.errorList.get().clear();
-                    this.fieldInfo.validations()
-                            .stream()
-                            .map(validation -> validation.validate(newValue))
-                            .filter(result -> !result.isValid())
-                            .map(ValidationResult::getMessage)
-                            .forEach(this.errorList.get()::add);
-                });
-            }
+            this.validProperty().bind(valueControl.validProperty());
         }
         if (this.content instanceof ILabeledContent<?> labeledControl) {
             labeledControl.withLabel(this.fieldInfo.label());

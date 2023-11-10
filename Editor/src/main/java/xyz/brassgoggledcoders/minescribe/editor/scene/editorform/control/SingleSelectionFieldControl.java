@@ -70,7 +70,7 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
     }
 
     @Override
-    protected boolean fulfillsRequired(T value) {
+    public boolean fulfillsRequired(T value) {
         return value != null;
     }
 
