@@ -20,8 +20,14 @@ public class Registry<K, V> implements Iterable<V> {
         this.dispatchCodec = new BiMapDispatchCodec<>(
                 this.name,
                 kCodec,
-                this::getMap
+                this::containsKey,
+                this::getKey,
+                this::getValue
         );
+    }
+
+    public boolean containsKey(K key) {
+        return this.getMap().containsKey(key);
     }
 
     protected void register(K key, V value) {

@@ -29,13 +29,18 @@ public class JsonCodec<T> implements Codec<T> {
 
     @Override
     public <U> DataResult<Pair<T, U>> decode(DynamicOps<U> ops, U input) {
-        JsonElement element = ops.convertTo(JsonOps.INSTANCE, input);
+        if (input != null) {
+            JsonElement element = ops.convertTo(JsonOps.INSTANCE, input);
 
-        try {
-            return DataResult.success(Pair.of(fromJson.apply(element, this), input));
-        } catch (JsonSyntaxException e) {
-            return DataResult.error(e.getMessage());
+            try {
+                return DataResult.success(Pair.of(fromJson.apply(element, this), input));
+            } catch (JsonSyntaxException e) {
+                return DataResult.error(e.getMessage());
+            }
+        } else {
+            return DataResult.error("input was null");
         }
+
     }
 
     @Override
