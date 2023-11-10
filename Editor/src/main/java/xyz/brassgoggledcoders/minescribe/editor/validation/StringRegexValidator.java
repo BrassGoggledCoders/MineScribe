@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.editor.validator;
+package xyz.brassgoggledcoders.minescribe.editor.validation;
 
 import com.dlsc.formsfx.model.validators.CustomValidator;
 

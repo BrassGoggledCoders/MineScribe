@@ -13,7 +13,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.AnchorPane;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
-import xyz.brassgoggledcoders.minescribe.editor.validator.StringRegexValidator;
+import xyz.brassgoggledcoders.minescribe.editor.validation.StringRegexValidator;
 
 public class NewDirectoryFormDialog extends Dialog<String> {
 

@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.codec;
+package xyz.brassgoggledcoders.minescribe.core.codec;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
@@ -8,13 +8,21 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class JsonCodec<T> implements Codec<T> {
-    private final Function<JsonElement, T> fromJson;
+    private final BiFunction<JsonElement, Codec<T>, T> fromJson;
     private final Function<T, JsonElement> toJson;
 
     public JsonCodec(Function<JsonElement, T> fromJson, Function<T, JsonElement> toJson) {
+        this(
+                (json, codec) -> fromJson.apply(json),
+                toJson
+        );
+    }
+
+    public JsonCodec(BiFunction<JsonElement, Codec<T>, T> fromJson, Function<T, JsonElement> toJson) {
         this.fromJson = fromJson;
         this.toJson = toJson;
     }
@@ -24,7 +32,7 @@ public class JsonCodec<T> implements Codec<T> {
         JsonElement element = ops.convertTo(JsonOps.INSTANCE, input);
 
         try {
-            return DataResult.success(Pair.of(fromJson.apply(element), input));
+            return DataResult.success(Pair.of(fromJson.apply(element, this), input));
         } catch (JsonSyntaxException e) {
             return DataResult.error(e.getMessage());
         }

@@ -1,14 +1,14 @@
 package xyz.brassgoggledcoders.minescribe.editor.javascript;
 
-import com.mojang.serialization.Codec;
+import com.google.gson.JsonElement;
 
 @SuppressWarnings("unused")
 public class MineScribeJSFieldHelper {
     public MineScribeJSField<String> ofString(String fieldName, String defaultValue) {
         return new MineScribeJSField<>(
                 fieldName,
-                Codec.STRING,
-                defaultValue
+                defaultValue,
+                JsonElement::getAsString
         );
     }
 }
