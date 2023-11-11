@@ -18,8 +18,10 @@
                 <Insets bottom="10" left="10" right="10" top="10"/>
             </padding>
             <spacing>10</spacing>
-            <Button prefHeight="30" prefWidth="125" onMouseClicked="#saveForm">Save</Button>
-            <Button prefHeight="30" prefWidth="125" onMouseClicked="#resetForm">Reset</Button>
+            <AnchorPane prefHeight="30" prefWidth="125" fx:id="saveButtonPane">
+                <Button prefHeight="30" prefWidth="125" onMouseClicked="#saveForm" disable="true" fx:id="saveButton">Save</Button>
+            </AnchorPane>
+            <Button prefHeight="30" prefWidth="125" onMouseClicked="#resetForm" disable="true" fx:id="resetButton">Reset</Button>
         </HBox>
     </VBox>
 </AnchorPane>

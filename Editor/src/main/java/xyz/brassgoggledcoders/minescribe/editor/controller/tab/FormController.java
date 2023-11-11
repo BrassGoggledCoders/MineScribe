@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -34,6 +37,13 @@ public class FormController implements IFileEditorController {
             .create();
     @FXML
     public VBox formPane;
+
+    @FXML
+    public AnchorPane saveButtonPane;
+    @FXML
+    public Button saveButton;
+    @FXML
+    public Button resetButton;
 
     private EditorFormPane editorForm;
 
@@ -87,6 +97,15 @@ public class FormController implements IFileEditorController {
                             }
                         }
                     });
+            this.resetButton.disableProperty()
+                    .bind(this.editorForm.changedProperty()
+                            .not()
+                    );
+            this.saveButton.disableProperty()
+                    .bind(Bindings.and(
+                            this.editorForm.changedProperty(),
+                            this.editorForm.validProperty()
+                    ).not());
             this.formPane.getChildren()
                     .add(this.editorForm);
         } catch (FormException e) {
