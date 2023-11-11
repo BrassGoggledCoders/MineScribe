@@ -39,6 +39,7 @@ public class FieldListControl extends TitledPane {
 
     private final IntegerProperty minimumFields = new SimpleIntegerProperty(0);
     private final IntegerProperty maximumFields = new SimpleIntegerProperty(Integer.MAX_VALUE);
+    private final LongProperty invalidChildren;
     private final ListProperty<FieldContent<?>> contents = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final ListProperty<Property<?>> values;
     private final IFileFieldDefinition fieldDefinition;
@@ -53,6 +54,8 @@ public class FieldListControl extends TitledPane {
         this.glyphFont = GlyphFontRegistry.font("FontAwesome");
         this.fieldPane = new VBox();
         this.values = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
+        this.invalidChildren = new SimpleLongProperty(0);
+
         this.setup();
     }
 
@@ -77,7 +80,7 @@ public class FieldListControl extends TitledPane {
                 } else if (c.wasRemoved()) {
                     for (FieldContent<?> fieldContent : c.getRemoved()) {
                         if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
-                            this.values.add((Property<?>) valueContent.valueProperty());
+                            this.values.remove((Property<?>) valueContent.valueProperty());
                         }
                     }
                 }
@@ -112,16 +115,32 @@ public class FieldListControl extends TitledPane {
             if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                 valueContent.withValidations(new ArrayList<>(this.fieldValidationSupplier.get()))
                         .withRequired(true);
+                valueContent.validate();
             }
             int size = this.fieldPane.getChildren()
                     .size();
             this.fieldPane.getChildren()
                     .add(size - 1, createFieldNode(fieldContent));
+            this.contents.add(fieldContent);
             return fieldContent;
         } catch (FormException formException) {
             LOGGER.error("Failed to create new Field Pane for Field List Control", formException);
         }
         return null;
+    }
+
+    private void recountInvalidChildren() {
+        this.invalidChildren.set(this.fieldPane.getChildren()
+                .stream()
+                .filter(FieldNode.class::isInstance)
+                .map(FieldNode.class::cast)
+                .filter(fieldNode -> !fieldNode.validProperty().get())
+                .count()
+        );
+    }
+
+    public LongProperty invalidChildren() {
+        return invalidChildren;
     }
 
     private FieldNode createFieldNode(FieldContent<?> newField) {
@@ -132,6 +151,7 @@ public class FieldListControl extends TitledPane {
         );
         this.contents.sizeProperty()
                 .addListener(new WeakChangeListener<Number>(fieldNode::changed));
+        fieldNode.valid.addListener((observable, old, newValue) -> recountInvalidChildren());
         fieldNode.minusButtonVisible.set(true);
         return fieldNode;
     }
@@ -149,6 +169,7 @@ public class FieldListControl extends TitledPane {
         private final BooleanProperty minusButtonVisible;
         private final ObservableList<FieldContent<?>> listOfFields;
         private final FieldContent<?> field;
+        private final BooleanProperty valid;
 
         public FieldNode(FieldContent<?> field, Label label, ObservableList<FieldContent<?>> listOfFields) {
             this.listOfFields = listOfFields;
@@ -160,6 +181,11 @@ public class FieldListControl extends TitledPane {
             removePane.setAlignment(Pos.CENTER_RIGHT);
             removePane.getChildren().add(label);
             removePane.setPadding(new Insets(5));
+
+            this.valid = new SimpleBooleanProperty(true);
+            if (field instanceof IValueContent<?, ?, ?> valueContent) {
+                valid.bind(valueContent.validProperty());
+            }
 
             this.minusButtonVisible = new SimpleBooleanProperty();
             label.visibleProperty().bind(this.minusButtonVisible);
@@ -176,6 +202,10 @@ public class FieldListControl extends TitledPane {
 
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             this.minusButtonVisible.set(newValue.intValue() > FieldListControl.this.minimumFields.get());
+        }
+
+        public BooleanProperty validProperty() {
+            return this.valid;
         }
     }
 }

@@ -7,7 +7,9 @@ public abstract class FieldContent<C extends FieldContent<C>> {
     public abstract Node getNode();
 
     public void finishSetup() {
-
+        this.getNode()
+                .getStyleClass()
+                .add("field-content");
     }
 
     @SuppressWarnings("unchecked")

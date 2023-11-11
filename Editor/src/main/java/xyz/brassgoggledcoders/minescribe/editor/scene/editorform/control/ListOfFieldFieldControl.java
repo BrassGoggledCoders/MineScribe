@@ -3,11 +3,8 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
-import javafx.beans.Observable;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
@@ -25,15 +22,14 @@ import java.util.List;
 public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldControl, ListProperty<Property<?>>, ObservableList<Property<?>>> {
 
     private final FieldListControl fieldListControl;
-    private final ListProperty<Property<?>> fieldValues;
     private final List<FieldValidation> fieldValidations;
 
     public ListOfFieldFieldControl(IFileFieldDefinition definition) {
         super();
         this.fieldListControl = new FieldListControl(definition, this::getFieldValidations);
-        this.fieldValues = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
-        this.fieldValues.bind(this.fieldListControl.valueProperty());
         this.fieldValidations = new ArrayList<>();
+        this.fieldListControl.invalidChildren()
+                .addListener((observable, oldValue, newValue) -> updateInvalidChildren(newValue.longValue()));
     }
 
     @Override
@@ -87,6 +83,23 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     }
 
     @Override
+    protected void checkValid(ObservableList<Property<?>> newValue) {
+        super.checkValid(newValue);
+
+        long numberInvalid = this.fieldListControl.invalidChildren().get();
+        if (numberInvalid > 0) {
+            this.errorListProperty().add("Field contains %s invalid fields".formatted(numberInvalid));
+        }
+    }
+
+    private void updateInvalidChildren(long numberInvalid) {
+        this.errorListProperty().clear();
+        if (numberInvalid > 0) {
+            this.errorListProperty().add("Field contains %s invalid fields".formatted(numberInvalid));
+        }
+    }
+
+    @Override
     public ListOfFieldFieldControl withValidations(List<Validation<?>> validations) {
         for (Validation<?> validation : validations) {
             if (validation instanceof FieldValidation fieldValidation) {
@@ -94,6 +107,11 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
             }
         }
         return this;
+    }
+
+    @Override
+    public boolean hasValidations() {
+        return true;
     }
 
     private List<FieldValidation> getFieldValidations() {
@@ -106,7 +124,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
 
     @Override
     public ListProperty<Property<?>> valueProperty() {
-        return this.fieldValues;
+        return this.fieldListControl.valueProperty();
     }
 
     @Override

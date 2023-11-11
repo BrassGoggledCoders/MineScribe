@@ -204,6 +204,11 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
     public abstract boolean fulfillsRequired(V value);
 
+    @Override
+    public void validate() {
+        this.checkValid(this.valueProperty().getValue());
+    }
+
     private Tooltip creatValidationToolTip() {
         if (this.hasValidations()) {
             Tooltip validationTooltip = new Tooltip();
@@ -225,15 +230,13 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
                 Tooltip.install(this.getNode(), this.supplierValidationTooltip.get());
             }
             this.getNode()
-                    .getStyleClass()
-                    .add("invalid");
+                    .pseudoClassStateChanged(INVALID, true);
         } else {
             if (SceneUtils.hasToolTip(this.getNode())) {
                 Tooltip.uninstall(this.getNode(), this.supplierValidationTooltip.get());
             }
             this.getNode()
-                    .getStyleClass()
-                    .remove("invalid");
+                    .pseudoClassStateChanged(INVALID, false);
         }
     }
 }
