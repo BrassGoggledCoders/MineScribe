@@ -4,6 +4,7 @@ import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -23,10 +24,15 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class FieldListControl extends TitledPane {
     private final Logger LOGGER = LoggerFactory.getLogger(FieldListControl.class);
@@ -36,12 +42,14 @@ public class FieldListControl extends TitledPane {
     private final ListProperty<FieldContent<?>> contents = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final ListProperty<Property<?>> values;
     private final IFileFieldDefinition fieldDefinition;
+    private final Supplier<List<FieldValidation>> fieldValidationSupplier;
 
     private final GlyphFont glyphFont;
     private final VBox fieldPane;
 
-    public FieldListControl(IFileFieldDefinition fieldDefinition) {
+    public FieldListControl(IFileFieldDefinition fieldDefinition, Supplier<List<FieldValidation>> fieldValidationSupplier) {
         this.fieldDefinition = fieldDefinition;
+        this.fieldValidationSupplier = fieldValidationSupplier;
         this.glyphFont = GlyphFontRegistry.font("FontAwesome");
         this.fieldPane = new VBox();
         this.values = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
@@ -62,13 +70,13 @@ public class FieldListControl extends TitledPane {
             while (c.next()) {
                 if (c.wasAdded()) {
                     for (FieldContent<?> fieldContent : c.getAddedSubList()) {
-                        if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                        if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                             this.values.add((Property<?>) valueContent.valueProperty());
                         }
                     }
                 } else if (c.wasRemoved()) {
                     for (FieldContent<?> fieldContent : c.getRemoved()) {
-                        if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                        if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                             this.values.add((Property<?>) valueContent.valueProperty());
                         }
                     }
@@ -101,7 +109,10 @@ public class FieldListControl extends TitledPane {
         try {
             FieldContent<?> fieldContent = EditorRegistries.getEditorFormFieldRegistry()
                     .createEditorFieldFor(this.fieldDefinition);
-
+            if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
+                valueContent.withValidations(new ArrayList<>(this.fieldValidationSupplier.get()))
+                        .withRequired(true);
+            }
             int size = this.fieldPane.getChildren()
                     .size();
             this.fieldPane.getChildren()
@@ -120,7 +131,7 @@ public class FieldListControl extends TitledPane {
                 this.contents
         );
         this.contents.sizeProperty()
-                .addListener(fieldNode::changed);
+                .addListener(new WeakChangeListener<Number>(fieldNode::changed));
         fieldNode.minusButtonVisible.set(true);
         return fieldNode;
     }

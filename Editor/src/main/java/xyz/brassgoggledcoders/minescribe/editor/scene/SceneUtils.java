@@ -17,4 +17,8 @@ public class SceneUtils {
         columnConstraints.setPercentWidth(percent);
         return columnConstraints;
     }
+
+    public static boolean hasToolTip(Node node) {
+        return node.getProperties().get("javafx.scene.control.Tooltip") != null;
+    }
 }

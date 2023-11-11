@@ -12,6 +12,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
+import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
@@ -23,22 +25,20 @@ import java.util.List;
 public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldControl, ListProperty<Property<?>>, ObservableList<Property<?>>> {
 
     private final FieldListControl fieldListControl;
-    private ListProperty<Property<?>> fieldValues;
+    private final ListProperty<Property<?>> fieldValues;
+    private final List<FieldValidation> fieldValidations;
 
     public ListOfFieldFieldControl(IFileFieldDefinition definition) {
         super();
-        this.fieldListControl = new FieldListControl(definition);
+        this.fieldListControl = new FieldListControl(definition, this::getFieldValidations);
+        this.fieldValues = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
         this.fieldValues.bind(this.fieldListControl.valueProperty());
+        this.fieldValidations = new ArrayList<>();
     }
 
     @Override
     public Node getNode() {
         return fieldListControl;
-    }
-
-    @Override
-    protected void setupControl() {
-        this.fieldValues = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
     }
 
     @Override
@@ -84,6 +84,20 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
                 valueContent.load(jsonElementList.get(x));
             }
         }
+    }
+
+    @Override
+    public ListOfFieldFieldControl withValidations(List<Validation<?>> validations) {
+        for (Validation<?> validation : validations) {
+            if (validation instanceof FieldValidation fieldValidation) {
+                this.fieldValidations.add(fieldValidation);
+            }
+        }
+        return this;
+    }
+
+    private List<FieldValidation> getFieldValidations() {
+        return this.fieldValidations;
     }
 
     public ListProperty<FieldContent<?>> contentProperty() {

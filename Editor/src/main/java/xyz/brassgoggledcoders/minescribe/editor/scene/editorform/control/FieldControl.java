@@ -1,15 +1,19 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
+import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.collections.SetChangeListener;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import org.jetbrains.annotations.Nullable;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
+import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
@@ -17,6 +21,7 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueC
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends ReadOnlyProperty<V>, V>
         extends FieldContent<C> implements IValueContent<C, P, V>, ILabeledContent<C> {
@@ -29,6 +34,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     private final ObjectProperty<JsonElement> persistedValue;
     private final SetProperty<String> errorList;
     private final Set<Function<Object, ValidationResult>> validations;
+    private final Supplier<Tooltip> supplierValidationTooltip;
 
     protected FieldControl() {
         this.valid = new SimpleBooleanProperty(true);
@@ -36,8 +42,13 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.required = new SimpleBooleanProperty(false);
         this.label = new SimpleObjectProperty<>();
         this.persistedValue = new SimpleObjectProperty<>();
+
         this.errorList = new SimpleSetProperty<>(FXCollections.observableSet());
+        this.errorList.addListener((SetChangeListener<? super String>) c -> handleValidationChange());
+        this.errorList.addListener((observable, oldValue, newValue) -> handleValidationChange());
+
         this.validations = new HashSet<>();
+        this.supplierValidationTooltip = Suppliers.memoize(this::creatValidationToolTip);
 
         this.setupControl();
         this.valid.bind(Bindings.isEmpty(this.errorList));
@@ -58,7 +69,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
     }
 
-    private void checkValid(V newValue) {
+    protected void checkValid(V newValue) {
         List<String> newErrors = new ArrayList<>();
         for (Function<Object, ValidationResult> fieldValidation : this.validations) {
             ValidationResult result = fieldValidation.apply(newValue);
@@ -192,4 +203,37 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     protected abstract void loadControl(JsonElement jsonElement);
 
     public abstract boolean fulfillsRequired(V value);
+
+    private Tooltip creatValidationToolTip() {
+        if (this.hasValidations()) {
+            Tooltip validationTooltip = new Tooltip();
+
+            validationTooltip.textProperty().bind(this.errorListProperty()
+                    .map(errorSet -> errorSet.stream()
+                            .reduce((stringA, stringB) -> stringA + System.lineSeparator() + stringB)
+                            .orElse("")
+                    )
+            );
+            return validationTooltip;
+        }
+        return null;
+    }
+
+    private void handleValidationChange() {
+        if (!this.errorListProperty().isEmpty()) {
+            if (!SceneUtils.hasToolTip(this.getNode())) {
+                Tooltip.install(this.getNode(), this.supplierValidationTooltip.get());
+            }
+            this.getNode()
+                    .getStyleClass()
+                    .add("invalid");
+        } else {
+            if (SceneUtils.hasToolTip(this.getNode())) {
+                Tooltip.uninstall(this.getNode(), this.supplierValidationTooltip.get());
+            }
+            this.getNode()
+                    .getStyleClass()
+                    .remove("invalid");
+        }
+    }
 }
