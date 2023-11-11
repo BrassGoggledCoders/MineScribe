@@ -22,6 +22,10 @@ public class JsonBuilder {
         public JsonObject build() {
             return jsonObject;
         }
+
+        public JsonObjectBuilder withInt(String name, int value) {
+            return withProperty(name, new JsonPrimitive(value));
+        }
     }
 
 }

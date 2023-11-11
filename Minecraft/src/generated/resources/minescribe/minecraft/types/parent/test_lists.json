@@ -7,7 +7,13 @@
         },
         "info": {
           "field": "string",
-          "label": "String Field"
+          "label": "String Field",
+          "validations": [
+            {
+              "type": "minescribe:min_length",
+              "minLength": 4
+            }
+          ]
         }
       },
       {
@@ -24,7 +30,13 @@
         "info": {
           "field": "stringList",
           "label": "String List",
-          "sortOrder": 1
+          "sortOrder": 1,
+          "validations": [
+            {
+              "type": "minescribe:min_length",
+              "minLength": 4
+            }
+          ]
         }
       }
     ]

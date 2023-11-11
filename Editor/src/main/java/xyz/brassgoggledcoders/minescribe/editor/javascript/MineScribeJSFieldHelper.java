@@ -11,4 +11,12 @@ public class MineScribeJSFieldHelper {
                 JsonElement::getAsString
         );
     }
+
+    public MineScribeJSField<Integer> ofInt(String fieldName, Integer defaultValue) {
+        return new MineScribeJSField<>(
+                fieldName,
+                defaultValue,
+                JsonElement::getAsInt
+        );
+    }
 }

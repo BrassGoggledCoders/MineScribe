@@ -155,7 +155,15 @@ public class MineScribeCommonEventHandler {
                                         "String Field",
                                         "string",
                                         0,
-                                        false
+                                        false,
+                                        List.of(
+                                                new FieldValidationData(
+                                                        new ResourceLocation(MineScribe.ID, "min_length"),
+                                                        JsonBuilder.forObject()
+                                                                .withInt("minLength", 4)
+                                                                .build()
+                                                )
+                                        )
                                 )
                         ),
                         new FileFieldData<>(
@@ -168,7 +176,15 @@ public class MineScribeCommonEventHandler {
                                         "String List",
                                         "stringList",
                                         1,
-                                        false
+                                        false,
+                                        List.of(
+                                                new FieldValidationData(
+                                                        new ResourceLocation(MineScribe.ID, "min_length"),
+                                                        JsonBuilder.forObject()
+                                                                .withInt("minLength", 4)
+                                                                .build()
+                                                )
+                                        )
                                 )
                         )
                 ))
