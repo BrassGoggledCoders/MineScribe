@@ -9,4 +9,8 @@ public class JsonFieldNames {
     public static final String FIELDS = "fields";
     public static final String DEFAULT_VALUE = "defaultValue";
     public static final String REQUIRED = "required";
+    public static final String SERIALIZER = "serializer";
+    public static final String INFO = "info";
+    public static final String DEFINITION = "definition";
+    public static final String VALIDATIONS = "validations";
 }

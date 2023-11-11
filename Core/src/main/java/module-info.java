@@ -3,6 +3,7 @@ module xyz.brassgoggledcoders.minescribe.core {
     requires com.google.gson;
     requires com.google.common;
     requires datafixerupper;
+
     requires org.slf4j;
 
     exports xyz.brassgoggledcoders.minescribe.core.fileform;
@@ -15,4 +16,6 @@ module xyz.brassgoggledcoders.minescribe.core {
     exports xyz.brassgoggledcoders.minescribe.core.registry;
     exports xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
     exports xyz.brassgoggledcoders.minescribe.core.util;
+    exports xyz.brassgoggledcoders.minescribe.core.validation;
+    exports xyz.brassgoggledcoders.minescribe.core.codec;
 }

@@ -5,6 +5,7 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, SerializerType> {
     public SerializerTypeRegistry() {
@@ -57,12 +58,15 @@ public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, Serial
         return serializerTypes;
     }
 
-    public SerializerType getForSerializerId(ResourceId resourceId) {
-        for (SerializerType type: this.getValues()) {
-            if (type.serializerId().equals(resourceId)) {
-                return type;
+    public Supplier<List<SerializerType>> supplyList(IFullName... values) {
+        return () -> {
+            List<SerializerType> serializerTypes = new ArrayList<>();
+            for (IFullName fullName : values) {
+                if (fullName != null) {
+                    serializerTypes.addAll(this.getFor(fullName.getFullName()));
+                }
             }
-        }
-        return null;
+            return serializerTypes;
+        };
     }
 }

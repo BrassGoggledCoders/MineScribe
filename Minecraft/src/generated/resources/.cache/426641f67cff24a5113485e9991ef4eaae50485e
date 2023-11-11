@@ -1,6 +1,6 @@
-// 1.19.2	2023-11-04T17:53:07.1056423	types/object generator for minescribe
+// 1.19.2	2023-11-10T00:36:45.1697681	types/object generator for minescribe
 ab015b0614183af63c168f8d5341c84436610e35 minescribe/minecraft/types/object/ingredient.json
 270d421ed88606180dad8686c3c1eff029c3ae65 minescribe/minescribe/types/object/file_field.json
 ace05211bd6b3f99ec2960749eabd8fe9baefe87 minescribe/minescribe/types/object/file_field_definition.json
 9e4661580066d73b143e0e2e97d2108dd245cc56 minescribe/minescribe/types/object/file_field_info.json
-55c3c56462bc292253f1e6e632c78d8133e42cae minescribe/minescribe/types/object/serializer_info.json
+d5aee5c676ae22cd1b5f2859d363091247b01589 minescribe/minescribe/types/object/serializer_info.json

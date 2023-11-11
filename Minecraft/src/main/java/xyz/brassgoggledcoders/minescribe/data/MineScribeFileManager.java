@@ -40,13 +40,21 @@ public class MineScribeFileManager {
         }
     }
 
-    private void writeToFile(Path path, JsonElement jsonElement) {
+    public void writeFile(Path path, String contents) {
+        if (!path.isAbsolute() || path.startsWith(this.mineScribeRoot)) {
+            writeToFile(path, contents);
+        } else {
+            MineScribe.LOGGER.error("Not writing file {} as it is outside MineScribe's path", path);
+        }
+    }
+
+    private void writeToFile(Path path, String value) {
         try {
             Path properPath = this.mineScribeRoot.resolve(path);
             Files.createDirectories(properPath.getParent());
             Files.writeString(
                     properPath,
-                    this.gson.toJson(jsonElement),
+                    value,
                     StandardCharsets.UTF_8,
                     StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE,
@@ -55,6 +63,10 @@ public class MineScribeFileManager {
         } catch (IOException e) {
             MineScribe.LOGGER.error("Failed to write file {}", path, e);
         }
+    }
+
+    private void writeToFile(Path path, JsonElement jsonElement) {
+        writeToFile(path, this.gson.toJson(jsonElement));
     }
 
     public void clearRoot() {

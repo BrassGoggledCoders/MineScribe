@@ -21,14 +21,14 @@ public record SerializerTypeData(
         ResourceLocation serializerId,
         ResourceLocation parentId,
         Component label,
-        FileForm form
+        FileFormData form
 ) {
     public static final Codec<SerializerTypeData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(SerializerTypeData::id),
             ResourceLocation.CODEC.fieldOf("serializerId").forGetter(SerializerTypeData::serializerId),
             ResourceLocation.CODEC.fieldOf("parentId").forGetter(SerializerTypeData::parentId),
             MineScribeCodecs.COMPONENT.fieldOf("label").forGetter(SerializerTypeData::label),
-            FileForm.CODEC.fieldOf("form").forGetter(SerializerTypeData::form)
+            FileFormData.CODEC.fieldOf("form").forGetter(SerializerTypeData::form)
     ).apply(instance, SerializerTypeData::new));
 
     public static JsonCodecProvider<SerializerTypeData> createProvider(

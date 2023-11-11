@@ -21,7 +21,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
-import xyz.brassgoggledcoders.minescribe.editor.validator.StringRegexValidator;
+import xyz.brassgoggledcoders.minescribe.editor.validation.StringRegexValidator;
 
 import java.util.List;
 import java.util.Optional;

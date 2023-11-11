@@ -3,7 +3,9 @@ package xyz.brassgoggledcoders.minescribe.editor;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
+import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
 import java.io.IOException;
@@ -32,9 +34,12 @@ public class Application extends javafx.application.Application {
         if (project != null) {
             project.trySave(Preferences.userNodeForPackage(Application.class));
         }
+        ScriptHandler.getInstance()
+                .close();
     }
 
     public static void main(String[] args) {
+        SLF4JBridgeHandler.install();
         launch();
     }
 }

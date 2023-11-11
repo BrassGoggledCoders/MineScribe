@@ -5,6 +5,7 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires java.prefs;
 
     requires org.slf4j;
+    requires jul.to.slf4j;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
@@ -15,6 +16,7 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires com.google.gson;
     requires datafixerupper;
     requires com.google.common;
+    requires org.graalvm.polyglot;
 
     exports xyz.brassgoggledcoders.minescribe.editor;
     opens xyz.brassgoggledcoders.minescribe.editor to javafx.fxml;
@@ -23,5 +25,11 @@ module xyz.brassgoggledcoders.minescribe.editor {
     exports xyz.brassgoggledcoders.minescribe.editor.controller.tab;
     opens xyz.brassgoggledcoders.minescribe.editor.controller.tab to javafx.fxml;
 
+    exports xyz.brassgoggledcoders.minescribe.editor.exception;
+    exports xyz.brassgoggledcoders.minescribe.editor.registry;
+    exports xyz.brassgoggledcoders.minescribe.editor.javascript;
+
     exports xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
+    exports xyz.brassgoggledcoders.minescribe.editor.scene;
+    opens xyz.brassgoggledcoders.minescribe.editor.scene to javafx.fxml;
 }

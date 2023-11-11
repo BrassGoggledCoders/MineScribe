@@ -19,11 +19,11 @@ import java.util.function.Consumer;
 
 public record ObjectTypeData(
         ResourceLocation id,
-        FileForm form
+        FileFormData form
 ) {
     public static final Codec<ObjectTypeData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(ObjectTypeData::id),
-            FileForm.CODEC.fieldOf("form").forGetter(ObjectTypeData::form)
+            FileFormData.CODEC.fieldOf("form").forGetter(ObjectTypeData::form)
     ).apply(instance, ObjectTypeData::new));
 
     public static JsonCodecProvider<ObjectTypeData> createProvider(

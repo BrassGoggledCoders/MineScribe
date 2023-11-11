@@ -8,8 +8,10 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFi
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class Registries {
@@ -80,6 +82,8 @@ public class Registries {
                     ObjectType::id
             ));
 
+    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations = null;
+
     public static BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>> getFileFieldCodecRegistry() {
         return FILE_FIELD_CODECS.get();
     }
@@ -112,7 +116,16 @@ public class Registries {
         return OBJECT_TYPES.get();
     }
 
-    public static void load(Path mineScribeRoot) {
+    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidations() {
+        return Objects.requireNonNull(validations);
+    }
+
+    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidationsNullable() {
+        return validations;
+    }
+
+    public static void load(Path mineScribeRoot, Registry<ResourceId, Codec<? extends Validation<?>>> validations) {
+        Registries.validations = validations;
         PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
         PACK_TYPES.get().load(mineScribeRoot);
         FORM_LISTS.get().setMineScribePath(mineScribeRoot);

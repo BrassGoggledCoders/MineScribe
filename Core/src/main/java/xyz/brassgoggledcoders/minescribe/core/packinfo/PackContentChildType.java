@@ -8,7 +8,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 
 import java.nio.file.Path;
 
-public class PackContentChildType extends PackContentType {
+public class PackContentChildType extends PackContentType implements IFullName {
     public static final Codec<PackContentChildType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceId.CODEC.fieldOf("id").forGetter(PackContentType::getId),
             Codec.STRING.fieldOf("label").forGetter(PackContentType::getLabel),
@@ -25,5 +25,13 @@ public class PackContentChildType extends PackContentType {
 
     public ResourceId getParentId() {
         return parentId;
+    }
+
+    @Override
+    public ResourceId getFullName() {
+        return new ResourceId(
+                this.getId().namespace(),
+                "types/child/" + this.getId().path()
+        );
     }
 }
