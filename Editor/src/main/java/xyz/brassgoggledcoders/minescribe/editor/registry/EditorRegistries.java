@@ -28,7 +28,7 @@ public class EditorRegistries {
                         StringFileFieldDefinition.class,
                         StringFieldControl::of
                 ));
-                registry.register("list_selection", new EditorFormFieldTransform<>(
+                registry.register("list_selection", new EditorFormFieldTransform<ListSelectionFileFieldDefinition, ListSelectionFieldContent<String>>(
                         ListSelectionFileFieldDefinition.class,
                         ListSelectionFieldContent::of
                 ));
@@ -37,7 +37,7 @@ public class EditorRegistries {
                         ListOfFileFieldDefinition.class,
                         ListOfFieldFieldControl::of
                 ));
-                registry.register("single_selection", new EditorFormFieldTransform<>(
+                registry.register("single_selection", new EditorFormFieldTransform<SingleSelectionFileFieldDefinition, SingleSelectionFieldControl<String>>(
                         SingleSelectionFileFieldDefinition.class,
                         SingleSelectionFieldControl::of
                 ));
@@ -47,6 +47,7 @@ public class EditorRegistries {
                             Range<Integer> range = integerFileField.getRange();
                             return new NumberFieldControl<>(
                                     integerFileField,
+                                    Integer.class,
                                     new SpinnerValueFactory.IntegerSpinnerValueFactory(
                                             range.min(),
                                             range.max(),
@@ -61,6 +62,7 @@ public class EditorRegistries {
                             Range<Double> doubleRange = doubleFileField.getRange();
                             return new NumberFieldControl<>(
                                     doubleFileField,
+                                    Double.class,
                                     new SpinnerValueFactory.DoubleSpinnerValueFactory(
                                             doubleRange.min(),
                                             doubleRange.max(),

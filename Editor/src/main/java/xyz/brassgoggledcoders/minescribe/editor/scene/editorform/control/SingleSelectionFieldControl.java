@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
+import com.mojang.datafixers.util.Either;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +12,7 @@ import javafx.scene.control.ComboBox;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
@@ -19,17 +21,21 @@ import java.util.List;
 import java.util.function.Function;
 
 public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelectionFieldControl<T>, ObjectProperty<T>, T> {
+    private final ComboBox<T> comboBox = new ComboBox<>();
     private final Function<T, String> getId;
-    private ComboBox<T> comboBox;
+    private final Class<T> tClass;
 
-    public SingleSelectionFieldControl(List<T> items, Function<T, String> getId) {
+
+    public SingleSelectionFieldControl(List<T> items, Function<T, String> getId, Class<T> tClass) {
+        super();
+        this.tClass = tClass;
         this.comboBox.setItems(FXCollections.observableArrayList(items));
         this.getId = getId;
     }
 
     @Override
-    protected void setupControl() {
-        this.comboBox = new ComboBox<>();
+    protected Either<T, ValidationResult> castObject(Object value) {
+        return castObjectWithClass(value, tClass);
     }
 
     @Override
@@ -85,14 +91,16 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
                         .getOptionalValue(definition.listId())
                         .map(FormList::values)
                         .orElseThrow(() -> new FormException("Failed to find List for Id: " + definition.listId())),
-                Function.identity()
+                Function.identity(),
+                String.class
         );
     }
 
-    public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId) {
+    public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId, Class<T> tClass) {
         return new SingleSelectionFieldControl<>(
                 items,
-                getId
+                getId,
+                tClass
         );
     }
 }

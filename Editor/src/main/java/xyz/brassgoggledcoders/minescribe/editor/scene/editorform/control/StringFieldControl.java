@@ -3,15 +3,16 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
+import com.mojang.datafixers.util.Either;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
-import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import org.jetbrains.annotations.Nullable;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 
 public class StringFieldControl extends FieldControl<StringFieldControl, StringProperty, String> {
-    private TextField textField;
+    private final TextField textField = new TextField();
 
     public StringFieldControl(String text) {
         super();
@@ -20,8 +21,8 @@ public class StringFieldControl extends FieldControl<StringFieldControl, StringP
     }
 
     @Override
-    protected void setupControl() {
-        this.textField = new TextField();
+    protected Either<String, ValidationResult> castObject(Object value) {
+        return castObjectWithClass(value, String.class);
     }
 
     @Override

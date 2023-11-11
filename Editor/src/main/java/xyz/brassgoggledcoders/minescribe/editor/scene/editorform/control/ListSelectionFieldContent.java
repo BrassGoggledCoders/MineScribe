@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import com.mojang.datafixers.util.Either;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -14,20 +15,21 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
+import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 
 import java.util.List;
 import java.util.function.Function;
 
 public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFieldContent<T>, ListProperty<T>, ObservableList<T>> {
+    private final ListSelectionView<T> listSelection = new ListSelectionView<>();
     private final Function<T, String> getId;
-
     private final List<T> items;
-    private ListSelectionView<T> listSelection;
     private ListProperty<T> listProperty;
 
 
     public ListSelectionFieldContent(List<T> items, Function<T, String> getId) {
+        super();
         this.items = items;
         this.listSelection.setSourceItems(FXCollections.observableArrayList(items));
         this.getId = getId;
@@ -46,8 +48,16 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
 
     @Override
     protected void setupControl() {
-        this.listSelection = new ListSelectionView<>();
         this.listProperty = new SimpleListProperty<>(this.listSelection.getTargetItems());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Either<ObservableList<T>, ValidationResult> castObject(Object value) {
+        if (value instanceof ObservableList<?> list) {
+            return Either.left((ObservableList<T>) list);
+        }
+        return Either.right(ValidationResult.error("Value Not a List"));
     }
 
     @Override

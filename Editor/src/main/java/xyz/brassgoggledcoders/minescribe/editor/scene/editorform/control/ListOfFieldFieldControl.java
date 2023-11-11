@@ -2,12 +2,17 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.mojang.datafixers.util.Either;
+import javafx.beans.Observable;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.FieldListControl;
@@ -15,14 +20,15 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.FieldListCont
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldControl, ListProperty<FieldContent<?>>, ObservableList<FieldContent<?>>> {
+public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldControl, ListProperty<Property<?>>, ObservableList<Property<?>>> {
 
     private final FieldListControl fieldListControl;
-    private ListProperty<FieldContent<?>> fieldContents;
+    private ListProperty<Property<?>> fieldValues;
 
     public ListOfFieldFieldControl(IFileFieldDefinition definition) {
+        super();
         this.fieldListControl = new FieldListControl(definition);
-        this.fieldContents.bind(this.fieldListControl.contentsProperty());
+        this.fieldValues.bind(this.fieldListControl.valueProperty());
     }
 
     @Override
@@ -32,13 +38,22 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
 
     @Override
     protected void setupControl() {
-        this.fieldContents = new SimpleListProperty<>();
+        this.fieldValues = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Either<ObservableList<Property<?>>, ValidationResult> castObject(Object value) {
+        if (value instanceof ObservableList<?> list) {
+            return Either.left((ObservableList<Property<?>>) list);
+        }
+        return Either.right(ValidationResult.error("Value Not a List"));
     }
 
     @Override
     protected JsonElement saveControl() {
         JsonArray jsonArray = new JsonArray();
-        for (FieldContent<?> fieldContent : this.fieldContents) {
+        for (FieldContent<?> fieldContent : this.fieldListControl.contentsProperty()) {
             if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                 jsonArray.add(valueContent.save());
             }
@@ -59,8 +74,8 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
 
         for (int x = 0; x < jsonElementList.size(); x++) {
             FieldContent<?> fieldContent;
-            if (x < this.fieldContents.size()) {
-                fieldContent = this.fieldContents.get(x);
+            if (x < this.contentProperty().size()) {
+                fieldContent = this.contentProperty().get(x);
             } else {
                 fieldContent = this.fieldListControl.addNewContent();
             }
@@ -71,13 +86,17 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
         }
     }
 
-    @Override
-    public ListProperty<FieldContent<?>> valueProperty() {
-        return this.fieldContents;
+    public ListProperty<FieldContent<?>> contentProperty() {
+        return this.fieldListControl.contentsProperty();
     }
 
     @Override
-    public boolean fulfillsRequired(ObservableList<FieldContent<?>> value) {
+    public ListProperty<Property<?>> valueProperty() {
+        return this.fieldValues;
+    }
+
+    @Override
+    public boolean fulfillsRequired(ObservableList<Property<?>> value) {
         return !value.isEmpty();
     }
 

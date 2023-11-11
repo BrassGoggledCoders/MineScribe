@@ -143,7 +143,8 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
                     SingleSelectionFieldControl<SerializerType> field = SingleSelectionFieldControl.of(
                                     serializerTypes,
-                                    serializerType -> serializerType.id().toString()
+                                    serializerType -> serializerType.id().toString(),
+                                    SerializerType.class
                             )
                             .withId(serializerInfo.fieldName())
                             .withLabel(serializerInfo.label())

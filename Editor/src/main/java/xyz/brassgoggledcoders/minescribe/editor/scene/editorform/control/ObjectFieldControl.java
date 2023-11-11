@@ -2,30 +2,27 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Either;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ObjectType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 
 public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ObjectProperty<JsonElement>, JsonElement> {
 
-
+    private final ObjectProperty<JsonElement> valueProperty = new SimpleObjectProperty<>();
     private final EditorFormPane formPane;
 
-    private ObjectProperty<JsonElement> valueProperty;
 
     public ObjectFieldControl(EditorFormPane editorFieldPane) {
+        super();
         this.formPane = editorFieldPane;
         this.valueProperty.bind(editorFieldPane.persistedObjectProperty());
-    }
-
-    @Override
-    protected void setupControl() {
-        this.valueProperty = new SimpleObjectProperty<>();
     }
 
     @Override
@@ -73,6 +70,11 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ObjectP
     public void reset() {
         this.formPane.reset();
         super.reset();
+    }
+
+    @Override
+    protected Either<JsonElement, ValidationResult> castObject(Object value) {
+        return castObjectWithClass(value, JsonElement.class);
     }
 
     public static ObjectFieldControl of(ReferencedObjectFileFieldDefinition definition) throws FormException {

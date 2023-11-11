@@ -2,12 +2,13 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import com.mojang.datafixers.util.Either;
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Control;
 import org.jetbrains.annotations.Nullable;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 
 public class CheckBoxFieldControl extends FieldControl<CheckBoxFieldControl, BooleanProperty, Boolean> {
     private final boolean defaultValue;
@@ -24,6 +25,11 @@ public class CheckBoxFieldControl extends FieldControl<CheckBoxFieldControl, Boo
     @Override
     protected void setupControl() {
         this.checkBox = new CheckBox();
+    }
+
+    @Override
+    protected Either<Boolean, ValidationResult> castObject(Object value) {
+        return castObjectWithClass(value, Boolean.class);
     }
 
     @Override

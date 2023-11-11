@@ -1,9 +1,11 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.form.control;
 
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,6 +26,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefin
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
 public class FieldListControl extends TitledPane {
     private final Logger LOGGER = LoggerFactory.getLogger(FieldListControl.class);
@@ -31,6 +34,7 @@ public class FieldListControl extends TitledPane {
     private final IntegerProperty minimumFields = new SimpleIntegerProperty(0);
     private final IntegerProperty maximumFields = new SimpleIntegerProperty(Integer.MAX_VALUE);
     private final ListProperty<FieldContent<?>> contents = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<Property<?>> values;
     private final IFileFieldDefinition fieldDefinition;
 
     private final GlyphFont glyphFont;
@@ -40,7 +44,7 @@ public class FieldListControl extends TitledPane {
         this.fieldDefinition = fieldDefinition;
         this.glyphFont = GlyphFontRegistry.font("FontAwesome");
         this.fieldPane = new VBox();
-
+        this.values = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
         this.setup();
     }
 
@@ -52,7 +56,24 @@ public class FieldListControl extends TitledPane {
                     fieldContent = this.addNewContent();
                 } while (fieldContent != null && this.contents.size() < newValue.intValue());
             }
+        });
 
+        this.contents.addListener((ListChangeListener<FieldContent<?>>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (FieldContent<?> fieldContent : c.getAddedSubList()) {
+                        if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                            this.values.add((Property<?>) valueContent.valueProperty());
+                        }
+                    }
+                } else if (c.wasRemoved()) {
+                    for (FieldContent<?> fieldContent : c.getRemoved()) {
+                        if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                            this.values.add((Property<?>) valueContent.valueProperty());
+                        }
+                    }
+                }
+            }
         });
 
         this.fieldPane.setPadding(new Insets(10, 10, 10, 10));
@@ -106,6 +127,10 @@ public class FieldListControl extends TitledPane {
 
     public ListProperty<FieldContent<?>> contentsProperty() {
         return this.contents;
+    }
+
+    public ListProperty<Property<?>> valueProperty() {
+        return this.values;
     }
 
     private class FieldNode extends HBox {

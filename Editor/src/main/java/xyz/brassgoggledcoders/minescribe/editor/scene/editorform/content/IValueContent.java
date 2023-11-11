@@ -29,4 +29,6 @@ public interface IValueContent<C extends IValueContent<C, P, V>, P extends ReadO
 
     @SuppressWarnings("UnusedReturnValue")
     C withValidations(List<FieldValidation> validations);
+
+    boolean hasValidations();
 }

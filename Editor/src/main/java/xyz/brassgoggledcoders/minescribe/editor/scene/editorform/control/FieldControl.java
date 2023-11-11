@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
 import com.google.gson.JsonElement;
+import com.mojang.datafixers.util.Either;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -12,8 +13,8 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldCo
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends ReadOnlyProperty<V>, V>
@@ -26,7 +27,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
     private final ObjectProperty<JsonElement> persistedValue;
     private final SetProperty<String> errorList;
-    private final List<FieldValidation> validations;
+    private final Set<Function<Object, ValidationResult>> validations;
 
     protected FieldControl() {
         this.valid = new SimpleBooleanProperty(true);
@@ -35,31 +36,34 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.label = new SimpleObjectProperty<>();
         this.persistedValue = new SimpleObjectProperty<>();
         this.errorList = new SimpleSetProperty<>(FXCollections.observableSet());
-        this.validations = new ArrayList<>();
+        this.validations = new HashSet<>();
 
         this.setupControl();
+        this.valid.bind(Bindings.isEmpty(this.errorList));
+    }
+
+    @Override
+    public void finishSetup() {
+        super.finishSetup();
         this.valueProperty()
                 .addListener((observable, oldValue, newValue) -> {
                     this.checkValid(newValue);
                     changedProperty()
                             .set(true);
                 });
-        this.valid.bind(Bindings.isEmpty(this.errorList));
     }
 
-    protected abstract void setupControl();
+    protected void setupControl() {
+
+    }
 
     private void checkValid(V newValue) {
         List<String> newErrors = new ArrayList<>();
-        for (FieldValidation fieldValidation : this.validations) {
-            ValidationResult result = fieldValidation.validate(newValue);
+        for (Function<Object, ValidationResult> fieldValidation : this.validations) {
+            ValidationResult result = fieldValidation.apply(newValue);
             if (!result.isValid()) {
                 newErrors.add(result.getMessage());
             }
-        }
-        if (this.required.get() && !this.fulfillsRequired(newValue)) {
-            String label = this.label.get() != null ? this.label.get().getText() : "Field";
-            newErrors.add(label + " is Required");
         }
         this.errorList.get().removeIf(Predicate.not(newErrors::contains));
         this.errorList.get().addAll(newErrors);
@@ -75,6 +79,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     @SuppressWarnings("unchecked")
     public C withRequired(boolean required) {
         this.required.set(required);
+        this.validations.add(this::checkRequires);
         return (C) this;
     }
 
@@ -128,7 +133,53 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     public C withValidations(List<FieldValidation> validations) {
         this.validations.clear();
         this.validations.addAll(validations);
+        if (this.required.get()) {
+            this.validations.add(this::checkRequires);
+        }
+        for (Function<V, ValidationResult> defaultValidation : getDefaultValidations()) {
+            Function<Object, Either<V, ValidationResult>> casted = this::castObject;
+            this.validations.add(casted.andThen(either -> either.mapLeft(defaultValidation))
+                    .andThen(either -> either.left()
+                            .or(either::right)
+                            .orElseGet(ValidationResult::valid)
+                    )
+            );
+        }
         return (C) this;
+    }
+
+    protected abstract Either<V, ValidationResult> castObject(Object value);
+
+    public Either<V, ValidationResult> castObjectWithClass(Object o, Class<V> vClass) {
+        if (vClass.isInstance(o)) {
+            return Either.left(vClass.cast(o));
+        } else {
+            return Either.right(ValidationResult.error("Invalid Value Type"));
+        }
+    }
+
+    protected Set<Function<V, ValidationResult>> getDefaultValidations() {
+        return Collections.emptySet();
+    }
+
+    private ValidationResult checkRequires(Object value) {
+        Either<V, ValidationResult> either = this.castObject(value);
+
+        return either.mapLeft(castValue -> {
+                    if (fulfillsRequired(castValue)) {
+                        return ValidationResult.valid();
+                    } else {
+                        return ValidationResult.error("Field is Required");
+                    }
+                })
+                .left()
+                .or(either::right)
+                .orElseGet(ValidationResult::valid);
+    }
+
+    @Override
+    public boolean hasValidations() {
+        return !this.validations.isEmpty();
     }
 
     protected abstract JsonElement saveControl();
