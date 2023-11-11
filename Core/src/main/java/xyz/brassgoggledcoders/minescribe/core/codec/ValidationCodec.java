@@ -7,35 +7,26 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
-import xyz.brassgoggledcoders.minescribe.core.validation.PretendFieldValidation;
+import xyz.brassgoggledcoders.minescribe.core.validation.PretendValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
-public class ValidationCodec<T extends Validation<U>, U> implements Codec<T> {
-    public static ValidationCodec<FieldValidation, Object> FIELD_CODEC = new ValidationCodec<>(
+public class ValidationCodec implements Codec<Validation<?>> {
+    public static ValidationCodec CODEC = new ValidationCodec(
             FieldValidation.DIRECT_DISPATCH_CODEC,
-            new JsonCodec<>(
-                    (PretendFieldValidation::new),
-                    fieldValidation -> {
-                        if (fieldValidation instanceof PretendFieldValidation pretendFieldValidation) {
-                            return pretendFieldValidation.getInternals();
-                        } else {
-                            return JsonNull.INSTANCE;
-                        }
-                    }
-            )
+            createJsonCodec()
     );
 
-    private final Codec<T> realCodec;
-    private final JsonCodec<T> jsonCodec;
+    private final Codec<Validation<?>> realCodec;
+    private final JsonCodec<Validation<?>> jsonCodec;
 
-    public ValidationCodec(Codec<T> realCodec, JsonCodec<T> jsonCodec) {
+    public ValidationCodec(Codec<Validation<?>> realCodec, JsonCodec<Validation<?>> jsonCodec) {
         this.realCodec = realCodec;
         this.jsonCodec = jsonCodec;
     }
 
 
     @Override
-    public <T1> DataResult<Pair<T, T1>> decode(DynamicOps<T1> ops, T1 input) {
+    public <T1> DataResult<Pair<Validation<?>, T1>> decode(DynamicOps<T1> ops, T1 input) {
         if (Registries.getValidationsNullable() != null) {
             return this.realCodec.decode(ops, input);
         } else {
@@ -44,11 +35,24 @@ public class ValidationCodec<T extends Validation<U>, U> implements Codec<T> {
     }
 
     @Override
-    public <T1> DataResult<T1> encode(T input, DynamicOps<T1> ops, T1 prefix) {
+    public <T1> DataResult<T1> encode(Validation<?> input, DynamicOps<T1> ops, T1 prefix) {
         if (Registries.getValidationsNullable() != null) {
             return this.realCodec.encode(input, ops, prefix);
         } else {
             return this.jsonCodec.encode(input, ops, prefix);
         }
+    }
+
+    public static JsonCodec<Validation<?>> createJsonCodec() {
+        return new JsonCodec<>(
+                PretendValidation::new,
+                validation -> {
+                    if (validation instanceof PretendValidation<?> pretendValidation) {
+                        return pretendValidation.getInternals();
+                    } else {
+                        return JsonNull.INSTANCE;
+                    }
+                }
+        );
     }
 }

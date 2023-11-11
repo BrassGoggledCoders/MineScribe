@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.Label;
 import org.jetbrains.annotations.Nullable;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
+import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
@@ -130,9 +131,13 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
     @Override
     @SuppressWarnings("unchecked")
-    public C withValidations(List<FieldValidation> validations) {
+    public C withValidations(List<Validation<?>> validations) {
         this.validations.clear();
-        this.validations.addAll(validations);
+        for (Validation<?> validation : validations) {
+            if (validation instanceof FieldValidation fieldValidation) {
+                this.validations.add(fieldValidation);
+            }
+        }
         if (this.required.get()) {
             this.validations.add(this::checkRequires);
         }
