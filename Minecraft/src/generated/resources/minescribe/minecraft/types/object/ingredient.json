@@ -2,30 +2,41 @@
   "form": {
     "fields": [],
     "serializer": {
-      "defaultFields": [
-        {
-          "definition": {
-            "type": "single_selection",
-            "list": "minecraft:registry/item"
+      "defaultForm": {
+        "fields": [
+          {
+            "definition": {
+              "type": "single_selection",
+              "list": "minecraft:registry/item"
+            },
+            "info": {
+              "field": "item",
+              "label": "Item",
+              "sortOrder": 1
+            }
           },
-          "info": {
-            "field": "item",
-            "label": "Item",
-            "sortOrder": 1
+          {
+            "definition": {
+              "type": "single_selection",
+              "list": "minecraft:tag/item"
+            },
+            "info": {
+              "field": "tag",
+              "label": "Item Tag",
+              "sortOrder": 2
+            }
           }
-        },
-        {
-          "definition": {
-            "type": "single_selection",
-            "list": "minecraft:tag/item"
-          },
-          "info": {
-            "field": "tag",
-            "label": "Item Tag",
-            "sortOrder": 2
+        ],
+        "validations": [
+          {
+            "type": "minescribe:only_x",
+            "fields": [
+              "item",
+              "tag"
+            ]
           }
-        }
-      ],
+        ]
+      },
       "label": "Type"
     }
   },

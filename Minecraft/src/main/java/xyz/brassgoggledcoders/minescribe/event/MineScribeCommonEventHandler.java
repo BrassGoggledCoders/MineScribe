@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 import xyz.brassgoggledcoders.minescribe.api.MineScribeAPI;
 import xyz.brassgoggledcoders.minescribe.api.data.*;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
@@ -157,7 +158,7 @@ public class MineScribeCommonEventHandler {
                                         0,
                                         false,
                                         List.of(
-                                                new FieldValidationData(
+                                                ValidationData.of(
                                                         new ResourceLocation(MineScribe.ID, "min_length"),
                                                         JsonBuilder.forObject()
                                                                 .withInt("minLength", 4)
@@ -178,7 +179,7 @@ public class MineScribeCommonEventHandler {
                                         1,
                                         false,
                                         List.of(
-                                                new FieldValidationData(
+                                                ValidationData.of(
                                                         new ResourceLocation(MineScribe.ID, "min_length"),
                                                         JsonBuilder.forObject()
                                                                 .withInt("minLength", 4)
@@ -202,26 +203,38 @@ public class MineScribeCommonEventHandler {
                         SerializerInfo.of(
                                 "type",
                                 "Type",
-                                new FileField<>(
-                                        new SingleSelectionFileFieldDefinition(
-                                                new ResourceId("minecraft", "registry/item")
+                                FileForm.of(
+                                        List.of(
+                                                new FileField<>(
+                                                        new SingleSelectionFileFieldDefinition(
+                                                                new ResourceId("minecraft", "registry/item")
+                                                        ),
+                                                        new FileFieldInfo(
+                                                                "Item",
+                                                                "item",
+                                                                1,
+                                                                false
+                                                        )
+                                                ),
+                                                new FileField<>(
+                                                        new SingleSelectionFileFieldDefinition(
+                                                                new ResourceId("minecraft", "tag/item")
+                                                        ),
+                                                        new FileFieldInfo(
+                                                                "Item Tag",
+                                                                "tag",
+                                                                2,
+                                                                false
+                                                        )
+                                                )
                                         ),
-                                        new FileFieldInfo(
-                                                "Item",
-                                                "item",
-                                                1,
-                                                false
-                                        )
-                                ),
-                                new FileField<>(
-                                        new SingleSelectionFileFieldDefinition(
-                                                new ResourceId("minecraft", "tag/item")
-                                        ),
-                                        new FileFieldInfo(
-                                                "Item Tag",
-                                                "tag",
-                                                2,
-                                                false
+                                        List.of(
+                                                ValidationData.of(
+                                                        new ResourceLocation("minescribe:only_x"),
+                                                        JsonBuilder.forObject()
+                                                                .withStringArray("fields", "item", "tag")
+                                                                .build()
+                                                )
                                         )
                                 )
                         )
@@ -328,7 +341,7 @@ public class MineScribeCommonEventHandler {
                                         3,
                                         false,
                                         List.of(
-                                                new FieldValidationData(
+                                                ValidationData.of(
                                                         new ResourceLocation(MineScribe.ID, "regex"),
                                                         JsonBuilder.forObject()
                                                                 .withString("regex", "^[a-z0-9\\.\\-_]+$")
