@@ -2,6 +2,8 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
+import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -20,7 +22,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
-import xyz.brassgoggledcoders.minescribe.editor.property.SimpleFormValueProperty;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
@@ -39,7 +40,7 @@ public class EditorFormPane extends GridPane {
     private final ReadOnlyObjectProperty<FileForm> primaryForm;
     private final ObjectProperty<FileForm> serializerForm;
     private final ObjectProperty<JsonObject> persistedObject;
-    private final SimpleFormValueProperty formValues;
+    private final SimpleListProperty<Pair<String, Property<?>>> formValues;
     private final ListProperty<FormValidation> formValidations;
 
     private final BooleanProperty valid;
@@ -53,7 +54,7 @@ public class EditorFormPane extends GridPane {
         this.valid = new SimpleBooleanProperty(true);
         this.changed = new SimpleBooleanProperty(false);
         this.persistable = new SimpleBooleanProperty(false);
-        this.formValues = new SimpleFormValueProperty();
+        this.formValues = new SimpleListProperty<>(FXCollections.observableArrayList(pair -> new Observable[]{pair.getSecond()}));
 
         this.serializerForm.addListener((observable, oldValue, newValue) -> reloadSerializerForm(oldValue, newValue));
         this.formValidations = new SimpleListProperty<>(FXCollections.observableArrayList(formValidations));
@@ -121,7 +122,7 @@ public class EditorFormPane extends GridPane {
         return this.valid;
     }
 
-    public ReadOnlyMapProperty<String, Property<?>> formValuesProperty() {
+    public ReadOnlyListProperty<Pair<String, Property<?>>> formValuesProperty() {
         return this.formValues;
     }
 
@@ -177,7 +178,7 @@ public class EditorFormPane extends GridPane {
         }
 
         if (newField.getContent() instanceof IValueContent<?, ?, ?> valueContent) {
-            this.formValues.put(newField.getFieldName(), (Property<?>) valueContent.valueProperty());
+            this.formValues.add(Pair.of(newField.getFieldName(), (Property<?>) valueContent.valueProperty()));
         }
 
         List<Node> children = new ArrayList<>(this.getChildren());

@@ -3,26 +3,29 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Either;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import com.mojang.datafixers.util.Pair;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ObjectType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
+import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 
-public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ObjectProperty<JsonElement>, JsonElement> {
+import java.util.List;
 
-    private final ObjectProperty<JsonElement> valueProperty = new SimpleObjectProperty<>();
+public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnlyListProperty<Pair<String, Property<?>>>, ObservableList<Pair<String, Property<?>>>> {
     private final EditorFormPane formPane;
-
 
     public ObjectFieldControl(EditorFormPane editorFieldPane) {
         super();
         this.formPane = editorFieldPane;
-        this.valueProperty.bind(editorFieldPane.persistedObjectProperty());
     }
 
     @Override
@@ -41,8 +44,8 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ObjectP
     }
 
     @Override
-    public ObjectProperty<JsonElement> valueProperty() {
-        return this.valueProperty;
+    public ReadOnlyListProperty<Pair<String, Property<?>>> valueProperty() {
+        return this.formPane.formValuesProperty();
     }
 
     @Override
@@ -51,13 +54,21 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ObjectP
     }
 
     @Override
-    public boolean fulfillsRequired(JsonElement value) {
-        if (value != null && value.isJsonObject()) {
-            return !value.getAsJsonObject()
-                    .isEmpty();
-        }
+    public boolean fulfillsRequired(ObservableList<Pair<String, Property<?>>> value) {
+        return value != null && !value.isEmpty();
+    }
 
-        return false;
+    @Override
+    public ObjectFieldControl withValidations(List<Validation<?>> validations) {
+        List<FormValidation> formValidations = validations.stream()
+                .filter(FormValidation.class::isInstance)
+                .map(FormValidation.class::cast)
+                .toList();
+        if (!formValidations.isEmpty()) {
+            this.formPane.formValidationsProperty()
+                    .addAll(formValidations);
+        }
+        return super.withValidations(validations);
     }
 
     @Override
@@ -73,8 +84,12 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ObjectP
     }
 
     @Override
-    protected Either<JsonElement, ValidationResult> castObject(Object value) {
-        return castObjectWithClass(value, JsonElement.class);
+    @SuppressWarnings("unchecked")
+    protected Either<ObservableList<Pair<String, Property<?>>>, ValidationResult> castObject(Object value) {
+        if (value instanceof ObservableMap<?, ?> list) {
+            return Either.left((ObservableList<Pair<String, Property<?>>>) list);
+        }
+        return Either.right(ValidationResult.error("Value Not a List"));
     }
 
     public static ObjectFieldControl of(ReferencedObjectFileFieldDefinition definition) throws FormException {

@@ -14,10 +14,10 @@ import javafx.scene.control.SelectionMode;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -68,16 +68,7 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
 
     @Override
     protected void loadControl(JsonElement jsonElement) {
-        List<String> selectedNames = new ArrayList<>();
-        if (jsonElement.isJsonArray()) {
-            for (JsonElement arrayElement : jsonElement.getAsJsonArray()) {
-                if (arrayElement.isJsonPrimitive()) {
-                    selectedNames.add(arrayElement.getAsString());
-                }
-            }
-        } else if (jsonElement.isJsonPrimitive()) {
-            selectedNames.add(jsonElement.getAsString());
-        }
+        List<String> selectedNames = MineScribeJsonHelper.getAsStrings(jsonElement);
 
         this.listView.getSelectionModel()
                 .clearSelection();
