@@ -7,7 +7,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.Label;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
@@ -128,15 +127,14 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         return fileForm.getSerializer()
                 .map(serializerInfo -> {
                     List<SerializerType> serializerTypes = new ArrayList<>(gatherTypes.get());
-                    if (!serializerInfo.defaultFields().isEmpty()) {
+                    if (serializerInfo.defaultForm().isPresent()) {
                         SerializerType defaultFieldsType = new SerializerType(
                                 ResourceId.NULL,
                                 ResourceId.NULL,
                                 ResourceId.NULL,
                                 "Default",
-                                FileForm.of(serializerInfo.defaultFields()
-                                        .toArray(FileField[]::new)
-                                )
+                                serializerInfo.defaultForm()
+                                        .get()
                         );
                         serializerTypes.add(0, defaultFieldsType);
                     }

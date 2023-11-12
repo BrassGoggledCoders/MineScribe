@@ -8,7 +8,6 @@ import com.google.gson.JsonSyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MineScribeJsonHelper {
     public static String getAsString(JsonObject pJson, String pMemberName) {
         if (pJson.has(pMemberName)) {

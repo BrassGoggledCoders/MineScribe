@@ -6,15 +6,21 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.util.IDataObject;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.PretendValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
+
+import java.util.List;
 
 public class ValidationCodec implements Codec<Validation<?>> {
     public static ValidationCodec CODEC = new ValidationCodec(
             FieldValidation.DIRECT_DISPATCH_CODEC,
             createJsonCodec()
     );
+
+    public static Codec<List<Validation<?>>> LIST_CODEC = CODEC.listOf();
+
 
     private final Codec<Validation<?>> realCodec;
     private final JsonCodec<Validation<?>> jsonCodec;
@@ -47,8 +53,8 @@ public class ValidationCodec implements Codec<Validation<?>> {
         return new JsonCodec<>(
                 PretendValidation::new,
                 validation -> {
-                    if (validation instanceof PretendValidation<?> pretendValidation) {
-                        return pretendValidation.getInternals();
+                    if (validation instanceof IDataObject dataObject) {
+                        return dataObject.getData();
                     } else {
                         return JsonNull.INSTANCE;
                     }

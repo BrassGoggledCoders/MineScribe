@@ -1,8 +1,5 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
-import javafx.collections.SetChangeListener;
-import javafx.scene.Node;
-import javafx.scene.control.Tooltip;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;

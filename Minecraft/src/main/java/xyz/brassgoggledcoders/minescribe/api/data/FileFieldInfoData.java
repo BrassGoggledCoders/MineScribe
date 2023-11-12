@@ -5,26 +5,24 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
-import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record FileFieldInfoData(
         String label,
         String field,
         int sortOrder,
         boolean required,
-        List<FieldValidationData> validations
+        List<ValidationData<?>> validations
 ) implements Comparable<FileFieldInfoData> {
     public static final Codec<FileFieldInfoData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf(JsonFieldNames.LABEL).forGetter(FileFieldInfoData::label),
             Codec.STRING.fieldOf(JsonFieldNames.FIELD).forGetter(FileFieldInfoData::field),
             Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(FileFieldInfoData::sortOrder),
             Codec.BOOL.optionalFieldOf(JsonFieldNames.REQUIRED, false).forGetter(FileFieldInfoData::required),
-            FieldValidationData.CODEC.listOf().optionalFieldOf(JsonFieldNames.VALIDATIONS, Collections.emptyList())
+            ValidationData.LIST_CODEC.optionalFieldOf(JsonFieldNames.VALIDATIONS, Collections.emptyList())
                     .forGetter(FileFieldInfoData::validations)
     ).apply(instance, FileFieldInfoData::new));
 

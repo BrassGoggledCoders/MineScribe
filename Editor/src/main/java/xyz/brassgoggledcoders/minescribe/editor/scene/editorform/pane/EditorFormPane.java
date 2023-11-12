@@ -3,6 +3,8 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -16,8 +18,11 @@ import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
+import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.property.SimpleFormValueProperty;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,23 +39,38 @@ public class EditorFormPane extends GridPane {
     private final ReadOnlyObjectProperty<FileForm> primaryForm;
     private final ObjectProperty<FileForm> serializerForm;
     private final ObjectProperty<JsonObject> persistedObject;
+    private final SimpleFormValueProperty formValues;
+    private final ListProperty<FormValidation> formValidations;
 
     private final BooleanProperty valid;
     private final BooleanProperty changed;
     private final BooleanProperty persistable;
 
-    public EditorFormPane(FileForm primaryForm, List<EditorFieldPane<?>> fieldPanes, @Nullable JsonObject persistedObject) {
+    public EditorFormPane(FileForm primaryForm, List<EditorFieldPane<?>> fieldPanes, List<FormValidation> formValidations, @Nullable JsonObject persistedObject) {
         this.primaryForm = new SimpleObjectProperty<>(primaryForm);
         this.serializerForm = new SimpleObjectProperty<>();
         this.persistedObject = new SimpleObjectProperty<>(persistedObject);
         this.valid = new SimpleBooleanProperty(true);
         this.changed = new SimpleBooleanProperty(false);
         this.persistable = new SimpleBooleanProperty(false);
+        this.formValues = new SimpleFormValueProperty();
 
         this.serializerForm.addListener((observable, oldValue, newValue) -> reloadSerializerForm(oldValue, newValue));
+        this.formValidations = new SimpleListProperty<>(FXCollections.observableArrayList(formValidations));
 
         this.getColumnConstraints().setAll(LABEL, CONTENT);
 
+        this.getChildren().addListener((ListChangeListener<Node>) c -> {
+            while (c.next()) {
+                if (c.wasRemoved()) {
+                    for (Node removedChild : c.getRemoved()) {
+                        if (removedChild instanceof EditorFieldPane<?> editorFieldPane) {
+                            formValuesProperty().remove(editorFieldPane.getFieldName());
+                        }
+                    }
+                }
+            }
+        });
         fieldPanes.forEach(this::addFieldPanel);
 
         updateValidProperty();
@@ -101,6 +121,18 @@ public class EditorFormPane extends GridPane {
         return this.valid;
     }
 
+    public ReadOnlyMapProperty<String, Property<?>> formValuesProperty() {
+        return this.formValues;
+    }
+
+    public ListProperty<FormValidation> formValidationsProperty() {
+        return this.formValidations;
+    }
+
+    public void validate() {
+
+    }
+
     public void reset() {
         this.getEditorFieldPanes()
                 .forEach(EditorFieldPane::reset);
@@ -142,6 +174,10 @@ public class EditorFormPane extends GridPane {
         if (this.persistedObjectProperty().get() != null) {
             JsonObject currentObject = this.persistedObjectProperty().get();
             setField(newField, currentObject);
+        }
+
+        if (newField.getContent() instanceof IValueContent<?, ?, ?> valueContent) {
+            this.formValues.put(newField.getFieldName(), (Property<?>) valueContent.valueProperty());
         }
 
         List<Node> children = new ArrayList<>(this.getChildren());
@@ -270,6 +306,12 @@ public class EditorFormPane extends GridPane {
         SerializerEditorFieldPane.of(form, gatherTypes)
                 .ifPresent(editorFieldPanes::add);
 
-        return new EditorFormPane(form, editorFieldPanes, persistedObject);
+        List<FormValidation> filteredValidation = form.getValidations()
+                .stream()
+                .filter(FormValidation.class::isInstance)
+                .map(FormValidation.class::cast)
+                .toList();
+
+        return new EditorFormPane(form, editorFieldPanes, filteredValidation, persistedObject);
     }
 }
