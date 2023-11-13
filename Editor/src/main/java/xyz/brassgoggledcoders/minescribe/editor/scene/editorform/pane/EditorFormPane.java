@@ -66,7 +66,7 @@ public class EditorFormPane extends GridPane {
                 if (c.wasRemoved()) {
                     for (Node removedChild : c.getRemoved()) {
                         if (removedChild instanceof EditorFieldPane<?> editorFieldPane) {
-                            formValuesProperty().remove(editorFieldPane.getFieldName());
+                            formValuesProperty().removeIf(pair -> pair.getFirst().equals(editorFieldPane.getFieldName()));
                         }
                     }
                 }
