@@ -1,7 +1,4 @@
 // noinspection JSUnresolvedReference
-const validationHelper = minescribe.validationHelper
-
-// noinspection JSUnresolvedReference
 minescribe.validationRegistry.register(
     "minescribe:regex",
     validationHelper.createForField(

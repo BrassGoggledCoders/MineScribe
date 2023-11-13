@@ -5,7 +5,6 @@ import org.graalvm.polyglot.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.io.Closeable;
 import java.util.function.Supplier;
@@ -22,9 +21,12 @@ public class ScriptHandler implements Closeable {
         this.engine = Engine.newBuilder()
                 .build();
         this.handler = new SLF4JBridgeHandler();
-        this.context = buildContext(engine);
+        this.context = this.buildContext(engine);
+        MineScribeJSHelper helper = new MineScribeJSHelper();
         this.context.getBindings("js")
-                .putMember("minescribe", new MineScribeJSHelper());
+                .putMember("minescribe", helper);
+        this.context.getBindings("js")
+                .putMember("validationHelper", helper.validationHelper);
     }
 
     private Context buildContext(Engine engine) {
@@ -37,14 +39,14 @@ public class ScriptHandler implements Closeable {
     }
 
 
-    public void runScript(String fileContents) {
+    public void runScript(String fileName, String fileContents) {
         try {
             Source source = Source.create("js", fileContents);
 
             this.context.parse(source)
                     .executeVoid();
         } catch (PolyglotException polyglotException) {
-            LOGGER.error("Failed to run Script", polyglotException);
+            LOGGER.error("Failed to run Script {}", fileName, polyglotException);
         }
 
     }

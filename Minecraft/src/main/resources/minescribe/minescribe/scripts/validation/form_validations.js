@@ -1,7 +1,4 @@
 // noinspection JSUnresolvedReference
-const validationHelper = minescribe.validationHelper
-
-// noinspection JSUnresolvedReference
 minescribe.validationRegistry.register(
     "minescribe:only_x",
     validationHelper.createForForm(

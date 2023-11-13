@@ -26,6 +26,7 @@ public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
 
     @Override
     protected void handleFileInFolder(String fileName, String fileContents) {
-        ScriptHandler.getInstance().runScript(fileContents);
+        ScriptHandler.getInstance()
+                .runScript(fileName, fileContents);
     }
 }
