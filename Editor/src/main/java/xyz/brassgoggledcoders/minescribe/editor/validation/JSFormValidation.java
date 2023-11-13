@@ -1,21 +1,13 @@
 package xyz.brassgoggledcoders.minescribe.editor.validation;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
-import xyz.brassgoggledcoders.minescribe.core.codec.JsonCodec;
-import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.IJSObject;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.MineScribeJSField;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class JSFormValidation extends FormValidation implements IJSObject {

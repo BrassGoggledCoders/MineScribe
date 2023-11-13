@@ -12,7 +12,7 @@ minescribe.validationRegistry.register(
             }
             if (filledIn !== storedValues['number']) {
                 // noinspection JSUnresolvedReference
-                return validationHelper.createErrorResult("Field should " + filledIn + " fields, should only be " + storedValues['number'])
+                return validationHelper.createErrorResult("Field contains " + filledIn + " filled fields, should only be " + storedValues['number'])
             } else {
                 // noinspection JSUnresolvedReference
                 return validationHelper.createValidResult()

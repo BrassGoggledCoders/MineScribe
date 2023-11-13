@@ -21,6 +21,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
+import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
@@ -28,7 +29,10 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueC
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -42,6 +46,7 @@ public class EditorFormPane extends GridPane {
     private final ObjectProperty<JsonObject> persistedObject;
     private final SimpleListProperty<Pair<String, Property<?>>> formValues;
     private final ListProperty<FormValidation> formValidations;
+    private final SetProperty<String> errorMessages;
 
     private final BooleanProperty valid;
     private final BooleanProperty changed;
@@ -56,19 +61,41 @@ public class EditorFormPane extends GridPane {
         this.persistable = new SimpleBooleanProperty(false);
         this.formValues = new SimpleListProperty<>(FXCollections.observableArrayList(pair -> new Observable[]{pair.getSecond()}));
 
+        this.formValues.addListener((ListChangeListener<Pair<String, Property<?>>>) c -> validate());
+
         this.serializerForm.addListener((observable, oldValue, newValue) -> reloadSerializerForm(oldValue, newValue));
+
         this.formValidations = new SimpleListProperty<>(FXCollections.observableArrayList(formValidations));
+        this.formValidations.addListener((ListChangeListener<FormValidation>) c -> validate());
+
+        this.errorMessages = new SimpleSetProperty<>(FXCollections.observableSet());
 
         this.getColumnConstraints().setAll(LABEL, CONTENT);
 
         this.getChildren().addListener((ListChangeListener<Node>) c -> {
             while (c.next()) {
-                if (c.wasRemoved()) {
-                    for (Node removedChild : c.getRemoved()) {
-                        if (removedChild instanceof EditorFieldPane<?> editorFieldPane) {
-                            formValuesProperty().removeIf(pair -> pair.getFirst().equals(editorFieldPane.getFieldName()));
+                if (c.wasAdded()) {
+                    List<Pair<String, Property<?>>> newProperties = new ArrayList<>();
+                    for (Node addedChild : c.getAddedSubList()) {
+                        if (addedChild instanceof EditorFieldPane<?> editorFieldPane) {
+                            if (editorFieldPane.getContent() instanceof IValueContent<?, ?, ?> valueContent) {
+                                newProperties.add(Pair.of(
+                                        editorFieldPane.getFieldName(),
+                                        (Property<?>) valueContent.valueProperty())
+                                );
+                            }
                         }
                     }
+                    this.formValues.addAll(newProperties);
+                }
+                if (c.wasRemoved()) {
+                    List<String> fieldsRemoved = new ArrayList<>();
+                    for (Node removedChild : c.getRemoved()) {
+                        if (removedChild instanceof EditorFieldPane<?> editorFieldPane) {
+                            fieldsRemoved.add(editorFieldPane.getFieldName());
+                        }
+                    }
+                    this.formValues.removeIf(pair -> fieldsRemoved.contains(pair.getFirst()));
                 }
             }
         });
@@ -131,7 +158,23 @@ public class EditorFormPane extends GridPane {
     }
 
     public void validate() {
+        Set<String> newErrorMessages = this.formValidations.stream()
+                .map(formValidation -> formValidation.validate(this.formValues.stream()
+                        .filter(pair -> pair.getSecond().getValue() != null)
+                        .collect(Collectors.toMap(Pair::getFirst, pair -> pair.getSecond().getValue()))
+                ))
+                .filter(Predicate.not(ValidationResult::isValid))
+                .map(ValidationResult::getMessage)
+                .collect(Collectors.toSet());
 
+        newErrorMessages.addAll(this.getEditorFieldPanes()
+                .flatMap(editorFieldPane -> editorFieldPane.errorListProperty()
+                        .stream()
+                )
+                .collect(Collectors.toSet())
+        );
+
+        this.errorMessages.setValue(FXCollections.observableSet(newErrorMessages));
     }
 
     public void reset() {
@@ -177,10 +220,6 @@ public class EditorFormPane extends GridPane {
             setField(newField, currentObject);
         }
 
-        if (newField.getContent() instanceof IValueContent<?, ?, ?> valueContent) {
-            this.formValues.add(Pair.of(newField.getFieldName(), (Property<?>) valueContent.valueProperty()));
-        }
-
         List<Node> children = new ArrayList<>(this.getChildren());
 
         if (children.contains(newField)) {
@@ -223,9 +262,11 @@ public class EditorFormPane extends GridPane {
     }
 
     private void updateValidProperty() {
-        valid.setValue(this.getEditorFieldPanes()
-                .allMatch(EditorFieldPane::isValid)
-        );
+        validate();
+        boolean noErrorMessages = this.errorMessages.isEmpty();
+        boolean fieldsValid = this.getEditorFieldPanes()
+                .allMatch(EditorFieldPane::isValid);
+        valid.setValue(noErrorMessages && fieldsValid);
         updatePersistableProperty();
     }
 
@@ -247,6 +288,10 @@ public class EditorFormPane extends GridPane {
     }
 
     private void reloadSerializerForm(FileForm oldValue, FileForm newValue) {
+        if (oldValue != null) {
+            this.formValidations.removeIf(oldValue.getValidations()::contains);
+        }
+
         int[] rowsToRemove = this.getChildren()
                 .stream()
                 .flatMapToInt(child -> {
@@ -285,6 +330,12 @@ public class EditorFormPane extends GridPane {
                     e.showErrorDialog();
                 }
             }
+            this.formValidations.addAll(newValue.getValidations()
+                    .stream()
+                    .filter(FormValidation.class::isInstance)
+                    .map(FormValidation.class::cast)
+                    .collect(Collectors.toSet())
+            );
         }
         updateValidProperty();
         updateChangedProperty();
