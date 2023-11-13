@@ -23,29 +23,25 @@ import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFieldContent<T>, ListProperty<T>, ObservableList<T>> {
-    private final ListView<T> listView = new ListView<>();
+    private final ListView<T> listView;
     private final Function<T, String> getId;
-
-    private ListProperty<T> listProperty;
+    private final ListProperty<T> selectedValues;
 
     public MultiSelectionFieldContent(List<T> items, Function<T, String> getId) {
         super();
+        this.listView = new ListView<>();
         this.listView.setItems(FXCollections.observableArrayList(items));
+        this.listView.getSelectionModel()
+                .setSelectionMode(SelectionMode.MULTIPLE);
         this.getId = getId;
+        this.selectedValues = new SimpleListProperty<>(this.listView.getSelectionModel()
+                .getSelectedItems()
+        );
     }
 
     @Override
     public Node getNode() {
         return this.listView;
-    }
-
-    @Override
-    protected void setupControl() {
-        this.listView.getSelectionModel()
-                .setSelectionMode(SelectionMode.MULTIPLE);
-        this.listProperty = new SimpleListProperty<>(this.listView.getSelectionModel()
-                .getSelectedItems()
-        );
     }
 
     @Override
@@ -85,7 +81,7 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
 
     @Override
     public ListProperty<T> valueProperty() {
-        return this.listProperty;
+        return this.selectedValues;
     }
 
     @Override

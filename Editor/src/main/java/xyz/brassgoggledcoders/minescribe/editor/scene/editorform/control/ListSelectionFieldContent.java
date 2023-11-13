@@ -4,8 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -21,11 +20,10 @@ import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import java.util.List;
 import java.util.function.Function;
 
-public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFieldContent<T>, ListProperty<T>, ObservableList<T>> {
+public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFieldContent<T>, ObjectProperty<ObservableList<T>>, ObservableList<T>> {
     private final ListSelectionView<T> listSelection = new ListSelectionView<>();
     private final Function<T, String> getId;
     private final List<T> items;
-    private ListProperty<T> listProperty;
 
 
     public ListSelectionFieldContent(List<T> items, Function<T, String> getId) {
@@ -44,11 +42,6 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
     @Override
     public Node getNode() {
         return this.listSelection;
-    }
-
-    @Override
-    protected void setupControl() {
-        this.listProperty = new SimpleListProperty<>(this.listSelection.getTargetItems());
     }
 
     @Override
@@ -87,8 +80,8 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
     }
 
     @Override
-    public ListProperty<T> valueProperty() {
-        return this.listProperty;
+    public ObjectProperty<ObservableList<T>> valueProperty() {
+        return this.listSelection.targetItemsProperty();
     }
 
     @Override

@@ -50,8 +50,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.validations = new HashSet<>();
         this.supplierValidationTooltip = Suppliers.memoize(this::creatValidationToolTip);
 
-        this.setupControl();
-        this.valid.bind(Bindings.isEmpty(this.errorList));
+        this.bindFields();
     }
 
     @Override
@@ -60,13 +59,15 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.valueProperty()
                 .addListener((observable, oldValue, newValue) -> {
                     this.checkValid(newValue);
-                    changedProperty()
-                            .set(true);
+                    if (!this.changedProperty().isBound()) {
+                        changedProperty()
+                                .set(true);
+                    }
                 });
     }
 
-    protected void setupControl() {
-
+    protected void bindFields() {
+        this.valid.bind(Bindings.isEmpty(this.errorList));
     }
 
     protected void checkValid(V newValue) {
@@ -115,6 +116,9 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     public void load(JsonElement jsonElement) {
         this.persistedValue.set(jsonElement);
         this.loadControl(jsonElement);
+        if (!this.changedProperty().isBound()) {
+            this.changedProperty().set(false);
+        }
     }
 
     @Override
@@ -127,12 +131,18 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         if (this.validProperty().get()) {
             JsonElement saved = this.saveControl();
             this.persistedValue.set(saved);
+            if (!this.changedProperty().isBound()) {
+                this.changedProperty().set(false);
+            }
         }
     }
 
     @Override
     public void reset() {
         this.loadControl(this.persistedValue.get());
+        if (!this.changedProperty().isBound()) {
+            this.changedProperty().set(false);
+        }
     }
 
     @Override

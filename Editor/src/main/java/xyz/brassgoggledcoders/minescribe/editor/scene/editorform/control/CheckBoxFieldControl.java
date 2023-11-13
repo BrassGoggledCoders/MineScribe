@@ -13,18 +13,14 @@ import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 public class CheckBoxFieldControl extends FieldControl<CheckBoxFieldControl, BooleanProperty, Boolean> {
     private final boolean defaultValue;
 
-    private CheckBox checkBox;
+    private final CheckBox checkBox;
 
     public CheckBoxFieldControl(boolean defaultValue) {
         super();
+        this.checkBox = new CheckBox();
         this.valueProperty()
                 .set(defaultValue);
         this.defaultValue = defaultValue;
-    }
-
-    @Override
-    protected void setupControl() {
-        this.checkBox = new CheckBox();
     }
 
     @Override
