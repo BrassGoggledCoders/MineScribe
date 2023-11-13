@@ -7,7 +7,6 @@ import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
-import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NoFormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
 import java.io.File;
@@ -42,10 +41,10 @@ public class FormFileEditorItem extends EditorItem {
 
     @Override
     public @NotNull ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
-        ContextMenu contextMenu = new ContextMenu();
+        ContextMenu contextMenu = super.createContextMenu(treeCell);
         MenuItem menuItem = new MenuItem("Open File");
         menuItem.setOnAction(event -> openTabFor(treeCell::fireEvent));
-        contextMenu.getItems().add(menuItem);
+        contextMenu.getItems().add(0, menuItem);
         return contextMenu;
     }
 

@@ -35,7 +35,7 @@ public class FileEditorItem extends EditorItem {
 
     @Override
     public @NotNull ContextMenu createContextMenu(TreeCell<EditorItem> treeCell) {
-        ContextMenu contextMenu = new ContextMenu();
+        ContextMenu contextMenu = super.createContextMenu(treeCell);
         MenuItem menuItem = new MenuItem("Open File");
         menuItem.setOnAction(event -> treeCell.fireEvent(
                 new OpenTabEvent<NoFormController>(
@@ -43,7 +43,7 @@ public class FileEditorItem extends EditorItem {
                         "tab/no_form",
                         (controller, tabId) -> controller.setPathToFile(treeCell.getItem().getPath()))
         ));
-        contextMenu.getItems().add(menuItem);
+        contextMenu.getItems().add(0, menuItem);
         return contextMenu;
     }
 }

@@ -1,12 +1,11 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeCell;
+import javafx.scene.control.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
+import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -48,6 +47,30 @@ public abstract class EditorItem implements Comparable<EditorItem> {
             reloadFolder.setOnAction(event -> FileHandler.getInstance().reloadDirectory(treeCell.getItem()));
             contextMenu.getItems().add(reloadFolder);
         }
+        MenuItem deleteItem = new MenuItem("Delete %s".formatted(this.isDirectory() ? "Directory" : "File"));
+        deleteItem.setOnAction(event -> {
+            Alert alert = new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Are you sure you want to delete %s".formatted(this.getPath()),
+                    ButtonType.NO, ButtonType.YES
+            );
+            alert.showAndWait()
+                    .filter(buttonType -> buttonType == ButtonType.YES)
+                    .ifPresent(ignored -> {
+                        try {
+                            Files.deleteIfExists(this.getPath());
+                            FileHandler.getInstance()
+                                    .reloadClosestNode(this.getPath().getParent());
+                        } catch (IOException e) {
+                            LOGGER.error("Failed to delete path: {}", this.getPath(), e);
+                            ExceptionDialog.showDialog(
+                                    "Failed to delete Path: %s".formatted(this.getPath()),
+                                    e
+                            );
+                        }
+                    });
+        });
+        contextMenu.getItems().add(deleteItem);
 
         return contextMenu;
     }
