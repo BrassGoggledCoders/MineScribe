@@ -21,6 +21,7 @@ import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import java.util.List;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFieldContent<T>, ListProperty<T>, ObservableList<T>> {
     private final ListView<T> listView = new ListView<>();
     private final Function<T, String> getId;
