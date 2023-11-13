@@ -49,13 +49,12 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
         this.validations = new HashSet<>();
         this.supplierValidationTooltip = Suppliers.memoize(this::creatValidationToolTip);
-
-        this.bindFields();
     }
 
     @Override
     public void finishSetup() {
         super.finishSetup();
+        this.bindFields();
         this.valueProperty()
                 .addListener((observable, oldValue, newValue) -> {
                     this.checkValid(newValue);

@@ -270,6 +270,10 @@ public class EditorFormPane extends GridPane {
         updatePersistableProperty();
     }
 
+    public ReadOnlySetProperty<String> errorMessagesProperty() {
+        return this.errorMessages;
+    }
+
     private void updateChangedProperty() {
         changed.setValue(this.getEditorFieldPanes()
                 .anyMatch(EditorFieldPane::isChanged)

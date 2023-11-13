@@ -28,6 +28,12 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     }
 
     @Override
+    protected void bindFields() {
+        super.bindFields();
+        this.changedProperty().bind(this.formPane.changedProperty());
+    }
+
+    @Override
     protected JsonElement saveControl() {
         return this.formPane.persistedObjectProperty()
                 .get();
@@ -55,6 +61,14 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     @Override
     public boolean fulfillsRequired(ObservableList<Pair<String, Property<?>>> value) {
         return value != null && !value.isEmpty();
+    }
+
+    @Override
+    protected void checkValid(ObservableList<Pair<String, Property<?>>> newValue) {
+        super.checkValid(newValue);
+        this.formPane.validate();
+        this.errorListProperty()
+                .addAll(this.formPane.errorMessagesProperty());
     }
 
     @Override
