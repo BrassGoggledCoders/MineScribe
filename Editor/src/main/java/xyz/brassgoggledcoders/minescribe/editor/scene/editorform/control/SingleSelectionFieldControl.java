@@ -17,6 +17,7 @@ import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -51,11 +52,13 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
         if (jsonElement != null && jsonElement.isJsonPrimitive()) {
             String id = jsonElement.getAsString();
             for (T value : this.comboBox.getItems()) {
-                if (getId.apply(value).equals(id)) {
-                    this.comboBox.selectionModelProperty()
-                            .get()
-                            .select(value);
-                    break;
+                if (value != null) {
+                    if (getId.apply(value).equals(id)) {
+                        this.comboBox.selectionModelProperty()
+                                .get()
+                                .select(value);
+                        break;
+                    }
                 }
             }
         }
@@ -86,11 +89,14 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
     }
 
     public static SingleSelectionFieldControl<String> of(SingleSelectionFileFieldDefinition definition) throws FormException {
+        List<String> values = new ArrayList<>(Registries.getFormLists()
+                .getOptionalValue(definition.listId())
+                .map(FormList::values)
+                .orElseThrow(() -> new FormException("Failed to find List for Id: " + definition.listId()))
+        );
+        values.add(0, null);
         return new SingleSelectionFieldControl<>(
-                Registries.getFormLists()
-                        .getOptionalValue(definition.listId())
-                        .map(FormList::values)
-                        .orElseThrow(() -> new FormException("Failed to find List for Id: " + definition.listId())),
+                values,
                 Function.identity(),
                 String.class
         );

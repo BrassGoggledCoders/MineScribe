@@ -5,9 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.beans.binding.Bindings;
+import javafx.collections.SetChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -44,6 +46,8 @@ public class FormController implements IFileEditorController {
     public Button saveButton;
     @FXML
     public Button resetButton;
+
+    public Tooltip validationToolTip;
 
     private EditorFormPane editorForm;
 
@@ -97,6 +101,15 @@ public class FormController implements IFileEditorController {
                             }
                         }
                     });
+            validationToolTip = new Tooltip();
+
+            validationToolTip.textProperty().bind(this.editorForm.errorMessagesProperty()
+                    .map(errorSet -> errorSet.stream()
+                            .reduce((stringA, stringB) -> stringA + System.lineSeparator() + stringB)
+                            .orElse("")
+                    )
+            );
+
             this.resetButton.disableProperty()
                     .bind(this.editorForm.changedProperty()
                             .not()
@@ -106,6 +119,14 @@ public class FormController implements IFileEditorController {
                             this.editorForm.changedProperty(),
                             this.editorForm.validProperty()
                     ).not());
+            this.editorForm.errorMessagesProperty()
+                    .addListener((SetChangeListener<String>) change -> {
+                        if (change.getSet().isEmpty()) {
+                            Tooltip.uninstall(saveButtonPane, validationToolTip);
+                        } else {
+                            Tooltip.install(saveButtonPane, validationToolTip);
+                        }
+                    });
             this.formPane.getChildren()
                     .add(this.editorForm);
         } catch (FormException e) {

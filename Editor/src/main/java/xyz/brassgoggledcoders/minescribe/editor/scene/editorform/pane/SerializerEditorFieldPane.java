@@ -15,6 +15,7 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.SingleS
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -84,6 +85,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
         if (selected.get() == null) {
             items.stream()
+                    .filter(Objects::nonNull)
                     .filter(serializerType -> serializerType.id().equals(ResourceId.NULL))
                     .findFirst()
                     .ifPresent(selected::set);
