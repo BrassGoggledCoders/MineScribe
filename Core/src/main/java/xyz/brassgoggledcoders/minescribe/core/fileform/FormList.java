@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record FormList(
@@ -15,5 +16,9 @@ public record FormList(
             ResourceId.CODEC.fieldOf("id").forGetter(FormList::id),
             Codec.STRING.fieldOf("label").forGetter(FormList::label),
             Codec.STRING.listOf().fieldOf("values").forGetter(FormList::values)
-    ).apply(instance, FormList::new));
+    ).apply(instance, (id, label, values) -> {
+        List<String> sorted = new ArrayList<>(values);
+        sorted.sort(String.CASE_INSENSITIVE_ORDER);
+        return new FormList(id, label, sorted);
+    }));
 }
