@@ -25,7 +25,6 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
     private final ListView<T> listView = new ListView<>();
     private final Function<T, String> getId;
 
-
     private ListProperty<T> listProperty;
 
     public MultiSelectionFieldContent(List<T> items, Function<T, String> getId) {
@@ -54,7 +53,7 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
         if (value instanceof ObservableList<?> list) {
             return Either.left((ObservableList<T>) list);
         }
-        return Either.right(ValidationResult.error("Value Not a List"));
+        return Either.right(ValidationResult.error("Value not a list"));
     }
 
     @Override

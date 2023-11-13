@@ -57,7 +57,7 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
         if (value instanceof ObservableList<?> list) {
             return Either.left((ObservableList<T>) list);
         }
-        return Either.right(ValidationResult.error("Value Not a List"));
+        return Either.right(ValidationResult.error("Value not a list"));
     }
 
     @Override

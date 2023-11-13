@@ -7,7 +7,6 @@ import com.mojang.datafixers.util.Pair;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ObjectType;
@@ -86,10 +85,10 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     @Override
     @SuppressWarnings("unchecked")
     protected Either<ObservableList<Pair<String, Property<?>>>, ValidationResult> castObject(Object value) {
-        if (value instanceof ObservableMap<?, ?> list) {
+        if (value instanceof ObservableList<?> list) {
             return Either.left((ObservableList<Pair<String, Property<?>>>) list);
         }
-        return Either.right(ValidationResult.error("Value Not a List"));
+        return Either.right(ValidationResult.error("Value not a list"));
     }
 
     public static ObjectFieldControl of(ReferencedObjectFileFieldDefinition definition) throws FormException {

@@ -43,7 +43,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
         if (value instanceof ObservableList<?> list) {
             return Either.left((ObservableList<Property<?>>) list);
         }
-        return Either.right(ValidationResult.error("Value Not a List"));
+        return Either.right(ValidationResult.error("Value not a list"));
     }
 
     @Override
