@@ -22,10 +22,13 @@ module xyz.brassgoggledcoders.minescribe.editor {
     opens xyz.brassgoggledcoders.minescribe.editor to javafx.fxml;
     exports xyz.brassgoggledcoders.minescribe.editor.controller;
     opens xyz.brassgoggledcoders.minescribe.editor.controller to javafx.fxml;
+    exports xyz.brassgoggledcoders.minescribe.editor.controller.element;
+    opens xyz.brassgoggledcoders.minescribe.editor.controller.element to javafx.fxml;
     exports xyz.brassgoggledcoders.minescribe.editor.controller.tab;
     opens xyz.brassgoggledcoders.minescribe.editor.controller.tab to javafx.fxml;
 
     exports xyz.brassgoggledcoders.minescribe.editor.exception;
+    exports xyz.brassgoggledcoders.minescribe.editor.message;
     exports xyz.brassgoggledcoders.minescribe.editor.registry;
     exports xyz.brassgoggledcoders.minescribe.editor.javascript;
 

@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.SetChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -23,6 +25,9 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
+import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
+import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
+import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 
 import java.io.IOException;
@@ -52,6 +57,11 @@ public class FormController implements IFileEditorController {
     private EditorFormPane editorForm;
 
     private Path filePath;
+    private final BooleanProperty fileSaved;
+
+    public FormController() {
+        this.fileSaved = new SimpleBooleanProperty(false);
+    }
 
     public void setFormInfo(Path filePath, PackContentParentType parentType, @Nullable PackContentChildType childType) {
         FileForm fileForm = parentType.getForm()
@@ -70,6 +80,7 @@ public class FormController implements IFileEditorController {
                 if (jsonElement.isJsonObject()) {
                     persistableObject = jsonElement.getAsJsonObject();
                 }
+                this.fileSaved.set(true);
             } catch (IOException e) {
                 new Alert(Alert.AlertType.ERROR, "Failed to load File for %s".formatted(this.filePath));
             }
@@ -95,12 +106,14 @@ public class FormController implements IFileEditorController {
                                         StandardOpenOption.CREATE,
                                         StandardOpenOption.TRUNCATE_EXISTING
                                 );
+                                this.fileSaved.set(true);
                                 FileHandler.getInstance().reloadClosestNode(filePath);
                             } catch (IOException e) {
                                 LOGGER.error("Failed to write file {}", this.filePath, e);
                             }
                         }
                     });
+
             validationToolTip = new Tooltip();
 
             validationToolTip.textProperty().bind(this.editorForm.errorMessagesProperty()
@@ -129,6 +142,21 @@ public class FormController implements IFileEditorController {
                     });
             this.formPane.getChildren()
                     .add(this.editorForm);
+
+            if (!this.fileSaved.get()) {
+                MineScribeMessage notSavedMessage = new MineScribeMessage(
+                        MessageType.WARNING,
+                        this.filePath,
+                        null,
+                        "File is not saved"
+                );
+
+                notSavedMessage.validProperty()
+                        .bind(this.fileSaved.not());
+
+                MessageHandler.getInstance()
+                        .addMessage(notSavedMessage);
+            }
         } catch (FormException e) {
             LOGGER.error("Failed to Load Form", e);
             e.showErrorDialog();

@@ -3,8 +3,10 @@ package xyz.brassgoggledcoders.minescribe.editor.controller;
 import com.mojang.datafixers.util.Pair;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
+import xyz.brassgoggledcoders.minescribe.editor.controller.element.InfoPaneController;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.IFileEditorController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
@@ -22,12 +24,18 @@ import java.util.UUID;
 public class EditorController {
     @FXML
     public SplitPane editor;
-
     @FXML
     public ScrollPane files;
-
     @FXML
     public TabPane editorTabPane;
+    @FXML
+    private SplitPane parentPane;
+    @FXML
+    @SuppressWarnings("unused")
+    private Parent infoPane;
+    @FXML
+    @SuppressWarnings("unused")
+    private InfoPaneController infoPaneController;
 
     @FXML
     public void initialize() {
@@ -37,6 +45,7 @@ public class EditorController {
         treeView.setCellFactory(param -> new EditorTreeCell());
 
         this.files.setContent(treeView);
+        this.infoPaneController.setParentPane(this.parentPane);
 
         editor.addEventHandler(OpenTabEvent.OPEN_TAB_EVENT_TYPE, this::handleTabOpen);
         editor.addEventHandler(CloseTabEvent.EVENT_TYPE, this::handleTabClose);

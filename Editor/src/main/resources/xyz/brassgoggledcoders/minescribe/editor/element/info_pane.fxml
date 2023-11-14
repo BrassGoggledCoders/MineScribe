@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane minHeight="25" prefHeight="25" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.element.InfoPaneController">
+    <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0">
+        <MenuBar>
+            <Menu>
+                <graphic>
+                    <Label text="Messages" onMouseClicked="#showMessagePane"/>
+                </graphic>
+            </Menu>
+        </MenuBar>
+        <StackPane fx:id="infoStackPane" VBox.vgrow="ALWAYS" minHeight="0" maxHeight="Infinity">
+            <TableView fx:id="messageView" minHeight="0" maxHeight="Infinity">
+                <columns>
+                    <TableColumn text="Type" prefWidth="50" fx:id="typeColumn"/>
+                    <TableColumn text="Field" prefWidth="100" fx:id="fieldColumn"/>
+                    <TableColumn text="Message" prefWidth="400" fx:id="messageColumn"/>
+                    <TableColumn text="Path" prefWidth="200" fx:id="pathColumn"/>
+                </columns>
+            </TableView>
+        </StackPane>
+    </VBox>
+
+</AnchorPane>

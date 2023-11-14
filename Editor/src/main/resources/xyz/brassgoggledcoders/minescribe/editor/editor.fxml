@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<SplitPane orientation="VERTICAL" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.2-ea"
+           fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.EditorController"
+           fx:id="parentPane" dividerPositions="0.99">
+    <AnchorPane VBox.vgrow="ALWAYS">
+        <SplitPane dividerPositions="0.2" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                   minWidth="-Infinity" fx:id="editor" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                   AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0">
+            <ScrollPane fx:id="files" prefWidth="105.0" fitToHeight="true" fitToWidth="true"/>
+            <TabPane fx:id="editorTabPane" prefHeight="398.0" prefWidth="288.0" tabClosingPolicy="ALL_TABS">
 
-<SplitPane dividerPositions="0.2" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-           prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" fx:id="editor"
-           xmlns:fx="http://javafx.com/fxml/1" fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.EditorController">
-    <ScrollPane fx:id="files" prefHeight="398.0" prefWidth="105.0" fitToHeight="true" fitToWidth="true"/>
-    <TabPane fx:id="editorTabPane" prefHeight="398.0" prefWidth="288.0" tabClosingPolicy="ALL_TABS">
-
-    </TabPane>
+            </TabPane>
+        </SplitPane>
+    </AnchorPane>
+    <fx:include source="element/info_pane.fxml" fx:id="infoPane"/>
 </SplitPane>
+
