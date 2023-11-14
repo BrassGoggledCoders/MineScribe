@@ -12,6 +12,8 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileField
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
+import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
+import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.FieldListControl;
@@ -88,14 +90,24 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
 
         long numberInvalid = this.fieldListControl.invalidChildren().get();
         if (numberInvalid > 0) {
-            this.errorListProperty().add("Field contains %s invalid fields".formatted(numberInvalid));
+            this.messagesProperty().add(new MineScribeMessage(
+                    MessageType.ERROR,
+                    null,
+                    this.getLabelString(),
+                    "Field contains %s invalid fields".formatted(numberInvalid)
+            ));
         }
     }
 
     private void updateInvalidChildren(long numberInvalid) {
-        this.errorListProperty().clear();
+        this.messagesProperty().clear();
         if (numberInvalid > 0) {
-            this.errorListProperty().add("Field contains %s invalid fields".formatted(numberInvalid));
+            this.messagesProperty().add(new MineScribeMessage(
+                    MessageType.ERROR,
+                    null,
+                    this.getLabelString(),
+                    "Field contains %s invalid fields".formatted(numberInvalid)
+            ));
         }
     }
 

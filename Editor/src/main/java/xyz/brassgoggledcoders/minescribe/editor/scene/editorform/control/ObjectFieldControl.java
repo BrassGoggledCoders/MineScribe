@@ -18,6 +18,7 @@ import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnlyListProperty<Pair<String, Property<?>>>, ObservableList<Pair<String, Property<?>>>> {
     private final EditorFormPane formPane;
@@ -67,8 +68,11 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     protected void checkValid(ObservableList<Pair<String, Property<?>>> newValue) {
         super.checkValid(newValue);
         this.formPane.validate();
-        this.errorListProperty()
-                .addAll(this.formPane.errorMessagesProperty());
+        this.formPane.messagesProperty().forEach(message -> message.fieldProperty()
+                .set(this.getLabelString())
+        );
+        this.messagesProperty()
+                .addAll(this.formPane.messagesProperty());
     }
 
     @Override

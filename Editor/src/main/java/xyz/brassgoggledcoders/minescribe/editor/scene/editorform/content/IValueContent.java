@@ -7,6 +7,7 @@ import javafx.beans.property.SetProperty;
 import javafx.css.PseudoClass;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
+import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public interface IValueContent<C extends IValueContent<C, P, V>, P extends ReadO
 
     C withRequired(boolean required);
 
-    SetProperty<String> errorListProperty();
+    SetProperty<MineScribeMessage> messagesProperty();
 
     @SuppressWarnings("UnusedReturnValue")
     C withValidations(List<Validation<?>> validations);

@@ -27,7 +27,7 @@ public class MessageHandler {
     }
 
     public void removeByPath(@NotNull Path path) {
-        this.messages.removeIf(message -> path.endsWith(message.filePathProperty().get()));
+        this.messages.removeIf(message -> path.equals(message.filePathProperty().get()));
     }
 
     public ObservableList<MineScribeMessage> getMessages() {

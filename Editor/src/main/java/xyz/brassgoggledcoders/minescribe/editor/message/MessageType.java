@@ -6,14 +6,23 @@ import xyz.brassgoggledcoders.minescribe.editor.Application;
 import java.util.Objects;
 
 public enum MessageType {
-    INFO("message/info.png"),
-    WARNING("message/warning.png"),
-    ERROR("message/error.png");
+    INFO("info"),
+    WARNING("warning"),
+    ERROR("error");
 
     private final Image image;
+    private final String name;
 
-    MessageType(String iconName) {
-        this.image = new Image(Objects.requireNonNull(Application.class.getResourceAsStream("icon/" + iconName)));
+    MessageType(String name) {
+        this.name = name;
+        this.image = new Image(Objects.requireNonNull(
+                Application.class.getResourceAsStream("icon/message/" + name + ".png"),
+                "Failed to find " + name
+        ));
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public Image getImage() {

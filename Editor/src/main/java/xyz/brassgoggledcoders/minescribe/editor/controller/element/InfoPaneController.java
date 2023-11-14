@@ -8,7 +8,7 @@ import javafx.scene.layout.StackPane;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
-import xyz.brassgoggledcoders.minescribe.editor.scene.table.ImageTableCell;
+import xyz.brassgoggledcoders.minescribe.editor.scene.table.MessageTypeCell;
 
 import java.nio.file.Path;
 
@@ -33,11 +33,11 @@ public class InfoPaneController {
 
     @FXML
     public void initialize() {
-        this.typeColumn.setCellFactory(param -> new ImageTableCell<>(MessageType::getImage));
+        this.typeColumn.setCellFactory(param -> new MessageTypeCell<>());
         this.typeColumn.setCellValueFactory(param -> param.getValue().messageTypeProperty());
         this.fieldColumn.setCellValueFactory(param -> param.getValue().fieldProperty());
         this.messageColumn.setCellValueFactory(param -> param.getValue().messageProperty());
-        this.pathColumn.setCellValueFactory(param -> param.getValue().filePathProperty());
+        this.pathColumn.setCellValueFactory(param -> param.getValue().relativeFilePath());
         this.messageView.setItems(MessageHandler.getInstance()
                 .getMessages()
         );

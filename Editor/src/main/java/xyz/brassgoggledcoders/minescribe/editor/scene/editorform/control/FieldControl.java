@@ -4,15 +4,20 @@ import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringExpression;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.SetChangeListener;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.Tooltip;
 import org.jetbrains.annotations.Nullable;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
+import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
+import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
@@ -30,9 +35,10 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     private final BooleanProperty required;
 
     private final ObjectProperty<Label> label;
+    private final ObservableValue<String> labelString;
 
     private final ObjectProperty<JsonElement> persistedValue;
-    private final SetProperty<String> errorList;
+    private final SetProperty<MineScribeMessage> messages;
     private final Set<Function<Object, ValidationResult>> validations;
     private final Supplier<Tooltip> supplierValidationTooltip;
 
@@ -41,11 +47,12 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.changed = new SimpleBooleanProperty(false);
         this.required = new SimpleBooleanProperty(false);
         this.label = new SimpleObjectProperty<>();
+        this.labelString = this.label.map(Labeled::getText);
         this.persistedValue = new SimpleObjectProperty<>();
 
-        this.errorList = new SimpleSetProperty<>(FXCollections.observableSet());
-        this.errorList.addListener((SetChangeListener<? super String>) c -> handleValidationChange());
-        this.errorList.addListener((observable, oldValue, newValue) -> handleValidationChange());
+        this.messages = new SimpleSetProperty<>(FXCollections.observableSet());
+        this.messages.addListener((SetChangeListener<? super MineScribeMessage>) c -> handleValidationChange());
+        this.messages.addListener((observable, oldValue, newValue) -> handleValidationChange());
 
         this.validations = new HashSet<>();
         this.supplierValidationTooltip = Suppliers.memoize(this::creatValidationToolTip);
@@ -66,19 +73,24 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     }
 
     protected void bindFields() {
-        this.valid.bind(Bindings.isEmpty(this.errorList));
+        this.valid.bind(Bindings.isEmpty(this.messages));
     }
 
     protected void checkValid(V newValue) {
-        List<String> newErrors = new ArrayList<>();
+        List<MineScribeMessage> newErrors = new ArrayList<>();
         for (Function<Object, ValidationResult> fieldValidation : this.validations) {
             ValidationResult result = fieldValidation.apply(newValue);
             if (!result.isValid()) {
-                newErrors.add(result.getMessage());
+                newErrors.add(new MineScribeMessage(
+                        MessageType.ERROR,
+                        null,
+                        this.labelString.getValue(),
+                        result.getMessage()
+                ));
             }
         }
-        this.errorList.get().removeIf(Predicate.not(newErrors::contains));
-        this.errorList.get().addAll(newErrors);
+        this.messages.get().removeIf(Predicate.not(newErrors::contains));
+        this.messages.get().addAll(newErrors);
     }
 
     @SuppressWarnings("unchecked")
@@ -145,8 +157,8 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     }
 
     @Override
-    public SetProperty<String> errorListProperty() {
-        return this.errorList;
+    public SetProperty<MineScribeMessage> messagesProperty() {
+        return this.messages;
     }
 
     @Override
@@ -218,12 +230,19 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.checkValid(this.valueProperty().getValue());
     }
 
+    protected String getLabelString() {
+        return this.labelString.getValue();
+    }
+
     private Tooltip creatValidationToolTip() {
         if (this.hasValidations()) {
             Tooltip validationTooltip = new Tooltip();
 
-            validationTooltip.textProperty().bind(this.errorListProperty()
+            validationTooltip.textProperty().bind(this.messagesProperty()
                     .map(errorSet -> errorSet.stream()
+                            .map(MineScribeMessage::messageProperty)
+                            .map(StringExpression::getValue)
+                            .filter(Objects::nonNull)
                             .reduce((stringA, stringB) -> stringA + System.lineSeparator() + stringB)
                             .orElse("")
                     )
@@ -234,7 +253,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     }
 
     private void handleValidationChange() {
-        if (!this.errorListProperty().isEmpty()) {
+        if (!this.messagesProperty().isEmpty()) {
             if (!SceneUtils.hasToolTip(this.getNode())) {
                 Tooltip.install(this.getNode(), this.supplierValidationTooltip.get());
             }

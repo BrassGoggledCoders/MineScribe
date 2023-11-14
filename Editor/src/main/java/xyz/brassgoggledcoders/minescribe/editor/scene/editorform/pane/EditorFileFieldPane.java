@@ -31,7 +31,7 @@ public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldP
 
             this.changedProperty().bind(valueControl.changedProperty());
             this.validProperty().bind(valueControl.validProperty());
-            this.errorListProperty().bind(valueControl.errorListProperty());
+            this.messagesProperty().bind(valueControl.messagesProperty());
         }
         if (this.content instanceof ILabeledContent<?> labeledControl) {
             labeledControl.withLabel(this.fieldInfo.label());

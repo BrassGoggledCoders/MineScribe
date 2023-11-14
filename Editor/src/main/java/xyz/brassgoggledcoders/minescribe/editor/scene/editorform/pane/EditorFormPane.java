@@ -23,6 +23,8 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
+import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
@@ -46,7 +48,7 @@ public class EditorFormPane extends GridPane {
     private final ObjectProperty<JsonObject> persistedObject;
     private final SimpleListProperty<Pair<String, Property<?>>> formValues;
     private final ListProperty<FormValidation> formValidations;
-    private final SetProperty<String> errorMessages;
+    private final SetProperty<MineScribeMessage> messages;
 
     private final BooleanProperty valid;
     private final BooleanProperty changed;
@@ -68,7 +70,7 @@ public class EditorFormPane extends GridPane {
         this.formValidations = new SimpleListProperty<>(FXCollections.observableArrayList(formValidations));
         this.formValidations.addListener((ListChangeListener<FormValidation>) c -> validate());
 
-        this.errorMessages = new SimpleSetProperty<>(FXCollections.observableSet());
+        this.messages = new SimpleSetProperty<>(FXCollections.observableSet());
 
         this.getColumnConstraints().setAll(LABEL, CONTENT);
 
@@ -158,23 +160,29 @@ public class EditorFormPane extends GridPane {
     }
 
     public void validate() {
-        Set<String> newErrorMessages = this.formValidations.stream()
+        Set<MineScribeMessage> newErrorMessages = this.formValidations.stream()
                 .map(formValidation -> formValidation.validate(this.formValues.stream()
                         .filter(pair -> pair.getSecond().getValue() != null)
                         .collect(Collectors.toMap(Pair::getFirst, pair -> pair.getSecond().getValue()))
                 ))
                 .filter(Predicate.not(ValidationResult::isValid))
-                .map(ValidationResult::getMessage)
+                .map(validationResult -> new MineScribeMessage(
+                        MessageType.ERROR,
+                        null,
+                        "Form",
+                        validationResult.getMessage()
+                ))
                 .collect(Collectors.toSet());
 
         newErrorMessages.addAll(this.getEditorFieldPanes()
-                .flatMap(editorFieldPane -> editorFieldPane.errorListProperty()
+                .flatMap(editorFieldPane -> editorFieldPane.messagesProperty()
                         .stream()
                 )
                 .collect(Collectors.toSet())
         );
 
-        this.errorMessages.setValue(FXCollections.observableSet(newErrorMessages));
+
+        this.messages.setValue(FXCollections.observableSet(newErrorMessages));
     }
 
     public void reset() {
@@ -263,15 +271,15 @@ public class EditorFormPane extends GridPane {
 
     private void updateValidProperty() {
         validate();
-        boolean noErrorMessages = this.errorMessages.isEmpty();
+        boolean noErrorMessages = this.messages.isEmpty();
         boolean fieldsValid = this.getEditorFieldPanes()
                 .allMatch(EditorFieldPane::isValid);
         valid.setValue(noErrorMessages && fieldsValid);
         updatePersistableProperty();
     }
 
-    public ReadOnlySetProperty<String> errorMessagesProperty() {
-        return this.errorMessages;
+    public ReadOnlySetProperty<MineScribeMessage> messagesProperty() {
+        return this.messages;
     }
 
     private void updateChangedProperty() {

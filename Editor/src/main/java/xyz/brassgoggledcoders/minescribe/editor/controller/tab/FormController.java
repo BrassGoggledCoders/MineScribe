@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.SetChangeListener;
@@ -34,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Objects;
 import java.util.Optional;
 
 public class FormController implements IFileEditorController {
@@ -116,9 +118,12 @@ public class FormController implements IFileEditorController {
 
             validationToolTip = new Tooltip();
 
-            validationToolTip.textProperty().bind(this.editorForm.errorMessagesProperty()
+            validationToolTip.textProperty().bind(this.editorForm.messagesProperty()
                     .map(errorSet -> errorSet.stream()
-                            .reduce((stringA, stringB) -> stringA + System.lineSeparator() + stringB)
+                            .map(MineScribeMessage::messageProperty)
+                            .map(StringExpression::getValue)
+                            .filter(Objects::nonNull)
+                            .reduce((messageA, messageB) -> messageA + System.lineSeparator() + messageB)
                             .orElse("")
                     )
             );
@@ -132,8 +137,8 @@ public class FormController implements IFileEditorController {
                             this.editorForm.changedProperty(),
                             this.editorForm.validProperty()
                     ).not());
-            this.editorForm.errorMessagesProperty()
-                    .addListener((SetChangeListener<String>) change -> {
+            this.editorForm.messagesProperty()
+                    .addListener((SetChangeListener<MineScribeMessage>) change -> {
                         if (change.getSet().isEmpty()) {
                             Tooltip.uninstall(saveButtonPane, validationToolTip);
                         } else {
@@ -142,6 +147,22 @@ public class FormController implements IFileEditorController {
                     });
             this.formPane.getChildren()
                     .add(this.editorForm);
+
+            this.editorForm.messagesProperty()
+                    .addListener((SetChangeListener<MineScribeMessage>) change -> {
+                        if (change.wasAdded()) {
+                            change.getElementAdded()
+                                    .filePathProperty()
+                                    .set(this.getPath());
+                            MessageHandler.getInstance()
+                                    .addMessage(change.getElementAdded());
+                        } else if (change.wasRemoved()) {
+                            MineScribeMessage message = change.getElementRemoved();
+                            if (!message.validProperty().isBound()) {
+                                message.validProperty().set(false);
+                            }
+                        }
+                    });
 
             if (!this.fileSaved.get()) {
                 MineScribeMessage notSavedMessage = new MineScribeMessage(
