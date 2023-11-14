@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.controller;
 
 import com.mojang.datafixers.util.Pair;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -62,28 +63,47 @@ public class EditorController {
                 }
             }
         }
+        this.editorTabPane.getTabs()
+                .addListener((ListChangeListener<Tab>) c -> {
+                    Project currentProject = InfoRepository.getInstance().getValue(Project.KEY);
+                    if (currentProject != null) {
+                        while (c.next()) {
+                            if (c.wasRemoved()) {
+                                for (Tab removedTab : c.getRemoved()) {
+                                    if (removedTab.getId() != null) {
+                                        currentProject.removeOpenTab(UUID.fromString(removedTab.getId()));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
     }
 
     private void handleTabOpen(OpenTabEvent<?> event) {
         UUID tabId = UUID.randomUUID();
-        Pair<Node, Object> node = event.createTabContent(tabId);
-        Tab tab = new Tab(event.getTabName());
-        tab.setId(tabId.toString());
-        this.editorTabPane.getTabs().add(tab);
-        tab.setContent(node.getFirst());
-        if (node.getSecond() instanceof IFileEditorController fileEditorController) {
-            Project project = InfoRepository.getInstance().getValue(Project.KEY);
-            if (project != null && fileEditorController.getPath() != null) {
-                project.addOpenTab(tabId, fileEditorController.getPath());
-            }
+        Pair<Object, Object> tabContent = event.createTabContent(tabId);
+        Tab newTab = null;
+        if (tabContent.getFirst() instanceof Tab tab) {
+            newTab = tab;
+            newTab.setText(event.getTabName());
+        } else if (tabContent.getFirst() instanceof Node node) {
+            newTab = new Tab(event.getTabName());
+            newTab.setContent(node);
         }
-        tab.setOnClosed(onClosed -> {
-            Project project = InfoRepository.getInstance().getValue(Project.KEY);
-            if (project != null) {
-                project.removeOpenTab(tabId);
+        if (newTab != null) {
+            newTab.setId(tabId.toString());
+            this.editorTabPane.getTabs().add(newTab);
+
+            if (tabContent.getSecond() instanceof IFileEditorController fileEditorController) {
+                Project project = InfoRepository.getInstance().getValue(Project.KEY);
+                if (project != null && fileEditorController.getPath() != null) {
+                    project.addOpenTab(tabId, fileEditorController.getPath());
+                }
             }
-        });
-        this.editorTabPane.getSelectionModel().select(tab);
+            this.editorTabPane.getSelectionModel().select(newTab);
+        }
+
     }
 
     private void handleTabClose(CloseTabEvent event) {

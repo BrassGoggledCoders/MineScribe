@@ -8,10 +8,9 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.SetChangeListener;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -53,6 +52,7 @@ public class FormController implements IFileEditorController {
     public Button resetButton;
 
     public Tooltip validationToolTip;
+    public Tab tab;
 
     private EditorFormPane editorForm;
 
@@ -178,5 +178,27 @@ public class FormController implements IFileEditorController {
     @Override
     public @Nullable Path getPath() {
         return this.filePath;
+    }
+
+    @FXML
+    public void onCloseRequest(Event event) {
+        if (!this.fileSaved.get()) {
+            boolean allowClose = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to close this file? It is unsaved.", ButtonType.YES, ButtonType.NO)
+                    .showAndWait()
+                    .map(buttonType -> buttonType == ButtonType.YES)
+                    .orElse(false);
+
+            if (!allowClose) {
+                event.consume();
+            }
+        }
+    }
+
+    @FXML
+    public void onClosed() {
+        if (this.getPath() != null) {
+            MessageHandler.getInstance()
+                    .removeByPath(this.getPath());
+        }
     }
 }

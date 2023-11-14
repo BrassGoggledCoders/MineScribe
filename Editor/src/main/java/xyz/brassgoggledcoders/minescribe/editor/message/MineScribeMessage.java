@@ -1,6 +1,10 @@
 package xyz.brassgoggledcoders.minescribe.editor.message;
 
 import javafx.beans.property.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
+import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
 import java.nio.file.Path;
 
@@ -11,9 +15,13 @@ public class MineScribeMessage {
     private final StringProperty message;
     private final BooleanProperty valid;
 
-    public MineScribeMessage(MessageType type, Path filePath, String field, String message) {
+    public MineScribeMessage(@NotNull MessageType type, @NotNull Path filePath, @Nullable String field, @NotNull String message) {
         this.type = new SimpleObjectProperty<>(type);
-        this.filePath = new SimpleObjectProperty<>(filePath);
+        this.filePath = new SimpleObjectProperty<>(InfoRepository.getInstance()
+                .getValue(Project.KEY)
+                .getRootPath()
+                .relativize(filePath)
+        );
         this.field = new SimpleStringProperty(field);
         this.message = new SimpleStringProperty(message);
         this.valid = new SimpleBooleanProperty(true);

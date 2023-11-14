@@ -4,6 +4,9 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.file.Path;
 
 public class MessageHandler {
     private static final MessageHandler INSTANCE = new MessageHandler();
@@ -21,6 +24,10 @@ public class MessageHandler {
     public void addMessage(MineScribeMessage newMessage) {
         this.messages.add(newMessage);
         this.messages.removeIf(message -> !message.validProperty().get());
+    }
+
+    public void removeByPath(@NotNull Path path) {
+        this.messages.removeIf(message -> path.endsWith(message.filePathProperty().get()));
     }
 
     public ObservableList<MineScribeMessage> getMessages() {
