@@ -25,6 +25,10 @@
     -fx-border-radius: 2px;
 }
 
-.menuLabel:hover {
-    -fx-background-color: cyan;
+.table-column-centered {
+    -fx-alignment: CENTER;
+}
+
+.table-column-centered-left {
+    -fx-alignment: CENTER-LEFT;
 }

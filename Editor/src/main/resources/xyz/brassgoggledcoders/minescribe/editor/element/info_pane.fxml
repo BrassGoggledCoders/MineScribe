@@ -15,10 +15,10 @@
         <StackPane fx:id="infoStackPane" VBox.vgrow="ALWAYS" minHeight="0" maxHeight="Infinity">
             <TableView fx:id="messageView" minHeight="0" maxHeight="Infinity">
                 <columns>
-                    <TableColumn text="Type" prefWidth="50" fx:id="typeColumn"/>
-                    <TableColumn text="Field" prefWidth="100" fx:id="fieldColumn"/>
-                    <TableColumn text="Message" prefWidth="400" fx:id="messageColumn"/>
-                    <TableColumn text="Path" prefWidth="200" fx:id="pathColumn"/>
+                    <TableColumn text="Type" prefWidth="50" fx:id="typeColumn" styleClass="table-column-centered"/>
+                    <TableColumn text="Field" prefWidth="100" fx:id="fieldColumn" styleClass="table-column-centered-left"/>
+                    <TableColumn text="Message" prefWidth="400" fx:id="messageColumn" styleClass="table-column-centered-left"/>
+                    <TableColumn text="Path" prefWidth="200" fx:id="pathColumn" styleClass="table-column-centered-left"/>
                 </columns>
             </TableView>
         </StackPane>
