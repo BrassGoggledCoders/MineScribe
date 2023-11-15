@@ -1,12 +1,15 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.PackRepositoryEditorItem;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,10 +20,11 @@ import java.util.function.Predicate;
 public class FileHandler {
 
     private static FileHandler INSTANCE;
+    private static FileWatcher WATCHER;
 
     private final TreeItem<EditorItem> rootItem;
 
-    public FileHandler() {
+    private FileHandler() {
         this.rootItem = new TreeItem<>();
     }
 
@@ -113,11 +117,33 @@ public class FileHandler {
 
     public static void initialize() {
         INSTANCE = new FileHandler();
+        try {
+            WATCHER = FileWatcher.of(
+                    INSTANCE::handleUpdates,
+                    throwable -> ExceptionDialog.showDialog("File Watcher Exception", throwable)
+            );
+        } catch (IOException e) {
+            ExceptionDialog.showDialog("Failed to initialize FileWatcher", e);
+            Platform.exit();
+        }
         for (PackRepositoryLocation location : Registries.getPackRepositoryLocations()) {
             PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(location);
             INSTANCE.rootItem.getChildren()
                     .add(new TreeItem<>(editorItem));
+            WATCHER.watchDirectory(editorItem.getPath());
             INSTANCE.reloadDirectory(editorItem);
+        }
+    }
+
+    private void handleUpdates(FileUpdate fileUpdate) {
+        this.reloadClosestNode(fileUpdate.path());
+    }
+
+    public static void dispose() {
+        try {
+            WATCHER.close();
+        } catch (Exception e) {
+            ExceptionDialog.showDialog("Failed to clean up FileHandler", e);
         }
     }
 

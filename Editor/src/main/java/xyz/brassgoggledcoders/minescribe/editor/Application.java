@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
+import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
@@ -34,6 +35,7 @@ public class Application extends javafx.application.Application {
         if (project != null) {
             project.trySave(Preferences.userNodeForPackage(Application.class));
         }
+        FileHandler.dispose();
         ScriptHandler.getInstance()
                 .close();
     }
