@@ -33,8 +33,14 @@ public record NodeTracker(
                             depth + 1
                     ));
                 }
-            } else {
+            } else if (depth == parentPath.getNameCount()) {
                 return createNodeTracksForChildren(path);
+            } else {
+                return Collections.singletonList(new NodeTracker(
+                        this.parentType(),
+                        Optional.empty(),
+                        depth + 1
+                ));
             }
         } else {
             Path parentSubPath = parentPath.subpath(depth, parentPath.getNameCount());
@@ -60,6 +66,13 @@ public record NodeTracker(
                         depth + 1
                 ));
             }
+        }
+        if (nodeTrackerList.isEmpty()) {
+            nodeTrackerList.add(new NodeTracker(
+                    this.parentType(),
+                    Optional.empty(),
+                    depth + 1
+            ));
         }
         return nodeTrackerList;
     }
