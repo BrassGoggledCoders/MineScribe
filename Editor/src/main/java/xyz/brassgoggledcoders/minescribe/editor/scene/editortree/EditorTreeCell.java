@@ -23,6 +23,13 @@ public class EditorTreeCell extends TreeCell<EditorItem> {
 
     @Override
     protected void updateItem(EditorItem item, boolean empty) {
+        EditorItem previousItem = this.getItem();
+        if (previousItem != null) {
+            if (previousItem.getCssClass() != null) {
+                this.getStyleClass()
+                        .remove(previousItem.getCssClass());
+            }
+        }
         super.updateItem(item, empty);
         if (item != null) {
             this.setText(item.getName());
@@ -33,6 +40,10 @@ public class EditorTreeCell extends TreeCell<EditorItem> {
                 ClickHandler clickHandler = new ClickHandler(this);
                 this.clickHandlerProperty.set(clickHandler);
                 this.setEventHandler(MouseEvent.MOUSE_CLICKED, clickHandler);
+            }
+            if (item.getCssClass() != null) {
+                this.getStyleClass()
+                        .add(item.getCssClass());
             }
         } else {
             this.setText(null);

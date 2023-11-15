@@ -27,6 +27,13 @@ public abstract class EditorItem implements Comparable<EditorItem> {
         this.path = path;
     }
 
+    /**
+     * @return if the file is automatically created from a parent
+     */
+    public boolean isAutomatic() {
+        return true;
+    }
+
     public String getName() {
         return name;
     }
@@ -128,5 +135,9 @@ public abstract class EditorItem implements Comparable<EditorItem> {
         } else {
             return String.CASE_INSENSITIVE_ORDER.compare(this.getName(), o.getName());
         }
+    }
+
+    public String getCssClass() {
+        return null;
     }
 }

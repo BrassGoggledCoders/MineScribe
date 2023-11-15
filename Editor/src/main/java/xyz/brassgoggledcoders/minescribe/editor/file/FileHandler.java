@@ -95,7 +95,7 @@ public class FileHandler {
     }
 
     private void createChildren(TreeItem<EditorItem> treeItem) {
-        treeItem.getChildren().clear();
+        treeItem.getChildren().removeIf(childItem -> childItem.getValue() == null || childItem.getValue().isAutomatic());
         List<EditorItem> children = treeItem.getValue().createChildren();
         children.removeIf(Predicate.not(EditorItem::isValid));
         children.sort(EditorItem::compareTo);
