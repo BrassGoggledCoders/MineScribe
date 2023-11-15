@@ -269,7 +269,10 @@ public class FormController implements IFileEditorController {
 
                 if (parentTreeItem != null) {
                     parentTreeItem.getChildren()
-                            .removeIf(childItem -> childItem.getValue() != null && !childItem.getValue().isAutomatic());
+                            .removeIf(childItem -> childItem.getValue() != null &&
+                                    !childItem.getValue().isAutomatic() &&
+                                    childItem.getValue().getPath().equals(this.getPath())
+                            );
                 }
             }
         }
