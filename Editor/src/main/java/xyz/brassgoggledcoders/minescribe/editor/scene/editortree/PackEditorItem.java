@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
 import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,24 +24,23 @@ public class PackEditorItem extends EditorItem {
 
     @Override
     @NotNull
-    public List<EditorItem> createChildren() {
-        List<File> childrenFiles = this.getChildrenFiles();
+    public List<EditorItem> createChildren(DirectoryStream<Path> childPaths) {
         List<EditorItem> childrenEditorItems = new ArrayList<>();
-        for (File childFile : childrenFiles) {
-            if (childFile.isDirectory()) {
-                Path childPath = childFile.toPath();
+        for (Path childPath : childPaths) {
+            if (Files.isDirectory(childPath)) {
                 Registries.getPackTypes()
                         .getValues()
                         .stream()
                         .filter(type -> childPath.endsWith(type.folder()))
                         .findFirst()
                         .ifPresent(packType -> childrenEditorItems.add(new PackTypeEditorItem(
-                                childFile.getName(),
+                                childPath.getFileName()
+                                        .toString(),
                                 childPath,
                                 packType
                         )));
-            } else if (childFile.getName().equalsIgnoreCase("pack.mcmeta")) {
-                childrenEditorItems.add(new NoFormFileEditorItem(childFile.getName(), childFile.toPath()));
+            } else if (childPath.getFileName().startsWith("pack.mcmeta")) {
+                childrenEditorItems.add(new NoFormFileEditorItem(childPath.getFileName().toString(), childPath));
             }
         }
 

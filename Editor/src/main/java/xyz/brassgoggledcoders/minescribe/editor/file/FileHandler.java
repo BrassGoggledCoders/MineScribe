@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
@@ -102,15 +103,31 @@ public class FileHandler {
     }
 
     private void createChildren(TreeItem<EditorItem> treeItem) {
-        treeItem.getChildren().removeIf(childItem -> childItem.getValue() == null || childItem.getValue().isAutomatic());
-        List<EditorItem> children = treeItem.getValue().createChildren();
-        children.removeIf(Predicate.not(EditorItem::isValid));
-        children.sort(EditorItem::compareTo);
-        for (EditorItem child : children) {
-            TreeItem<EditorItem> childTreeItem = new TreeItem<>(child);
-            treeItem.getChildren().add(childTreeItem);
-            createChildren(childTreeItem);
+        if (treeItem.getValue() != null && treeItem.getValue().isDirectory()) {
+            Path currentPath = treeItem.getValue().getPath();
+            ObservableList<TreeItem<EditorItem>> currentChildren = treeItem.getChildren();
+            List<Path> childrenPaths = currentChildren.stream()
+                    .map(TreeItem::getValue)
+                    .filter(Objects::nonNull)
+                    .map(EditorItem::getPath)
+                    .toList();
+            currentChildren.removeIf(childItem -> childItem.getValue() == null || !childItem.getValue().isValid());
+
+            try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(currentPath, path -> !childrenPaths.contains(path))) {
+                List<EditorItem> children = treeItem.getValue().createChildren(childPaths);
+                children.removeIf(Predicate.not(EditorItem::isValid));
+                children.sort(EditorItem::compareTo);
+                for (EditorItem child : children) {
+                    TreeItem<EditorItem> childTreeItem = new TreeItem<>(child);
+                    treeItem.getChildren().add(childTreeItem);
+                    createChildren(childTreeItem);
+                }
+            } catch (IOException ioException) {
+                ExceptionDialog.showDialog("Failed to generate file list for %s".formatted(currentPath), ioException);
+            }
         }
+
+
     }
 
     public TreeItem<EditorItem> getRootModel() {

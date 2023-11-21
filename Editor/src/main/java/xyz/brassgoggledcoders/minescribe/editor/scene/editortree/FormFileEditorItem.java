@@ -10,6 +10,7 @@ import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
 import java.io.File;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +31,7 @@ public class FormFileEditorItem extends EditorItem {
     }
 
     @Override
-    public @NotNull List<EditorItem> createChildren() {
+    public @NotNull List<EditorItem> createChildren(DirectoryStream<Path> childPaths) {
         return Collections.emptyList();
     }
 

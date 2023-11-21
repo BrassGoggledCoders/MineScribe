@@ -30,6 +30,7 @@ module xyz.brassgoggledcoders.minescribe.editor {
     exports xyz.brassgoggledcoders.minescribe.editor.exception;
     exports xyz.brassgoggledcoders.minescribe.editor.message;
     exports xyz.brassgoggledcoders.minescribe.editor.registry;
+    exports xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
     exports xyz.brassgoggledcoders.minescribe.editor.javascript;
 
     exports xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
