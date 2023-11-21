@@ -30,27 +30,24 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
     private static final String PATH_SUFFIX = ".json";
     private static final int PATH_SUFFIX_LENGTH = ".json".length();
     private final Gson gson;
-    private final String packDirectory;
-    private final String editorDirectory;
+    private final String directory;
     private final Codec<U> prepareCodec;
     private final Codec<U> finalizeCodec;
     private final boolean attemptAddId;
     private final Supplier<Map<ResourceLocation, U>> gatherAdditional;
 
-    public CodecMineScribeReloadListener(String packDirectory, String editorDirectory, Codec<U> prepareCodec,
-                                         Codec<U> finalizeCodec, boolean attemptAddId) {
-        this(packDirectory, editorDirectory, prepareCodec, finalizeCodec, attemptAddId, Collections::emptyMap);
+    public CodecMineScribeReloadListener(String packDirectory, Codec<U> prepareCodec, Codec<U> finalizeCodec,
+                                         boolean attemptAddId) {
+        this(packDirectory, prepareCodec, finalizeCodec, attemptAddId, Collections::emptyMap);
     }
 
-    public CodecMineScribeReloadListener(String packDirectory, String editorDirectory, Codec<U> prepareCodec,
-                                         Codec<U> finalizeCodec, boolean attemptAddId,
-                                         Supplier<Map<ResourceLocation, U>> gatherAdditional) {
-        this.editorDirectory = editorDirectory;
+    public CodecMineScribeReloadListener(String packDirectory, Codec<U> prepareCodec, Codec<U> finalizeCodec,
+                                         boolean attemptAddId, Supplier<Map<ResourceLocation, U>> gatherAdditional) {
         this.attemptAddId = attemptAddId;
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
-        this.packDirectory = packDirectory;
+        this.directory = packDirectory;
         this.prepareCodec = prepareCodec;
         this.finalizeCodec = finalizeCodec;
         this.gatherAdditional = gatherAdditional;
@@ -58,9 +55,9 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
 
     protected Map<ResourceLocation, JsonElement> prepare(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
         Map<ResourceLocation, JsonElement> map = Maps.newHashMap();
-        int i = this.packDirectory.length() + 1;
+        int i = this.directory.length() + 1;
 
-        for (Entry<ResourceLocation, Resource> entry : pResourceManager.listResources(this.packDirectory, this::isJson).entrySet()) {
+        for (Entry<ResourceLocation, Resource> entry : pResourceManager.listResources(this.directory, this::isJson).entrySet()) {
             ResourceLocation fileResourceLocation = entry.getKey();
             String path = fileResourceLocation.getPath();
             ResourceLocation resourceLocation = new ResourceLocation(
@@ -108,9 +105,9 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
 
         Map<ResourceLocation, U> additional = this.gatherAdditional.get();
         if (additional.isEmpty()) {
-            LOGGER.info("Loaded {} values for {}", values.size(), this.packDirectory);
+            LOGGER.info("Loaded {} values for {}", values.size(), this.directory);
         } else {
-            LOGGER.info("Loaded {} values from JSON and {} from Event for {}", values.size(), additional.size(), this.packDirectory);
+            LOGGER.info("Loaded {} values from JSON and {} from Event for {}", values.size(), additional.size(), this.directory);
             values.putAll(additional);
         }
 
@@ -119,15 +116,10 @@ public class CodecMineScribeReloadListener<U> extends MineScribeReloadListener<M
 
     @Override
     protected void finalize(Map<ResourceLocation, U> pObject, MineScribeFileManager fileManager, ProfilerFiller profilerFiller) {
-        String[] directories = this.editorDirectory.split("/");
-        Path parentPath = Path.of(directories[0]);
-        if (directories.length > 1) {
-            for (int i = 1; i < directories.length; i++) {
-                parentPath = parentPath.resolve(directories[i]);
-            }
-        }
         for (Entry<ResourceLocation, U> entry : pObject.entrySet()) {
-            Path writePath = parentPath.resolve(Path.of(entry.getKey().getNamespace(), entry.getKey().getPath() + ".json"));
+            Path writePath = Path.of(entry.getKey().getNamespace())
+                    .resolve(this.directory)
+                    .resolve(entry.getKey().getPath() + ".json");
             fileManager.writeFile(writePath, this.finalizeCodec, entry.getValue());
         }
     }

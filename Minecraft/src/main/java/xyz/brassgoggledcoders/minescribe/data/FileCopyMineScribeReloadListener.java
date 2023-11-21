@@ -19,11 +19,9 @@ public class FileCopyMineScribeReloadListener extends MineScribeReloadListener<M
     private static final Logger LOGGER = LogUtils.getLogger();
     private final String pathSuffix;
     private final String packDirectory;
-    private final String editorDirectory;
 
-    public FileCopyMineScribeReloadListener(String packDirectory, String editorDirectory, String pathSuffix) {
+    public FileCopyMineScribeReloadListener(String packDirectory, String pathSuffix) {
         this.packDirectory = packDirectory;
-        this.editorDirectory = editorDirectory;
         this.pathSuffix = pathSuffix;
     }
 
@@ -62,17 +60,10 @@ public class FileCopyMineScribeReloadListener extends MineScribeReloadListener<M
     @Override
     protected void finalize(Map<ResourceLocation, String> files, MineScribeFileManager fileManager, ProfilerFiller profilerFiller) {
         for (Entry<ResourceLocation, String> entry : files.entrySet()) {
-            String path = entry.getKey().getPath();
-            if (path.startsWith(this.packDirectory)) {
-                path = path.replaceFirst(this.packDirectory, "");
-            }
-            if (path.startsWith("/")) {
-                path = path.replaceFirst("/", "");
-            }
+
             fileManager.writeFile(
-                    Path.of(this.editorDirectory)
-                            .resolve(entry.getKey().getNamespace())
-                            .resolve(path),
+                    Path.of(entry.getKey().getNamespace())
+                            .resolve(entry.getKey().getPath()),
                     entry.getValue()
             );
         }

@@ -17,12 +17,14 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = MineScribe.ID, bus = Bus.MOD)
@@ -53,6 +55,12 @@ public class MineScribeCommonEventHandler {
                 event.getExistingFileHelper(),
                 MineScribe.ID,
                 MineScribeCommonEventHandler::generateSerializerTypes
+        ));
+        event.getGenerator().addProvider(event.includeServer(), MineScribeProviders.createLocationProvider(
+                event.getGenerator(),
+                event.getExistingFileHelper(),
+                MineScribe.ID,
+                MineScribeCommonEventHandler::generatePackLocations
         ));
     }
 
@@ -541,5 +549,22 @@ public class MineScribeCommonEventHandler {
                         )
                 )
         ));
+    }
+
+    private static void generatePackLocations(BiConsumer<ResourceLocation, PackRepositoryLocation> mapConsumer) {
+        mapConsumer.accept(
+                new ResourceLocation("resource_pack"),
+                new PackRepositoryLocation(
+                        "Client Resource Packs",
+                        "${MINECRAFT_FOLDER}/resourcepacks"
+                )
+        );
+        mapConsumer.accept(
+                new ResourceLocation("saves_datapacks"),
+                new PackRepositoryLocation(
+                        "${PATH:-2} Data Packs",
+                        "${MINECRAFT_FOLDER}/saves/*/datapacks/"
+                )
+        );
     }
 }

@@ -16,10 +16,12 @@ import java.nio.file.StandardOpenOption;
 
 public class MineScribeFileManager {
     private final Path mineScribeRoot;
+    private final Path mineScribeData;
     private final Gson gson;
 
     public MineScribeFileManager(Path minecraftRoot) {
         this.mineScribeRoot = minecraftRoot.resolve(".minescribe");
+        this.mineScribeData = this.mineScribeRoot.resolve("data");
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
@@ -30,7 +32,7 @@ public class MineScribeFileManager {
     }
 
     public <T> void writeFile(Path path, Codec<T> codec, T value) {
-        if (!path.isAbsolute() || path.startsWith(this.mineScribeRoot)) {
+        if (!path.isAbsolute() || path.startsWith(this.mineScribeData)) {
             codec.encodeStart(JsonOps.INSTANCE, value)
                     .get()
                     .ifLeft(result -> writeToFile(path, result))
@@ -50,7 +52,7 @@ public class MineScribeFileManager {
 
     private void writeToFile(Path path, String value) {
         try {
-            Path properPath = this.mineScribeRoot.resolve(path);
+            Path properPath = this.mineScribeData.resolve(path);
             Files.createDirectories(properPath.getParent());
             Files.writeString(
                     properPath,

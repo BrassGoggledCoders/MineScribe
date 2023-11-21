@@ -1,0 +1,4 @@
+{
+  "label": "Client Resource Packs",
+  "path_matcher": "${MINECRAFT_FOLDER}/resourcepacks"
+}

@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagManager;
-import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -18,7 +17,6 @@ import xyz.brassgoggledcoders.minescribe.api.data.FileFormData;
 import xyz.brassgoggledcoders.minescribe.api.data.PackContentChildData;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherFormListsEvent;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherPackContentChildTypes;
-import xyz.brassgoggledcoders.minescribe.api.event.GatherPackRepositoryLocationsEvent;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
 import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
@@ -28,62 +26,56 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
 import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.data.FileCopyMineScribeReloadListener;
-import xyz.brassgoggledcoders.minescribe.data.GameGatheredMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = MineScribe.ID, bus = Bus.FORGE)
 public class ForgeCommonEventHandler {
 
     @SubscribeEvent
     public static void registerMineScribeResourceReloadListeners(RegisterMineScribeReloadListenerEvent event) {
-        event.registerReloadListener(new GameGatheredMineScribeReloadListener<>(
-                "registry",
-                MineScribePackType.CODEC.listOf(),
-                unused -> Path.of("packTypes.json"),
-                () -> Stream.of(PackTypeHelper.gatherPackTypes()
-                        .toList()
-                )
+        event.registerReloadListener(new CodecMineScribeReloadListener<>(
+                "pack_types",
+                MineScribePackType.CODEC,
+                MineScribePackType.CODEC,
+                false,
+                () -> PackTypeHelper.gatherPackTypes()
+                        .collect(Collectors.<MineScribePackType, ResourceLocation, MineScribePackType>toMap(
+                                packType -> MineScribe.rl(packType.name().toLowerCase(Locale.ROOT)),
+                                Function.identity()
+                        ))
         ));
-        event.registerReloadListener(new GameGatheredMineScribeReloadListener<>(
-                "registry",
-                PackRepositoryLocation.CODEC.listOf(),
-                unused -> Path.of("packRepositories.json"),
-                () -> {
-                    GatherPackRepositoryLocationsEvent locations = new GatherPackRepositoryLocationsEvent();
-                    MinecraftForge.EVENT_BUS.post(locations);
-                    return Stream.of(locations.getPackRepositoryLocations());
-                }
+        event.registerReloadListener(new CodecMineScribeReloadListener<>(
+                "pack_repositories",
+                PackRepositoryLocation.CODEC,
+                PackRepositoryLocation.CODEC,
+                false
         ));
-        event.registerReloadListener(new GameGatheredMineScribeReloadListener<>(
-                "formLists",
+        event.registerReloadListener(new CodecMineScribeReloadListener<>(
+                "form_lists",
                 FormList.CODEC,
-                formList -> {
-                    ResourceId id = formList.id();
-                    return Path.of(id.namespace(), id.path() + ".json");
-                },
+                FormList.CODEC,
+                false,
                 () -> {
                     GatherFormListsEvent formListsEvent = new GatherFormListsEvent();
                     MinecraftForge.EVENT_BUS.post(formListsEvent);
-                    return formListsEvent.getValues()
-                            .values()
-                            .stream();
+                    return formListsEvent.getValues();
                 }
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
                 "types/parent",
-                "registry/types/parent",
                 MineScribeCodecs.PACK_CONTENT_PARENT_TYPE,
                 PackContentParentType.CODEC,
                 true
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
                 "types/child",
-                "registry/types/child",
                 MineScribeCodecs.PACK_CONTENT_CHILD_TYPE,
                 PackContentChildType.CODEC,
                 true,
@@ -95,32 +87,20 @@ public class ForgeCommonEventHandler {
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
                 "types/object",
-                "registry/types/object",
                 MineScribeCodecs.OBJECT_TYPE,
                 ObjectType.CODEC,
                 true
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
                 "types/serializer",
-                "registry/types/serializer",
                 MineScribeCodecs.SERIALIZER_TYPE,
                 SerializerType.CODEC,
                 true
         ));
         event.registerReloadListener(new FileCopyMineScribeReloadListener(
                 "scripts/validation",
-                "scripts/validation",
                 ".js"
         ));
-    }
-
-    @SubscribeEvent
-    public static void registerPackRepositoryLocations(GatherPackRepositoryLocationsEvent packRepositoryLocations) {
-        Optional.ofNullable(ServerLifecycleHooks.getCurrentServer())
-                .ifPresent(minecraftServer -> packRepositoryLocations.register(new PackRepositoryLocation(
-                        "Level Data Packs",
-                        minecraftServer.getWorldPath(LevelResource.DATAPACK_DIR).toAbsolutePath()
-                )));
     }
 
     @SubscribeEvent

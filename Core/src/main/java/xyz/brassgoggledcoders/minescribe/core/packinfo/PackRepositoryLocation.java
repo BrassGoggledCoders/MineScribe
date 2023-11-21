@@ -8,10 +8,10 @@ import java.nio.file.Path;
 
 public record PackRepositoryLocation(
         String label,
-        Path path
+        String pathMatcher
 ) {
     public static final Codec<PackRepositoryLocation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("label").forGetter(PackRepositoryLocation::label),
-            MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackRepositoryLocation::path)
+            Codec.STRING.fieldOf("path_matcher").forGetter(PackRepositoryLocation::pathMatcher)
     ).apply(instance, PackRepositoryLocation::new));
 }
