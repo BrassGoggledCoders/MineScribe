@@ -16,6 +16,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.util.List;
 import java.util.function.Function;
@@ -93,7 +94,7 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
         return new ListSelectionFieldContent<>(
                 definition.listNames()
                         .stream()
-                        .map(Registries.getFormLists()::getValue)
+                        .map(EditorRegistries.getFormLists()::getValue)
                         .map(FormList::values)
                         .flatMap(List::stream)
                         .toList(),

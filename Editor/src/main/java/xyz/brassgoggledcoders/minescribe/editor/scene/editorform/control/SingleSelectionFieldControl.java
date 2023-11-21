@@ -14,6 +14,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelection
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
@@ -89,7 +90,7 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
     }
 
     public static SingleSelectionFieldControl<String> of(SingleSelectionFileFieldDefinition definition) throws FormException {
-        List<String> values = new ArrayList<>(Registries.getFormLists()
+        List<String> values = new ArrayList<>(EditorRegistries.getFormLists()
                 .getOptionalValue(definition.listId())
                 .map(FormList::values)
                 .orElseThrow(() -> new FormException("Failed to find List for Id: " + definition.listId()))

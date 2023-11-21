@@ -1,11 +1,11 @@
-package xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
+package xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
 
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -58,7 +58,7 @@ public record NodeTracker(
     @NotNull
     private List<NodeTracker> createNodeTracksForChildren(Path path) {
         List<NodeTracker> nodeTrackerList = new ArrayList<>();
-        for (PackContentChildType childType : Registries.getContentChildTypes()) {
+        for (PackContentChildType childType : EditorRegistries.getContentChildTypes()) {
             if (childType.getParentId().equals(this.parentType().getId()) && childType.getPath().startsWith(path)) {
                 nodeTrackerList.add(new NodeTracker(
                         this.parentType(),

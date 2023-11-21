@@ -10,6 +10,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.SingleSelectionFieldControl;
 
@@ -69,13 +70,13 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         if (jsonElement != null && jsonElement.isJsonPrimitive()) {
             ResourceId.fromString(jsonElement.getAsString())
                     .result()
-                    .map(Registries.getSerializerTypes()::getValue)
+                    .map(EditorRegistries.getSerializerTypes()::getValue)
                     .ifPresent(selected::set);
         }
 
         if (selected.get() == null) {
             serializerInfo.defaultType()
-                    .map(Registries.getSerializerTypes()::getValue)
+                    .map(EditorRegistries.getSerializerTypes()::getValue)
                     .ifPresent(selected::set);
         }
 

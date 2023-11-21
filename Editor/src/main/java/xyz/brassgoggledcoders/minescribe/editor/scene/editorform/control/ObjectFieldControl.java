@@ -15,6 +15,7 @@ import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 
 import java.util.List;
@@ -110,13 +111,13 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     }
 
     public static ObjectFieldControl of(ReferencedObjectFileFieldDefinition definition) throws FormException {
-        ObjectType objectType = Registries.getObjectTypes()
+        ObjectType objectType = EditorRegistries.getObjectTypes()
                 .getValue(definition.objectId());
 
         if (objectType != null) {
             return new ObjectFieldControl(EditorFormPane.of(
                     objectType.fileForm(),
-                    Registries.getSerializerTypes()
+                    EditorRegistries.getSerializerTypes()
                             .supplyList(objectType),
                     null
             ));

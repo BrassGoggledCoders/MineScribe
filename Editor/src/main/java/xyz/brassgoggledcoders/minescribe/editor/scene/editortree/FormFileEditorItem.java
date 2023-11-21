@@ -5,7 +5,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 

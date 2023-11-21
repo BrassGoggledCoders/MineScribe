@@ -6,6 +6,8 @@ module xyz.brassgoggledcoders.minescribe.core {
 
     requires org.slf4j;
 
+    exports xyz.brassgoggledcoders.minescribe.core;
+    exports xyz.brassgoggledcoders.minescribe.core.codec;
     exports xyz.brassgoggledcoders.minescribe.core.fileform;
     exports xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
     exports xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number;
@@ -14,8 +16,6 @@ module xyz.brassgoggledcoders.minescribe.core {
     exports xyz.brassgoggledcoders.minescribe.core.info;
     exports xyz.brassgoggledcoders.minescribe.core.packinfo;
     exports xyz.brassgoggledcoders.minescribe.core.registry;
-    exports xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
     exports xyz.brassgoggledcoders.minescribe.core.util;
     exports xyz.brassgoggledcoders.minescribe.core.validation;
-    exports xyz.brassgoggledcoders.minescribe.core.codec;
 }

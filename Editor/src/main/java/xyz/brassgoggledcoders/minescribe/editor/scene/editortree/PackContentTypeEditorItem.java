@@ -4,7 +4,7 @@ import javafx.scene.control.*;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.IPackContentNode;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.IPackContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;

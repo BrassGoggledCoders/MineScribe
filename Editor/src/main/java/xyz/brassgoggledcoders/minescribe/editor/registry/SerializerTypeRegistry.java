@@ -1,6 +1,7 @@
-package xyz.brassgoggledcoders.minescribe.core.registry;
+package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.registry.BasicJsonRegistry;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -16,34 +17,6 @@ public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, Serial
                 SerializerType.CODEC,
                 SerializerType::id
         );
-    }
-
-    public List<SerializerType> getFor(PackContentParentType parentType) {
-        return getFor(new ResourceId(
-                parentType.getId().namespace(),
-                "types/parent/" + parentType.getId().path()
-        ));
-    }
-
-    public List<SerializerType> getFor(PackContentChildType childType) {
-        return getFor(new ResourceId(
-                childType.getId().namespace(),
-                "types/child/" + childType.getId().path()
-        ));
-    }
-
-    public List<SerializerType> getFor(ObjectType objectType) {
-        return getFor(new ResourceId(
-                objectType.id().namespace(),
-                "types/object/" + objectType.id().path()
-        ));
-    }
-
-    public List<SerializerType> getFor(SerializerType serializerType) {
-        return getFor(new ResourceId(
-                serializerType.id().namespace(),
-                "types/serializer/" + serializerType.id().path()
-        ));
     }
 
     public List<SerializerType> getFor(ResourceId parentId) {

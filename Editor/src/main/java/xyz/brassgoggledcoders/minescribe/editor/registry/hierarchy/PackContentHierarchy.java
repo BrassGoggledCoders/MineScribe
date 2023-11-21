@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
+package xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
 
 import com.google.common.base.Suppliers;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;

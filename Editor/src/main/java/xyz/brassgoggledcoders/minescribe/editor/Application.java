@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import xyz.brassgoggledcoders.minescribe.core.MineScribeRuntime;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
@@ -42,6 +43,7 @@ public class Application extends javafx.application.Application {
 
     public static void main(String[] args) {
         SLF4JBridgeHandler.install();
+        MineScribeRuntime.setRuntime(MineScribeRuntime.APPLICATION);
         launch();
     }
 }

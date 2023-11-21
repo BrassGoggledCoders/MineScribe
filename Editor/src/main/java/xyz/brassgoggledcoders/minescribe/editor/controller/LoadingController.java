@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
@@ -43,7 +42,6 @@ public class LoadingController {
     private void startProjectLoad() {
         this.loadingStatus.setText("Found Project. Loading Files from ./minescribe");
         EditorRegistries.load(this.project.getMineScribeFolder());
-        Registries.load(this.project.getMineScribeFolder(), EditorRegistries.getValidationRegistry());
         this.loadingStatus.setText("Project Loaded. Opening Editor");
 
         InfoRepository.getInstance()

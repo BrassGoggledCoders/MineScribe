@@ -28,6 +28,7 @@ import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
@@ -101,7 +102,7 @@ public class FormController implements IFileEditorController {
             try {
                 this.editorForm = EditorFormPane.of(
                         fileForm,
-                        Registries.getSerializerTypes()
+                        EditorRegistries.getSerializerTypes()
                                 .supplyList(parentType, childType),
                         persistableObject
                 );

@@ -17,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
 import xyz.brassgoggledcoders.minescribe.editor.validation.StringRegexValidator;
@@ -48,11 +48,11 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                 .toList();
 
         if (parentTypes.isEmpty()) {
-            parentTypes = Registries.getContentParentTypes()
+            parentTypes = EditorRegistries.getContentParentTypes()
                     .getValues();
         }
         if (childTypes.isEmpty()) {
-            childTypes = Registries.getContentChildTypes()
+            childTypes = EditorRegistries.getContentChildTypes()
                     .getValues();
         }
 
