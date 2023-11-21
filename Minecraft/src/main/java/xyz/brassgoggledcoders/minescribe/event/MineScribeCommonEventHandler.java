@@ -64,28 +64,42 @@ public class MineScribeCommonEventHandler {
                 MineScribeAPI.PACK_TYPE,
                 Optional.of(FileFormData.of(
                         new FileFieldData<>(
-                                new ListOfFileFieldDefinition(
-                                        0,
-                                        Integer.MAX_VALUE,
-                                        new ReferencedObjectFileFieldDefinition(
-                                                new ResourceId(MineScribe.ID, "file_field")
-                                        )
-                                ),
+                                new StringFileFieldDefinition(""),
                                 new FileFieldInfoData(
-                                        "Fields",
-                                        "fields",
-                                        0,
-                                        false
+                                        "Label",
+                                        "label",
+                                        1,
+                                        true
                                 )
                         ),
-                        new FileFieldData<IFileFieldDefinition>(
-                                new ReferencedObjectFileFieldDefinition(
-                                        new ResourceId(MineScribe.ID, "serializer_info")
+                        new FileFieldData<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "Path",
+                                        "path",
+                                        2,
+                                        true
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new SingleSelectionFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "pack_type")
                                 ),
                                 new FileFieldInfoData(
-                                        "Serializer Info",
-                                        "serializer",
-                                        1,
+                                        "Pack Type",
+                                        "packType",
+                                        3,
+                                        true
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "file_form")
+                                ),
+                                new FileFieldInfoData(
+                                        "File Form",
+                                        "form",
+                                        4,
                                         false
                                 )
                         )
@@ -98,28 +112,40 @@ public class MineScribeCommonEventHandler {
                 MineScribeAPI.PACK_TYPE,
                 Optional.of(FileFormData.of(
                         new FileFieldData<>(
-                                new ListOfFileFieldDefinition(
-                                        0,
-                                        Integer.MAX_VALUE,
-                                        new ReferencedObjectFileFieldDefinition(
-                                                new ResourceId(MineScribe.ID, "file_field")
-                                        )
-                                ),
+                                new StringFileFieldDefinition(""),
                                 new FileFieldInfoData(
-                                        "Fields",
-                                        "fields",
-                                        0,
-                                        false
+                                        "Parent",
+                                        "parentId",
+                                        1,
+                                        true
                                 )
                         ),
-                        new FileFieldData<IFileFieldDefinition>(
+                        new FileFieldData<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "Label",
+                                        "label",
+                                        2,
+                                        true
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "Path",
+                                        "path",
+                                        3,
+                                        true
+                                )
+                        ),
+                        new FileFieldData<>(
                                 new ReferencedObjectFileFieldDefinition(
-                                        new ResourceId(MineScribe.ID, "serializer_info")
+                                        new ResourceId(MineScribe.ID, "file_form")
                                 ),
                                 new FileFieldInfoData(
-                                        "Serializer Info",
-                                        "serializer",
-                                        1,
+                                        "File Form",
+                                        "form",
+                                        4,
                                         false
                                 )
                         )
@@ -376,6 +402,37 @@ public class MineScribeCommonEventHandler {
                                         "info",
                                         1,
                                         true
+                                )
+                        )
+                )
+        ));
+        consumer.accept(new ObjectTypeData(
+                new ResourceLocation(MineScribe.ID, "file_form"),
+                FileFormData.of(
+                        new FileFieldData<>(
+                                new ListOfFileFieldDefinition(
+                                        0,
+                                        Integer.MAX_VALUE,
+                                        new ReferencedObjectFileFieldDefinition(
+                                                new ResourceId(MineScribe.ID, "file_field")
+                                        )
+                                ),
+                                new FileFieldInfoData(
+                                        "Fields",
+                                        "fields",
+                                        0,
+                                        false
+                                )
+                        ),
+                        new FileFieldData<IFileFieldDefinition>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "serializer_info")
+                                ),
+                                new FileFieldInfoData(
+                                        "Serializer Info",
+                                        "serializer",
+                                        1,
+                                        false
                                 )
                         )
                 )

@@ -1,0 +1,34 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "list_of_fields",
+          "value": {
+            "minimum": 0,
+            "valueField": {
+              "type": "object_ref",
+              "objectId": "minescribe:file_field"
+            }
+          }
+        },
+        "info": {
+          "field": "fields",
+          "label": "Fields"
+        }
+      },
+      {
+        "definition": {
+          "type": "object_ref",
+          "objectId": "minescribe:serializer_info"
+        },
+        "info": {
+          "field": "serializer",
+          "label": "Serializer Info",
+          "sortOrder": 1
+        }
+      }
+    ]
+  },
+  "id": "minescribe:file_form"
+}
