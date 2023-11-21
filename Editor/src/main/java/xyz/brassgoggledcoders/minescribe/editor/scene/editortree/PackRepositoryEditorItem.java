@@ -9,12 +9,13 @@ import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NewPackController
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PackRepositoryEditorItem extends EditorItem {
-    public PackRepositoryEditorItem(PackRepositoryLocation location) {
-        super(location.label(), location.path());
+    public PackRepositoryEditorItem(String label, Path path) {
+        super(label, path);
     }
 
     @Override

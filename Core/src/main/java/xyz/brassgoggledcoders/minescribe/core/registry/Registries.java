@@ -2,12 +2,13 @@ package xyz.brassgoggledcoders.minescribe.core.registry;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
-import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
 import java.nio.file.Path;
@@ -33,6 +34,7 @@ public class Registries {
 
     private static final Supplier<BasicJsonRegistry<String, MineScribePackType>> PACK_TYPES = Suppliers.memoize(() -> BasicJsonRegistry.ofString(
             "packTypes",
+            "pack_types",
             MineScribePackType.CODEC,
             MineScribePackType::name
     ));
@@ -40,6 +42,7 @@ public class Registries {
     private static final Supplier<BasicJsonRegistry<String, PackRepositoryLocation>> PACK_REPOSITORY_LOCATIONS =
             Suppliers.memoize(() -> BasicJsonRegistry.ofString(
                     "packRepositories",
+                    "pack_repositories",
                     PackRepositoryLocation.CODEC,
                     PackRepositoryLocation::label
             ));

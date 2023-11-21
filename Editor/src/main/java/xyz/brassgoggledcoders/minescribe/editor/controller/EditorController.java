@@ -58,7 +58,7 @@ public class EditorController {
             for (Path openTab : tabPaths) {
                 TreeItem<EditorItem> treeItem = FileHandler.getInstance()
                         .getClosestNode(openTab, true);
-                if (treeItem.getValue() instanceof FormFileEditorItem fileEditorItem) {
+                if (treeItem != null && treeItem.getValue() instanceof FormFileEditorItem fileEditorItem) {
                     fileEditorItem.openTabFor(editor::fireEvent);
                 }
             }

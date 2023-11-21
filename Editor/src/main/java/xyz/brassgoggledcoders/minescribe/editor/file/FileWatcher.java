@@ -25,13 +25,15 @@ public class FileWatcher extends Thread implements AutoCloseable {
 
     public void watchDirectory(Path path) {
         try {
-            Files.walkFileTree(path, new SimpleFileVisitor<>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    register(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
+            if (Files.exists(path)) {
+                Files.walkFileTree(path, new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                        register(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            }
         } catch (IOException e) {
             this.exceptionHandler.accept(e);
         }

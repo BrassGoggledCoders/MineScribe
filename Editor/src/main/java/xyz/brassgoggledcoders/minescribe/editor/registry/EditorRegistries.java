@@ -24,7 +24,7 @@ public class EditorRegistries {
     private static final Supplier<BasicJsonRegistry<ResourceId, PackContentParentType>> CONTENT_PARENT_TYPES =
             Suppliers.memoize(() -> new BasicJsonRegistry<>(
                     "contentParentTypes",
-                    Path.of("types", "parent"),
+                    Path.of("types", "parent").toString(),
                     ResourceId.CODEC,
                     PackContentParentType.CODEC,
                     PackContentType::getId
@@ -33,7 +33,7 @@ public class EditorRegistries {
     private static final Supplier<BasicJsonRegistry<ResourceId, PackContentChildType>> CONTENT_CHILD_TYPES =
             Suppliers.memoize(() -> new BasicJsonRegistry<>(
                     "contentChildTypes",
-                    Path.of("types", "child"),
+                    Path.of("types", "child").toString(),
                     ResourceId.CODEC,
                     PackContentChildType.CODEC,
                     PackContentType::getId
@@ -111,7 +111,7 @@ public class EditorRegistries {
     private static final Supplier<BasicJsonRegistry<ResourceId, ObjectType>> OBJECT_TYPES =
             Suppliers.memoize(() -> new BasicJsonRegistry<>(
                     "objectTypes",
-                    Path.of("types", "object"),
+                    Path.of("types", "object").toString(),
                     ResourceId.CODEC,
                     ObjectType.CODEC,
                     ObjectType::id

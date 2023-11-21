@@ -556,14 +556,14 @@ public class MineScribeCommonEventHandler {
                 new ResourceLocation("resource_pack"),
                 new PackRepositoryLocation(
                         "Client Resource Packs",
-                        "${MINECRAFT_FOLDER}/resourcepacks"
+                        "**resourcepacks"
                 )
         );
         mapConsumer.accept(
                 new ResourceLocation("saves_datapacks"),
                 new PackRepositoryLocation(
                         "${PATH:-2} Data Packs",
-                        "${MINECRAFT_FOLDER}/saves/*/datapacks/"
+                        "**saves/*/datapacks"
                 )
         );
     }

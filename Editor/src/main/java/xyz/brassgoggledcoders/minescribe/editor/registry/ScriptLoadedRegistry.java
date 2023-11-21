@@ -9,14 +9,9 @@ import java.nio.file.Path;
 public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
 
     public ScriptLoadedRegistry(String name, Codec<K> kCodec, Path directory) {
-        super(name, kCodec, Path.of("scripts").resolve(directory), "js");
+        super(name, kCodec, Path.of("scripts").resolve(directory).toString(), "js");
         ScriptHandler.getInstance()
                 .putBinding(name, this);
-    }
-
-    @Override
-    protected void handleSingleFile(String fileContents) {
-        //Do Nothing, Shouldn't happen
     }
 
     @Override

@@ -15,32 +15,12 @@ public class BasicJsonRegistry<K, V> extends FileLoadedRegistry<K, V> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicJsonRegistry.class);
     private static final Gson GSON = new Gson();
     private final Codec<V> vCodec;
-    private final Codec<List<V>> vCodecList;
     private final Function<V, K> valueName;
 
-    public BasicJsonRegistry(String name, Path directory, Codec<K> kCodec, Codec<V> vCodec, Function<V, K> valueName) {
-        super(name, kCodec, setPath(directory), "json");
+    public BasicJsonRegistry(String name, String directory, Codec<K> kCodec, Codec<V> vCodec, Function<V, K> valueName) {
+        super(name, kCodec, directory, "json");
         this.vCodec = vCodec;
-        this.vCodecList = vCodec.listOf();
         this.valueName = valueName;
-    }
-
-    private static Path setPath(Path directory) {
-        if (directory == null) {
-            return null;
-        } else {
-            return Path.of("registry")
-                    .resolve(directory);
-        }
-    }
-
-    @Override
-    protected void handleSingleFile(String fileContents) {
-        JsonElement jsonElement = GSON.fromJson(fileContents, JsonElement.class);
-        vCodecList.decode(JsonOps.INSTANCE, jsonElement)
-                .get()
-                .ifLeft(result -> result.getFirst().forEach(value -> this.register(valueName.apply(value), value)))
-                .ifRight(partial -> LOGGER.error("Failed to decode file {} due to {}", this.getName(), partial.message()));
     }
 
     @Override
@@ -53,10 +33,10 @@ public class BasicJsonRegistry<K, V> extends FileLoadedRegistry<K, V> {
 
     }
 
-    public static <V> BasicJsonRegistry<String, V> ofString(String name, Codec<V> vCodec, Function<V, String> valueName) {
+    public static <V> BasicJsonRegistry<String, V> ofString(String name, String directory, Codec<V> vCodec, Function<V, String> valueName) {
         return new BasicJsonRegistry<>(
                 name,
-                null,
+                directory,
                 Codec.STRING,
                 vCodec,
                 valueName

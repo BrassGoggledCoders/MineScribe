@@ -12,7 +12,7 @@ public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, Serial
     public SerializerTypeRegistry() {
         super(
                 "serializerTypes",
-                Path.of("types", "serializer"),
+                Path.of("types", "serializer").toString(),
                 ResourceId.CODEC,
                 SerializerType.CODEC,
                 SerializerType::id
