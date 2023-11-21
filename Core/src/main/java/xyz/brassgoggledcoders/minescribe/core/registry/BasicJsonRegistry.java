@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.Function;
 
 public class BasicJsonRegistry<K, V> extends FileLoadedRegistry<K, V> {
@@ -24,7 +23,7 @@ public class BasicJsonRegistry<K, V> extends FileLoadedRegistry<K, V> {
     }
 
     @Override
-    protected void handleFileInFolder(String fileName, String fileContents) {
+    protected void handleFileInFolder(Path path, String fileName, String fileContents) {
         JsonElement jsonElement = GSON.fromJson(fileContents, JsonElement.class);
         this.vCodec.decode(JsonOps.INSTANCE, jsonElement)
                 .get()

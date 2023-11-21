@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.Closeable;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -18,7 +19,7 @@ public class ScriptHandler implements Closeable {
     private final Engine engine;
     private final Context context;
     private final SLF4JBridgeHandler handler;
-    private final AtomicReference<String> currentScript;
+    private final AtomicReference<Path> currentScript;
 
     public ScriptHandler() {
         this.engine = Engine.newBuilder()
@@ -43,20 +44,20 @@ public class ScriptHandler implements Closeable {
     }
 
     @Nullable
-    public String getCurrentScript() {
+    public Path getCurrentScript() {
         return this.currentScript.get();
     }
 
 
-    public void runScript(String fileName, String fileContents) {
+    public void runScript(Path filePath, String fileContents) {
         try {
             Source source = Source.create("js", fileContents);
-            this.currentScript.set(fileContents);
+            this.currentScript.set(filePath);
             this.context.parse(source)
                     .executeVoid();
             this.currentScript.set(null);
         } catch (PolyglotException polyglotException) {
-            LOGGER.error("Failed to run Script {}", fileName, polyglotException);
+            LOGGER.error("Failed to run Script {}", filePath, polyglotException);
         }
 
     }
