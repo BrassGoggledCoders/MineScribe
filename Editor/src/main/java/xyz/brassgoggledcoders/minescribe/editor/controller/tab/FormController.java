@@ -22,7 +22,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
@@ -219,7 +218,6 @@ public class FormController implements IFileEditorController {
                             .addMessage(notSavedMessage);
                 }
             } catch (FormException e) {
-                LOGGER.error("Failed to Load Form", e);
                 e.showErrorDialog();
             }
         } else {

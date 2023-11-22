@@ -8,13 +8,11 @@ import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.function.Function;
+import java.util.List;
 
 public abstract class EditorItem implements Comparable<EditorItem> {
     private final Logger LOGGER = LoggerFactory.getLogger(EditorItem.class);

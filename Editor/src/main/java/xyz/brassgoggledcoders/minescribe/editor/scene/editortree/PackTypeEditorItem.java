@@ -6,6 +6,7 @@ import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewDirectoryFormDialog;
 
 import java.nio.file.DirectoryStream;
@@ -20,6 +21,9 @@ public class PackTypeEditorItem extends EditorItem {
     public PackTypeEditorItem(String name, Path path, MineScribePackType packType) {
         super(name, path);
         this.packType = packType;
+        if (packType.name().equalsIgnoreCase("MINESCRIBE")) {
+            EditorRegistries.addSourcePath(path);
+        }
     }
 
     @Override

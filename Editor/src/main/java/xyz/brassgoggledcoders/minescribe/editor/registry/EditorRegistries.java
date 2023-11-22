@@ -157,12 +157,20 @@ public class EditorRegistries {
     public static void load(Path mineScribeRoot) {
         Path dataRoot = mineScribeRoot.resolve("data");
         //Validations are required by the others;
-        VALIDATION_CODECS.get().load(dataRoot);
+
         Registries.load(dataRoot, EditorRegistries.getValidationRegistry());
         FORM_LISTS.get().setMineScribePath(dataRoot);
         CONTENT_PARENT_TYPES.get().load(dataRoot);
         CONTENT_CHILD_TYPES.get().load(dataRoot);
         SERIALIZER_TYPES.get().load(dataRoot);
         OBJECT_TYPES.get().load(dataRoot);
+    }
+
+    public static void addSourcePath(Path sourcePath) {
+        VALIDATION_CODECS.get().load(sourcePath);
+        CONTENT_PARENT_TYPES.get().load(sourcePath);
+        CONTENT_CHILD_TYPES.get().load(sourcePath);
+        SERIALIZER_TYPES.get().load(sourcePath);
+        OBJECT_TYPES.get().load(sourcePath);
     }
 }
