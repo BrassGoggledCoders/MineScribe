@@ -51,7 +51,7 @@ public class NewPackController {
     @FXML
     public void initialize() {
         form = Form.of(Group.of(
-                Field.ofMultiSelectionType(Registries.getPackTypes().getValues())
+                Field.ofMultiSelectionType(Registries.getPackTypeRegistry().getValues())
                         .label("Pack Type")
                         .render(SmallerSimpleListViewControl::new)
                         .id("packTypes")

@@ -2,6 +2,7 @@ package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.registry.BasicJsonRegistry;
+import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, SerializerType> {
     public SerializerTypeRegistry() {
         super(
-                "serializerTypes",
+                RegistryNames.SERIALIZER_TYPES,
                 Path.of("types", "serializer").toString(),
                 ResourceId.CODEC,
                 SerializerType.CODEC,

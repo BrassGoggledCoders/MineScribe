@@ -24,7 +24,7 @@ public class PackContentHierarchy {
 
     public static PackContentHierarchy build() {
         Map<MineScribePackType, RootPackContentNode> hierarchy = new HashMap<>();
-        for (MineScribePackType packType : Registries.getPackTypes()) {
+        for (MineScribePackType packType : Registries.getPackTypeRegistry()) {
             hierarchy.put(packType, new RootPackContentNode(packType));
         }
         return new PackContentHierarchy(hierarchy);

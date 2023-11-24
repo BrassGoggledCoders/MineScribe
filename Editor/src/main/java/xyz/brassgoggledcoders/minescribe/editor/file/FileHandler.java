@@ -149,7 +149,7 @@ public class FileHandler {
         Project project = InfoRepository.getInstance()
                 .getValue(Project.KEY);
         if (project != null) {
-            for (PackRepositoryLocation location : Registries.getPackRepositoryLocations()) {
+            for (PackRepositoryLocation location : Registries.getPackRepositoryLocationRegistry()) {
                 PathMatcher pathMatcher = project.getRootPath()
                         .getFileSystem()
                         .getPathMatcher("glob:" + location.pathMatcher());

@@ -27,7 +27,7 @@ public class MineScribeCodecs {
     public static final Codec<PackType> PACK_TYPE = new EnumCodec<>(PackType.class);
 
     public static final Codec<MineScribePackType> MS_PACK_TYPE = PACK_TYPE.xmap(
-            mcPackType -> Registries.getPackTypes().getValue(mcPackType.name()),
+            mcPackType -> Registries.getPackTypeRegistry().getValue(mcPackType.name()),
             msPackType -> PackType.valueOf(msPackType.name())
     );
 

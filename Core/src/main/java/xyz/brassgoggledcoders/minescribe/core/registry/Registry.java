@@ -5,7 +5,6 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.BiMapDispatchCodec;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.util.*;
 
@@ -30,7 +29,7 @@ public class Registry<K, V> implements Iterable<V> {
         return this.getMap().containsKey(key);
     }
 
-    protected void register(K key, V value) {
+    public void register(K key, V value) {
         this.values.put(key, value);
     }
 
@@ -50,7 +49,7 @@ public class Registry<K, V> implements Iterable<V> {
         return dispatchCodec;
     }
 
-    protected String getName() {
+    public String getName() {
         return this.name;
     }
 
@@ -80,5 +79,9 @@ public class Registry<K, V> implements Iterable<V> {
 
     public Optional<V> getOptionalValue(K key) {
         return Optional.ofNullable(this.getValue(key));
+    }
+
+    public void validate() {
+
     }
 }

@@ -28,7 +28,7 @@ public class PackEditorItem extends EditorItem {
         List<EditorItem> childrenEditorItems = new ArrayList<>();
         for (Path childPath : childPaths) {
             if (Files.isDirectory(childPath)) {
-                Registries.getPackTypes()
+                Registries.getPackTypeRegistry()
                         .getValues()
                         .stream()
                         .filter(type -> childPath.endsWith(type.folder()))

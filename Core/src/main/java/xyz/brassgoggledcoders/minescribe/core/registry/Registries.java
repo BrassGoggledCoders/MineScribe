@@ -1,73 +1,47 @@
 package xyz.brassgoggledcoders.minescribe.core.registry;
 
-import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
-import java.nio.file.Path;
-import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.Optional;
+import java.util.ServiceLoader;
 
 public class Registries {
-    private static final Supplier<BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>>> FILE_FIELD_CODECS =
-            Suppliers.memoize(() -> new BasicStaticRegistry<>(
-                    "fileFields",
-                    Codec.STRING,
-                    initializer -> {
-                        initializer.accept("checkbox", CheckBoxFileFieldDefinition.CODEC);
-                        initializer.accept("list_selection", ListSelectionFileFieldDefinition.CODEC);
-                        initializer.accept("list_of_fields", ListOfFileFieldDefinition.CODEC);
-                        initializer.accept("string", StringFileFieldDefinition.CODEC);
-                        initializer.accept("single_selection", SingleSelectionFileFieldDefinition.CODEC);
-                        initializer.accept("integer", IntegerFileFieldDefinition.CODEC);
-                        initializer.accept("double", DoubleFileFieldDefinition.CODEC);
-                        initializer.accept("object_ref", ReferencedObjectFileFieldDefinition.CODEC);
-                    }
-            ));
+    public static final ServiceLoader<IRegistryProviderService> REGISTRY_PROVIDER_SERVICE_LOADER =
+            ServiceLoader.load(IRegistryProviderService.class);
 
-    private static final Supplier<BasicJsonRegistry<String, MineScribePackType>> PACK_TYPES = Suppliers.memoize(() -> BasicJsonRegistry.ofString(
-            "packTypes",
-            "pack_types",
-            MineScribePackType.CODEC,
-            MineScribePackType::name
-    ));
-
-    private static final Supplier<BasicJsonRegistry<String, PackRepositoryLocation>> PACK_REPOSITORY_LOCATIONS =
-            Suppliers.memoize(() -> BasicJsonRegistry.ofString(
-                    "packRepositories",
-                    "pack_repositories",
-                    PackRepositoryLocation.CODEC,
-                    PackRepositoryLocation::label
-            ));
-
-    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations = null;
-
-    public static BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>> getFileFieldCodecRegistry() {
-        return FILE_FIELD_CODECS.get();
+    public static Registry<String, PackRepositoryLocation> getPackRepositoryLocationRegistry() {
+        return getRegistry(RegistryNames.PACK_REPOSITORY_LOCATIONS);
     }
 
-    public static BasicJsonRegistry<String, MineScribePackType> getPackTypes() {
-        return PACK_TYPES.get();
+    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidationCodecRegistry() {
+        return getRegistry(RegistryNames.VALIDATIONS);
     }
 
-    public static BasicJsonRegistry<String, PackRepositoryLocation> getPackRepositoryLocations() {
-        return PACK_REPOSITORY_LOCATIONS.get();
+    public static Registry<String, MineScribePackType> getPackTypeRegistry() {
+        return getRegistry(RegistryNames.PACK_TYPES);
     }
 
-    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidations() {
-        return Objects.requireNonNull(validations);
+    public static Registry<String, Codec<? extends IFileFieldDefinition>> getFileFieldDefinitionCodecRegistry() {
+        return getRegistry(RegistryNames.FILE_FIELD_DEFINITIONS);
     }
 
-    public static void load(Path mineScribeRoot, Registry<ResourceId, Codec<? extends Validation<?>>> validations) {
-        Registries.validations = validations;
-        PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
-        PACK_TYPES.get().load(mineScribeRoot);
+    public static <K, V> Registry<K, V> getRegistry(String name) {
+        return Registries.<K, V>getRegistryOpt(name)
+                .orElseThrow();
+    }
+
+    public static <K, V> Optional<Registry<K, V>> getRegistryOpt(String name) {
+        return REGISTRY_PROVIDER_SERVICE_LOADER.stream()
+                .flatMap(registryProvider -> registryProvider.get()
+                        .<K,V>getRegistry(name)
+                        .stream()
+                )
+                .findFirst();
     }
 }

@@ -1,4 +1,11 @@
+import xyz.brassgoggledcoders.minescribe.core.service.CoreRegistryProviderService;
+
 module xyz.brassgoggledcoders.minescribe.core {
+    uses xyz.brassgoggledcoders.minescribe.core.service.IPackFileWatcherService;
+    uses xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
+
+    provides xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService with CoreRegistryProviderService;
+
     requires org.jetbrains.annotations;
     requires com.google.gson;
     requires com.google.common;
@@ -16,6 +23,7 @@ module xyz.brassgoggledcoders.minescribe.core {
     exports xyz.brassgoggledcoders.minescribe.core.info;
     exports xyz.brassgoggledcoders.minescribe.core.packinfo;
     exports xyz.brassgoggledcoders.minescribe.core.registry;
+    exports xyz.brassgoggledcoders.minescribe.core.service;
     exports xyz.brassgoggledcoders.minescribe.core.util;
     exports xyz.brassgoggledcoders.minescribe.core.validation;
 }

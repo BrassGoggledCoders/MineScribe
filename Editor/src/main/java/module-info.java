@@ -1,4 +1,9 @@
+import xyz.brassgoggledcoders.minescribe.editor.service.EditorRegistryProviderService;
+
 module xyz.brassgoggledcoders.minescribe.editor {
+    uses xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
+    provides xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService with EditorRegistryProviderService;
+
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -37,4 +42,6 @@ module xyz.brassgoggledcoders.minescribe.editor {
     exports xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content;
     exports xyz.brassgoggledcoders.minescribe.editor.scene;
     opens xyz.brassgoggledcoders.minescribe.editor.scene to javafx.fxml;
+
+    exports xyz.brassgoggledcoders.minescribe.editor.service;
 }

@@ -60,7 +60,7 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
                 if (Files.isDirectory(path)) {
                     readFolder(path, matcher);
                 } else if (matcher.matches(path)) {
-                    String fileName = path.relativize(parent).toString();
+                    String fileName = parent.relativize(path).toString();
                     try {
                         String jsonString = Files.readString(path, StandardCharsets.UTF_8);
                         handleFileInFolder(path, fileName, jsonString);
