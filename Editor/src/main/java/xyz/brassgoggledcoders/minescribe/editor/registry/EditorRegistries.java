@@ -53,7 +53,7 @@ public class EditorRegistries {
 
     public static void addSourcePath(Path sourcePath) {
         for (IRegistryProviderService service : Registries.REGISTRY_PROVIDER_SERVICE_LOADER) {
-            service.load(sourcePath);
+            service.addSourcePath(sourcePath);
         }
     }
 }

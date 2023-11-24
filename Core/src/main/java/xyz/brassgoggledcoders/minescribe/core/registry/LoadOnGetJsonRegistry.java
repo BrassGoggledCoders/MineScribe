@@ -19,7 +19,7 @@ public class LoadOnGetJsonRegistry<V> extends Registry<ResourceId, V> {
     private final Codec<V> vCodec;
     private final Path basePath;
 
-    private Path mineScribePath;
+    private Path dataPath;
 
     public LoadOnGetJsonRegistry(String name, Path basePath, Codec<V> vCodec) {
         super(name, ResourceId.CODEC);
@@ -36,14 +36,14 @@ public class LoadOnGetJsonRegistry<V> extends Registry<ResourceId, V> {
         return super.getValue(key);
     }
 
-    public void setMineScribePath(Path mineScribePath) {
-        this.mineScribePath = mineScribePath;
+    public void setDataPath(Path mineScribePath) {
+        this.dataPath = mineScribePath;
     }
 
     private void load(ResourceId id) {
-        if (this.mineScribePath != null) {
-            Path filePath = this.mineScribePath.resolve(this.basePath)
-                    .resolve(id.namespace())
+        if (this.dataPath != null) {
+            Path filePath = this.dataPath.resolve(id.namespace())
+                    .resolve(this.basePath)
                     .resolve(id.path() + ".json");
 
             if (Files.isRegularFile(filePath)) {

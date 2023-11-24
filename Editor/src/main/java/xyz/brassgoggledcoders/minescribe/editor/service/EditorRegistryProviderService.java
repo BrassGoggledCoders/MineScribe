@@ -52,7 +52,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
     );
     private static final LoadOnGetJsonRegistry<FormList> formLists = new LoadOnGetJsonRegistry<>(
             RegistryNames.FORM_LISTS,
-            Path.of("formLists"),
+            Path.of("form_lists"),
             FormList.CODEC
     );
     private static final BasicJsonRegistry<ResourceId, ObjectType> objectTypes = new BasicJsonRegistry<>(
@@ -173,6 +173,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 fileLoadedRegistry.load(dataRoot);
             }
         }
+        formLists.setDataPath(dataRoot);
 
         this.validate();
     }
