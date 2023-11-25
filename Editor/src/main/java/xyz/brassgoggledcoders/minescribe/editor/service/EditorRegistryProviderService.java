@@ -12,10 +12,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.*;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
-import xyz.brassgoggledcoders.minescribe.editor.registry.EditorFormFieldRegistry;
-import xyz.brassgoggledcoders.minescribe.editor.registry.EditorFormFieldTransform;
-import xyz.brassgoggledcoders.minescribe.editor.registry.ScriptLoadedRegistry;
-import xyz.brassgoggledcoders.minescribe.editor.registry.SerializerTypeRegistry;
+import xyz.brassgoggledcoders.minescribe.editor.registry.*;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.*;
 
 import java.nio.file.Path;
@@ -24,43 +21,35 @@ import java.util.List;
 import java.util.Optional;
 
 public class EditorRegistryProviderService implements IRegistryProviderService {
-    private static final BasicJsonRegistry<String, MineScribePackType> packTypes = BasicJsonRegistry.ofString(
+    private static final BasicJsonRegistry<MineScribePackType> packTypes = new BasicJsonRegistry<>(
             RegistryNames.PACK_TYPES,
             "pack_types",
-            MineScribePackType.CODEC,
-            MineScribePackType::name
+            MineScribePackType.CODEC
     );
-    private static final BasicJsonRegistry<String, PackRepositoryLocation> packRepositoryLocations = BasicJsonRegistry.ofString(
+    private static final BasicJsonRegistry<PackRepositoryLocation> packRepositoryLocations = new BasicJsonRegistry<>(
             RegistryNames.PACK_REPOSITORY_LOCATIONS,
             "pack_repositories",
-            PackRepositoryLocation.CODEC,
-            PackRepositoryLocation::label
+            PackRepositoryLocation.CODEC
     );
-    private static final BasicJsonRegistry<ResourceId, PackContentParentType> contentParentTypes = new BasicJsonRegistry<>(
+    private static final BasicJsonRegistry<PackContentParentType> contentParentTypes = new BasicJsonRegistry<>(
             RegistryNames.CONTENT_PARENT_TYPES,
             Path.of("types", "parent").toString(),
-            ResourceId.CODEC,
-            PackContentParentType.CODEC,
-            PackContentType::getId
+            PackContentParentType.CODEC
     );
-    private static final BasicJsonRegistry<ResourceId, PackContentChildType> contentChildTypes = new BasicJsonRegistry<>(
+    private static final BasicJsonRegistry<PackContentChildType> contentChildTypes = new BasicJsonRegistry<>(
             RegistryNames.CONTENT_CHILD_TYPES,
             Path.of("types", "child").toString(),
-            ResourceId.CODEC,
-            PackContentChildType.CODEC,
-            PackContentType::getId
+            PackContentChildType.CODEC
     );
-    private static final LoadOnGetJsonRegistry<FormList> formLists = new LoadOnGetJsonRegistry<>(
-            RegistryNames.FORM_LISTS,
+    private static final LoadOnGetJsonRegistry<FormList> formValueLists = new LoadOnGetJsonRegistry<>(
+            RegistryNames.FORM_LIST_VALUES,
             Path.of("form_lists"),
             FormList.CODEC
     );
-    private static final BasicJsonRegistry<ResourceId, ObjectType> objectTypes = new BasicJsonRegistry<>(
+    private static final BasicJsonRegistry<ObjectType> objectTypes = new BasicJsonRegistry<>(
             RegistryNames.OBJECT_TYPES,
             Path.of("types", "object").toString(),
-            ResourceId.CODEC,
-            ObjectType.CODEC,
-            ObjectType::id
+            ObjectType.CODEC
     );
     private static final SerializerTypeRegistry serializerTypes = new SerializerTypeRegistry();
     private static final ScriptLoadedRegistry<ResourceId, Codec<? extends Validation<?>>> validations = new ScriptLoadedRegistry<>(
@@ -68,6 +57,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
             ResourceId.CODEC,
             Path.of("validation")
     );
+
     private static final EditorFormFieldRegistry editorFormFieldTransforms = new EditorFormFieldRegistry(registry -> {
         registry.accept("checkbox", new EditorFormFieldTransform<>(
                 CheckBoxFileFieldDefinition.class,
@@ -133,7 +123,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
         this.registries = List.of(
                 packTypes,
                 packRepositoryLocations,
-                formLists,
+                formValueLists,
                 validations,
                 contentParentTypes,
                 contentChildTypes,
@@ -173,7 +163,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 fileLoadedRegistry.load(dataRoot);
             }
         }
-        formLists.setDataPath(dataRoot);
+        formValueLists.setDataPath(dataRoot);
 
         this.validate();
     }

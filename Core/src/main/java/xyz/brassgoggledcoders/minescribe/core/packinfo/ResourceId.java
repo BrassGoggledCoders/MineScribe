@@ -3,6 +3,8 @@ package xyz.brassgoggledcoders.minescribe.core.packinfo;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
+import java.util.Locale;
+
 public record ResourceId(
         String namespace,
         String path
@@ -31,11 +33,14 @@ public record ResourceId(
         if (s.isEmpty()) {
             return DataResult.error("String is empty");
         } else {
-            String[] strings = s.split(":");
-            if (strings.length != 2) {
+            String[] strings = s.toLowerCase(Locale.ROOT)
+                    .split(":");
+            if (strings.length > 2 || strings.length == 0) {
                 return DataResult.error("%s should have exact one :".formatted(s));
-            } else {
+            } else if (strings.length == 2) {
                 return DataResult.success(new ResourceId(strings[0], strings[1]));
+            } else {
+                return DataResult.success(new ResourceId(strings[0]));
             }
         }
     }

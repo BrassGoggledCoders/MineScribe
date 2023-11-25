@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 
 import java.io.File;
@@ -31,7 +32,7 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
         this.fileType = fileType;
     }
 
-    protected abstract void handleFileInFolder(Path path, String fileName, String fileContents);
+    protected abstract void handleFileInFolder(Path path, ResourceId id, String fileContents);
 
     public void load(Path sourcePath) {
         if (this.sourcePaths.add(sourcePath)) {
@@ -64,7 +65,12 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
                     String fileName = parent.relativize(path).toString();
                     try {
                         String jsonString = Files.readString(path, StandardCharsets.UTF_8);
-                        handleFileInFolder(path, fileName, jsonString);
+                        ResourceId id = getResourceId(path);
+                        if (id != null) {
+                            handleFileInFolder(path, id, jsonString);
+                        } else {
+                            LOGGER.error("Failed to convert {} to an id", path);
+                        }
                     } catch (IOException e) {
                         LOGGER.error("Failed to load Value for file {}", fileName, e);
                     }
@@ -73,6 +79,32 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
         } catch (IOException e) {
             LOGGER.error("Failed to load Values for registry {}", this.getName(), e);
         }
+    }
+
+    @Nullable
+    private ResourceId getResourceId(Path path) {
+        Path sourceRoot = null;
+        for (Path testingRoot : this.sourcePaths) {
+            if (path.startsWith(testingRoot)) {
+                sourceRoot = testingRoot;
+                break;
+            }
+        }
+        ResourceId id = null;
+        if (sourceRoot != null) {
+            String relativePath = sourceRoot.relativize(path).toString().replace("." + this.fileType, "");
+            int directoryIndex = relativePath.indexOf(this.directory);
+            if (directoryIndex > 0) {
+                String[] parts = relativePath.split(directory.replace("\\", "\\\\"));
+                if (parts.length == 2) {
+                    id = new ResourceId(
+                            parts[0].substring(0, parts[0].length() - 1),
+                            parts[1].substring(1)
+                    );
+                }
+            }
+        }
+        return id;
     }
 
     @Nullable

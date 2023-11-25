@@ -8,14 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class SerializerTypeRegistry extends BasicJsonRegistry<ResourceId, SerializerType> {
+public class SerializerTypeRegistry extends BasicJsonRegistry<SerializerType> {
     public SerializerTypeRegistry() {
         super(
                 RegistryNames.SERIALIZER_TYPES,
                 Path.of("types", "serializer").toString(),
-                ResourceId.CODEC,
-                SerializerType.CODEC,
-                SerializerType::id
+                SerializerType.CODEC
         );
     }
 

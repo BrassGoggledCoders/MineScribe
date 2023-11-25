@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.minescribe.editor.registry;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.mojang.serialization.Codec;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 
 import java.nio.file.Path;
@@ -36,7 +37,7 @@ public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
     }
 
     @Override
-    protected void handleFileInFolder(Path path, String fileName, String fileContents) {
+    protected void handleFileInFolder(Path path, ResourceId id, String fileContents) {
         ScriptHandler.getInstance()
                 .runScript(path, fileContents);
     }
