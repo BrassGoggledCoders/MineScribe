@@ -3,7 +3,6 @@ package xyz.brassgoggledcoders.minescribe.editor.registry;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.mojang.serialization.Codec;
-import xyz.brassgoggledcoders.minescribe.core.registry.FileLoadedRegistry;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 
 import java.nio.file.Path;

@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.core.registry;
 
 import com.mojang.serialization.Codec;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
@@ -29,6 +30,10 @@ public class Registries {
 
     public static Registry<String, Codec<? extends IFileFieldDefinition>> getFileFieldDefinitionCodecRegistry() {
         return getRegistry(RegistryNames.FILE_FIELD_DEFINITIONS);
+    }
+
+    public static Registry<ResourceId, FormList> getFormListValues() {
+        return Registries.getRegistry(RegistryNames.FORM_LIST_VALUES);
     }
 
     public static <K, V> Registry<K, V> getRegistry(String name) {

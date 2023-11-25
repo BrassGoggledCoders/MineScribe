@@ -29,7 +29,7 @@ public class EditorRegistries {
     }
 
     public static Registry<ResourceId, FormList> getFormLists() {
-        return Registries.getRegistry(RegistryNames.FORM_LISTS);
+        return Registries.getRegistry(RegistryNames.FORM_LIST_VALUES);
     }
 
     public static SerializerTypeRegistry getSerializerTypes() {

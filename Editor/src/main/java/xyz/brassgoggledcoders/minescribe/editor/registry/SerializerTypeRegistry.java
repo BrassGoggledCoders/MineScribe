@@ -1,7 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
-import xyz.brassgoggledcoders.minescribe.core.registry.BasicJsonRegistry;
 import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 
 import java.nio.file.Path;

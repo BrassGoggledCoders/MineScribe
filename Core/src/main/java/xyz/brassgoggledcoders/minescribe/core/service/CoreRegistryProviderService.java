@@ -5,6 +5,10 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FileIdFormList;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.RegistryFormList;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.ValueFormList;
 import xyz.brassgoggledcoders.minescribe.core.registry.BasicStaticRegistry;
 import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
@@ -12,6 +16,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class CoreRegistryProviderService implements IRegistryProviderService {
@@ -31,9 +36,19 @@ public class CoreRegistryProviderService implements IRegistryProviderService {
             }
     );
 
+    private final BasicStaticRegistry<String, Codec<? extends IFormList>> FORM_LIST_CODECS = new BasicStaticRegistry<>(
+            RegistryNames.FORM_LISTS,
+            Codec.STRING,
+            register -> {
+                register.accept("registry", RegistryFormList.CODEC);
+                register.accept("file_name", FileIdFormList.CODEC);
+                register.accept("list", ValueFormList.CODEC);
+            }
+    );
+
     @Override
     public Collection<String> getRegistryNames() {
-        return Collections.singleton(FILE_FIELD_CODECS.getName());
+        return List.of(FILE_FIELD_CODECS.getName(), FORM_LIST_CODECS.getName());
     }
 
     @Override
@@ -41,17 +56,10 @@ public class CoreRegistryProviderService implements IRegistryProviderService {
     public <K, V> Optional<Registry<K, V>> getRegistry(String name) {
         if (name.equals(FILE_FIELD_CODECS.getName())) {
             return Optional.of((Registry<K, V>) FILE_FIELD_CODECS);
+        } else if (name.equals(FORM_LIST_CODECS.getName())) {
+            return Optional.of((Registry<K, V>) FORM_LIST_CODECS);
         }
         return Optional.empty();
     }
 
-    @Override
-    public void load(Path mineScribeRoot) {
-
-    }
-
-    @Override
-    public void addSourcePath(Path sourcePath) {
-
-    }
 }

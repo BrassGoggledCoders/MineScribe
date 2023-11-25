@@ -19,6 +19,7 @@ module xyz.brassgoggledcoders.minescribe.core {
     exports xyz.brassgoggledcoders.minescribe.core.fileform.filefield;
     exports xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number;
     exports xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object;
+    exports xyz.brassgoggledcoders.minescribe.core.fileform.formlist;
     exports xyz.brassgoggledcoders.minescribe.core.functional;
     exports xyz.brassgoggledcoders.minescribe.core.info;
     exports xyz.brassgoggledcoders.minescribe.core.packinfo;

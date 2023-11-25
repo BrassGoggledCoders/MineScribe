@@ -6,14 +6,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.service.IPackFileWatcherService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
 public class FileIdFormList implements IFormList {
-    private static final IPackFileWatcherService SERVICE = ServiceLoader.load(IPackFileWatcherService.class)
-            .findFirst()
-            .orElseThrow();
+    private static final ServiceLoader<IPackFileWatcherService> SERVICE = ServiceLoader.load(IPackFileWatcherService.class);
 
     public static final Codec<FileIdFormList> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("folderMatcher").forGetter(FileIdFormList::getFolderMatcher)
@@ -24,7 +23,9 @@ public class FileIdFormList implements IFormList {
 
     public FileIdFormList(String folderMatcher) {
         this.folderMatcher = folderMatcher;
-        this.matchedFiles = Suppliers.memoize(() -> SERVICE.getFileNamesForFolderMatch(this.folderMatcher));
+        this.matchedFiles = Suppliers.memoize(() -> SERVICE.findFirst()
+                .map(service -> service.getFileNamesForFolderMatch(this.folderMatcher))
+                .orElse(Collections.emptyList()));
     }
 
     public String getFolderMatcher() {

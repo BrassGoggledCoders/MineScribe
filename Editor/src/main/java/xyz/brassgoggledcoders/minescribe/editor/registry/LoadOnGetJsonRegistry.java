@@ -1,12 +1,15 @@
-package xyz.brassgoggledcoders.minescribe.core.registry;
+package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

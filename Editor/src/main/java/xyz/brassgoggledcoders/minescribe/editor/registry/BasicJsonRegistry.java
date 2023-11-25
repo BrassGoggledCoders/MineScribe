@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.core.registry;
+package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -14,12 +14,10 @@ public class BasicJsonRegistry<K, V> extends FileLoadedRegistry<K, V> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicJsonRegistry.class);
     private static final Gson GSON = new Gson();
     private final Codec<V> vCodec;
-    private final Function<V, K> valueName;
 
-    public BasicJsonRegistry(String name, String directory, Codec<K> kCodec, Codec<V> vCodec, Function<V, K> valueName) {
+    public BasicJsonRegistry(String name, String directory, Codec<K> kCodec, Codec<V> vCodec) {
         super(name, kCodec, directory, "json");
         this.vCodec = vCodec;
-        this.valueName = valueName;
     }
 
     @Override

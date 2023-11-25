@@ -1,10 +1,11 @@
-package xyz.brassgoggledcoders.minescribe.core.registry;
+package xyz.brassgoggledcoders.minescribe.editor.registry;
 
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 
 import java.io.File;
 import java.io.IOException;
