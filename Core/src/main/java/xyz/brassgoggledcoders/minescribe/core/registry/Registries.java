@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.minescribe.core.registry;
 import com.mojang.serialization.Codec;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
@@ -33,6 +34,10 @@ public class Registries {
 
     public static Registry<ResourceId, FormList> getFormListValues() {
         return Registries.getRegistry(RegistryNames.FORM_LIST_VALUES);
+    }
+
+    public static Registry<ResourceId, Codec<? extends IFormList>> getFormListCodecs() {
+        return Registries.getRegistry(RegistryNames.FORM_LISTS);
     }
 
     public static Registry<ResourceId, PackContentParentType> getContentParentTypes() {

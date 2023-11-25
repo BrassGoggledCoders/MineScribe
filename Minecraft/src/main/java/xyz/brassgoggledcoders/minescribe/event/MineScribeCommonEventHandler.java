@@ -17,8 +17,11 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.RegistryFormList;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.ValueFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 
 import java.nio.file.Path;
@@ -91,7 +94,7 @@ public class MineScribeCommonEventHandler {
                         ),
                         new FileFieldData<>(
                                 new SingleSelectionFileFieldDefinition(
-                                        new ResourceId(MineScribe.ID, "pack_type")
+                                        new RegistryFormList(Registries.getPackTypeRegistry())
                                 ),
                                 new FileFieldInfoData(
                                         "Pack Type",
@@ -241,7 +244,7 @@ public class MineScribeCommonEventHandler {
                                         List.of(
                                                 new FileField<>(
                                                         new SingleSelectionFileFieldDefinition(
-                                                                new ResourceId("minecraft", "registry/item")
+                                                                new ValueFormList(new ResourceId("minecraft", "registry/item"))
                                                         ),
                                                         new FileFieldInfo(
                                                                 "Item",
@@ -252,7 +255,7 @@ public class MineScribeCommonEventHandler {
                                                 ),
                                                 new FileField<>(
                                                         new SingleSelectionFileFieldDefinition(
-                                                                new ResourceId("minecraft", "tag/item")
+                                                                new ValueFormList(new ResourceId("minecraft", "tag/item"))
                                                         ),
                                                         new FileFieldInfo(
                                                                 "Item Tag",
@@ -467,7 +470,7 @@ public class MineScribeCommonEventHandler {
                         ),
                         new FileFieldData<>(
                                 new SingleSelectionFileFieldDefinition(
-                                        new ResourceId("minecraft", "registry/item")
+                                        new ValueFormList(new ResourceId("minecraft", "registry/item"))
                                 ),
                                 new FileFieldInfoData(
                                         "Result",

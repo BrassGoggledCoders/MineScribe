@@ -9,11 +9,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
-import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
@@ -89,10 +87,8 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
     }
 
     public static SingleSelectionFieldControl<String> of(SingleSelectionFileFieldDefinition definition) throws FormException {
-        List<String> values = new ArrayList<>(EditorRegistries.getFormLists()
-                .getOptionalValue(definition.listId())
-                .map(FormList::values)
-                .orElseThrow(() -> new FormException("Failed to find List for Id: " + definition.listId()))
+        List<String> values = new ArrayList<>(definition.formList()
+                .getValues()
         );
         values.add(0, null);
         return new SingleSelectionFieldControl<>(

@@ -26,7 +26,10 @@
       {
         "definition": {
           "type": "single_selection",
-          "list": "minescribe:pack_type"
+          "list": {
+            "type": "registry",
+            "registry": "packTypes"
+          }
         },
         "info": {
           "field": "packType",

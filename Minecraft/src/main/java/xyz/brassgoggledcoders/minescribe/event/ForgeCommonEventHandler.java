@@ -22,6 +22,7 @@ import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.CheckBoxFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.ValueFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
 import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
@@ -180,8 +181,8 @@ public class ForgeCommonEventHandler {
                                         ),
                                         new FileFieldData<>(
                                                 new ListSelectionFileFieldDefinition(List.of(
-                                                        new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath()),
-                                                        new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath())
+                                                        new ValueFormList(new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath())),
+                                                        new ValueFormList(new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath()))
                                                 )),
                                                 new FileFieldInfoData(
                                                         "Values",
