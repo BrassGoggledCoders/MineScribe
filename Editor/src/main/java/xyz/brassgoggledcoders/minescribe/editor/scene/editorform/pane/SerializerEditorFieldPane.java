@@ -87,7 +87,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         if (selected.get() == null) {
             items.stream()
                     .filter(Objects::nonNull)
-                    .filter(serializerType -> serializerType.id().equals(ResourceId.NULL))
+                    .filter(serializerType -> Registries.getSerializerTypes().getKey(serializerType) == null)
                     .findFirst()
                     .ifPresent(selected::set);
         }
@@ -102,7 +102,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         SerializerType serializerType = this.getContent()
                 .valueProperty()
                 .get();
-        if (serializerType != null && !serializerType.id().equals(ResourceId.NULL)) {
+        if (serializerType != null && Registries.getSerializerTypes().getKey(serializerType) != null) {
             return new JsonPrimitive(serializerType.serializerId().toString());
         } else {
             return JsonNull.INSTANCE;
@@ -134,7 +134,6 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                         SerializerType defaultFieldsType = new SerializerType(
                                 ResourceId.NULL,
                                 ResourceId.NULL,
-                                ResourceId.NULL,
                                 "Default",
                                 serializerInfo.defaultForm()
                                         .get()
@@ -144,7 +143,8 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
                     SingleSelectionFieldControl<SerializerType> field = SingleSelectionFieldControl.of(
                                     serializerTypes,
-                                    serializerType -> serializerType.id().toString(),
+                                    serializerType -> serializerType.serializerId()
+                                            .toString(),
                                     SerializerType.class
                             )
                             .withId(serializerInfo.fieldName())

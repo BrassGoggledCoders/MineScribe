@@ -3,9 +3,7 @@ package xyz.brassgoggledcoders.minescribe.core.registry;
 import com.mojang.serialization.Codec;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
@@ -36,6 +34,22 @@ public class Registries {
         return Registries.getRegistry(RegistryNames.FORM_LIST_VALUES);
     }
 
+    public static Registry<ResourceId, PackContentParentType> getContentParentTypes() {
+        return Registries.getRegistry(RegistryNames.CONTENT_PARENT_TYPES);
+    }
+
+    public static Registry<ResourceId, PackContentChildType> getContentChildTypes() {
+        return Registries.getRegistry(RegistryNames.CONTENT_CHILD_TYPES);
+    }
+
+    public static Registry<ResourceId, SerializerType> getSerializerTypes() {
+        return Registries.getRegistry(RegistryNames.SERIALIZER_TYPES);
+    }
+
+    public static Registry<ResourceId, ObjectType> getObjectTypes() {
+        return Registries.getRegistry(RegistryNames.OBJECT_TYPES);
+    }
+
     public static <K, V> Registry<K, V> getRegistry(String name) {
         return Registries.<K, V>getRegistryOpt(name)
                 .orElseThrow();
@@ -44,7 +58,7 @@ public class Registries {
     public static <K, V> Optional<Registry<K, V>> getRegistryOpt(String name) {
         return REGISTRY_PROVIDER_SERVICE_LOADER.stream()
                 .flatMap(registryProvider -> registryProvider.get()
-                        .<K,V>getRegistry(name)
+                        .<K, V>getRegistry(name)
                         .stream()
                 )
                 .findFirst();

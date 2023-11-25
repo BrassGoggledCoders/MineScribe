@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
@@ -77,8 +78,10 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
 
 
         this.parentType.addListener(((observable, oldValue, newValue) -> {
+            ResourceId parentId = EditorRegistries.getContentParentTypes()
+                    .getKey(newValue);
             this.childTypesFiltered.setPredicate(
-                    childValue -> childValue.getParentId().equals(newValue.getId())
+                    childValue -> childValue.getParentId().equals(parentId)
             );
             childField.required(!this.childTypesFiltered.isEmpty());
             childField.editable(!this.childTypesFiltered.isEmpty());

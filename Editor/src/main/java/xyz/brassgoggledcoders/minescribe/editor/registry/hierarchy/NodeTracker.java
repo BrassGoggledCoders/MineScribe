@@ -5,6 +5,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.nio.file.Path;
@@ -59,7 +60,9 @@ public record NodeTracker(
     private List<NodeTracker> createNodeTracksForChildren(Path path) {
         List<NodeTracker> nodeTrackerList = new ArrayList<>();
         for (PackContentChildType childType : EditorRegistries.getContentChildTypes()) {
-            if (childType.getParentId().equals(this.parentType().getId()) && childType.getPath().startsWith(path)) {
+            ResourceId parentId = EditorRegistries.getContentParentTypes()
+                    .getKey(this.parentType());
+            if (childType.getParentId().equals(parentId) && childType.getPath().startsWith(path)) {
                 nodeTrackerList.add(new NodeTracker(
                         this.parentType(),
                         Optional.of(childType),
