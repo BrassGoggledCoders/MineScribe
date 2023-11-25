@@ -1,4 +1,4 @@
 {
   "label": "${PATH:-2} Data Packs",
-  "path_matcher": "${MINECRAFT_FOLDER}/saves/*/datapacks/"
+  "path_matcher": "**saves/*/datapacks"
 }

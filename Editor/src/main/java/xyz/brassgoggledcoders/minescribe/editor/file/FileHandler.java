@@ -208,7 +208,9 @@ public class FileHandler {
 
     public static void dispose() {
         try {
-            WATCHER.close();
+            if (WATCHER != null) {
+                WATCHER.close();
+            }
         } catch (Exception e) {
             ExceptionDialog.showDialog("Failed to clean up FileHandler", e);
         }
