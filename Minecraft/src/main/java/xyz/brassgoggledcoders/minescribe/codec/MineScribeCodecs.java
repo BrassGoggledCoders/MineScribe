@@ -51,13 +51,11 @@ public class MineScribeCodecs {
     ).apply(instance, (label, path, form, packType) -> new PackContentChildType(label, path, form.orElse(null), packType)));
 
     public static final Codec<ObjectType> OBJECT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            RESOURCE_ID.fieldOf("id").forGetter(ObjectType::id),
             FileForm.CODEC.fieldOf("form").forGetter(ObjectType::fileForm)
     ).apply(instance, ObjectType::new));
 
     public static final Codec<SerializerType> SERIALIZER_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             RESOURCE_ID.fieldOf("parentId").forGetter(SerializerType::parentId),
-            RESOURCE_ID.fieldOf("id").forGetter(SerializerType::id),
             RESOURCE_ID.fieldOf("serializerId").forGetter(SerializerType::serializerId),
             LABEL_STRING.fieldOf("label").forGetter(SerializerType::label),
             FileForm.CODEC.fieldOf("form").forGetter(SerializerType::fileForm)

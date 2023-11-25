@@ -7,6 +7,7 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
@@ -52,13 +53,14 @@ public class Registries {
 
     public static <K, V> Registry<K, V> getRegistry(String name) {
         return Registries.<K, V>getRegistryOpt(name)
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("No value %s present".formatted(name)));
     }
 
     public static <K, V> Optional<Registry<K, V>> getRegistryOpt(String name) {
         return REGISTRY_PROVIDER_SERVICE_LOADER.stream()
-                .flatMap(registryProvider -> registryProvider.get()
-                        .<K, V>getRegistry(name)
+                .map(ServiceLoader.Provider::get)
+                .sorted(IRegistryProviderService::compareTo)
+                .flatMap(registryProvider -> registryProvider.<K, V>getRegistry(name)
                         .stream()
                 )
                 .findFirst();
