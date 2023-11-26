@@ -29,8 +29,18 @@ public class Registry<K, V> implements Iterable<V> {
         return this.getMap().containsKey(key);
     }
 
-    public void register(K key, V value) {
-        this.values.put(key, value);
+    public boolean register(K key, V value) {
+        if (this.values.containsKey(key)) {
+            V oldValue = this.values.get(key);
+            if (!oldValue.equals(value)) {
+                this.values.put(key, value);
+                return true;
+            }
+        } else {
+            this.values.put(key, value);
+            return true;
+        }
+        return false;
     }
 
     public BiMap<K, V> getMap() {
@@ -77,6 +87,7 @@ public class Registry<K, V> implements Iterable<V> {
         return this.getMap().inverse().get(value);
     }
 
+    @SuppressWarnings("unused")
     public Optional<V> getOptionalValue(K key) {
         return Optional.ofNullable(this.getValue(key));
     }

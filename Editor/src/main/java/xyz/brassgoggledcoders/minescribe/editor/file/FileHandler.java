@@ -8,6 +8,7 @@ import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.PackRepositoryEditorItem;
@@ -204,6 +205,7 @@ public class FileHandler {
 
     private void handleUpdates(FileUpdate fileUpdate) {
         this.reloadClosestNode(fileUpdate.path());
+        EditorRegistries.tryUpdate(fileUpdate.path());
     }
 
     public static void dispose() {

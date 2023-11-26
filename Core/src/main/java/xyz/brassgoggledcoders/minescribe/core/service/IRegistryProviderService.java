@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface IRegistryProviderService extends Comparable<IRegistryProviderService> {
     Collection<String> getRegistryNames();
 
+    Collection<? extends Registry<?, ?>> getRegistries();
+
     <K, V> Optional<Registry<K, V>> getRegistry(String name);
 
     default int priority() {

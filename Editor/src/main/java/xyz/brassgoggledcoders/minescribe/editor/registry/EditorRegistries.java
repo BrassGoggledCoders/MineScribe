@@ -51,4 +51,14 @@ public class EditorRegistries {
             service.addSourcePath(sourcePath);
         }
     }
+
+    public static void tryUpdate(Path path) {
+        for (IRegistryProviderService service : Registries.REGISTRY_PROVIDER_SERVICE_LOADER) {
+            for (Registry<?, ?> registry : service.getRegistries()) {
+                if (registry instanceof FileLoadedRegistry<?,?> fileLoadedRegistry) {
+                    fileLoadedRegistry.updateFile(path);
+                }
+            }
+        }
+    }
 }

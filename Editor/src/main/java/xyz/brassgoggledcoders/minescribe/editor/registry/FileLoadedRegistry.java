@@ -35,14 +35,19 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
 
     protected abstract int handleFileInFolder(Path path, ResourceId id, String fileContents);
 
+    private PathMatcher createPathMatcher(Path path) {
+        String stringMatcher = "**" + File.separator +
+                this.directory + File.separator + "**." + this.fileType;
+        stringMatcher = stringMatcher.replace("\\", "\\\\");
+
+        return path.getFileSystem()
+                .getPathMatcher("glob:" + stringMatcher);
+    }
+
     public void load(Path sourcePath) {
         if (this.sourcePaths.add(sourcePath)) {
-            String stringMatcher = "**" + File.separator +
-                    this.directory + File.separator + "**." + this.fileType;
-            stringMatcher = stringMatcher.replace("\\", "\\\\");
 
-            PathMatcher matcher = sourcePath.getFileSystem()
-                    .getPathMatcher("glob:" + stringMatcher);
+            PathMatcher matcher = createPathMatcher(sourcePath);
 
             int loaded = 0;
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(sourcePath)) {
@@ -65,18 +70,7 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
                 if (Files.isDirectory(path)) {
                     loaded += readFolder(path, matcher);
                 } else if (matcher.matches(path)) {
-                    String fileName = parent.relativize(path).toString();
-                    try {
-                        String jsonString = Files.readString(path, StandardCharsets.UTF_8);
-                        ResourceId id = getResourceId(path);
-                        if (id != null) {
-                            loaded += handleFileInFolder(path, id, jsonString);
-                        } else {
-                            logger.error("Failed to convert {} to an id", path);
-                        }
-                    } catch (IOException e) {
-                        logger.error("Failed to load Value for file {}", fileName, e);
-                    }
+                    loaded += loadFile(path);
                 }
             }
         } catch (IOException e) {
@@ -111,5 +105,30 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
                 .filter(path::startsWith)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private int loadFile(Path path) {
+        try {
+            String jsonString = Files.readString(path, StandardCharsets.UTF_8);
+            ResourceId id = getResourceId(path);
+            if (id != null) {
+                return handleFileInFolder(path, id, jsonString);
+            } else {
+                logger.error("Failed to convert {} to an id", path);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to load Value for file {}", path, e);
+        }
+        return 0;
+    }
+
+    public void updateFile(Path path) {
+        Path sourcePath = findSourcePath(path);
+        if (sourcePath != null) {
+            PathMatcher pathMatcher = createPathMatcher(sourcePath);
+            if (pathMatcher.matches(path)) {
+                loadFile(path);
+            }
+        }
     }
 }

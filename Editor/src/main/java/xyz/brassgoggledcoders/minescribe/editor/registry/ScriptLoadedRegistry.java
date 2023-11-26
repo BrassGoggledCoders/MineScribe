@@ -21,7 +21,7 @@ public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
     }
 
     @Override
-    public void register(K key, V value) {
+    public boolean register(K key, V value) {
         Path currentScript = ScriptHandler.getInstance()
                 .getCurrentScript();
         if (currentScript != null) {
@@ -33,7 +33,7 @@ public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
                 );
             }
         }
-        super.register(key, value);
+        return super.register(key, value);
     }
 
     @Override

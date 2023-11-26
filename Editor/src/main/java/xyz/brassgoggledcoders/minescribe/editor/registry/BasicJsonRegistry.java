@@ -27,9 +27,9 @@ public class BasicJsonRegistry<V> extends FileLoadedRegistry<ResourceId, V> {
         JsonElement jsonElement = GSON.fromJson(fileContents, JsonElement.class);
         return this.vCodec.decode(JsonOps.INSTANCE, jsonElement)
                 .get()
-                .ifLeft(result -> this.register(id, result.getFirst()))
+                .mapLeft(result -> this.register(id, result.getFirst()) ? 1 : 0)
                 .ifRight(partial -> logger.error("Failed to decode file {} due to {}", path, partial.message()))
                 .left()
-                .isPresent() ? 1 : 0;
+                .orElse(0);
     }
 }

@@ -25,6 +25,11 @@ public class FallBackRegistryProviderService implements IRegistryProviderService
     }
 
     @Override
+    public Collection<? extends Registry<?, ?>> getRegistries() {
+        return Collections.singleton(PACK_TYPES);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <K, V> Optional<Registry<K, V>> getRegistry(String name) {
         if (name.equals(PACK_TYPES.getName())) {

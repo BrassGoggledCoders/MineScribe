@@ -36,7 +36,7 @@ public class CoreRegistryProviderService implements IRegistryProviderService {
             }
     );
 
-    private final BasicStaticRegistry<String, Codec<? extends IFormList>> FORM_LIST_CODECS = new BasicStaticRegistry<>(
+    private final BasicStaticRegistry<String, Codec<? extends IFormList<?>>> FORM_LIST_CODECS = new BasicStaticRegistry<>(
             RegistryNames.FORM_LISTS,
             Codec.STRING,
             register -> {
@@ -49,6 +49,11 @@ public class CoreRegistryProviderService implements IRegistryProviderService {
     @Override
     public Collection<String> getRegistryNames() {
         return List.of(FILE_FIELD_CODECS.getName(), FORM_LIST_CODECS.getName());
+    }
+
+    @Override
+    public Collection<? extends Registry<?, ?>> getRegistries() {
+        return List.of(FILE_FIELD_CODECS, FORM_LIST_CODECS);
     }
 
     @Override

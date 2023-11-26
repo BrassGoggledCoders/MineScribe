@@ -142,6 +142,10 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
         return this.registryNames;
     }
 
+    @Override
+    public Collection<Registry<?, ?>> getRegistries() {
+        return registries;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
