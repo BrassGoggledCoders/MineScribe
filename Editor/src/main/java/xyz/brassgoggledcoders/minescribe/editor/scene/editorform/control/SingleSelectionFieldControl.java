@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,6 +17,7 @@ import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -88,16 +90,20 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
     }
 
     public static SingleSelectionFieldControl<FormListValue> of(SingleSelectionFileFieldDefinition definition) throws FormException {
-        List<FormListValue> values = new ArrayList<>(definition.formList()
-                .getFormListValues()
-        );
-        values.add(0, null);
-        return new SingleSelectionFieldControl<>(
-                values,
-                FormListValue::id,
-                FormListValue::label,
-                FormListValue.class
-        );
+        try {
+            List<FormListValue> values = new ArrayList<>(definition.formList()
+                    .getFormListValues()
+            );
+            values.add(0, null);
+            return new SingleSelectionFieldControl<>(
+                    values,
+                    FormListValue::id,
+                    FormListValue::label,
+                    FormListValue.class
+            );
+        } catch (Exception e) {
+            throw new FormException("Found error while gathering list values", e);
+        }
     }
 
     public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId, Function<T, String> getLabel, Class<T> tClass) {

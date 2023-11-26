@@ -205,7 +205,7 @@ public class FileHandler {
 
     private void handleUpdates(FileUpdate fileUpdate) {
         this.reloadClosestNode(fileUpdate.path());
-        EditorRegistries.tryUpdate(fileUpdate.path());
+        EditorRegistries.tryUpdate(fileUpdate);
     }
 
     public static void dispose() {

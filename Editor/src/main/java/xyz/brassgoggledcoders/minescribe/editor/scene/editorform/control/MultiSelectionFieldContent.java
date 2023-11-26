@@ -19,6 +19,7 @@ import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -92,14 +93,18 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
     }
 
     public static MultiSelectionFieldContent<FormListValue> of(ListSelectionFileFieldDefinition definition) throws FormException {
-        return new MultiSelectionFieldContent<>(
-                definition.listNames()
-                        .stream()
-                        .map(IFormList::getFormListValues)
-                        .flatMap(List::stream)
-                        .toList(),
-                FormListValue::id,
-                FormListValue::label
-        );
+        try {
+            List<FormListValue> values = new ArrayList<>();
+            for (IFormList<?> formList : definition.listNames()) {
+                values.addAll(formList.getFormListValues());
+            }
+            return new MultiSelectionFieldContent<>(
+                    values,
+                    FormListValue::id,
+                    FormListValue::label
+            );
+        } catch (Exception e) {
+            throw new FormException(e.getMessage(), e);
+        }
     }
 }

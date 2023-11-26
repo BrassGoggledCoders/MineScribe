@@ -6,6 +6,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefin
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
+import xyz.brassgoggledcoders.minescribe.core.util.FolderCollection;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
 import java.util.NoSuchElementException;
@@ -54,6 +55,10 @@ public class Registries {
 
     public static Registry<ResourceId, ObjectType> getObjectTypes() {
         return Registries.getRegistry(RegistryNames.OBJECT_TYPES);
+    }
+
+    public static Registry<String, FolderCollection> getFolderCollectionRegistry() {
+        return Registries.getRegistry(RegistryNames.FOLDER_COLLECTIONS);
     }
 
     public static <K, V> Registry<K, V> getRegistry(String name) {

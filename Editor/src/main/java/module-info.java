@@ -43,5 +43,6 @@ module xyz.brassgoggledcoders.minescribe.editor {
     exports xyz.brassgoggledcoders.minescribe.editor.scene;
     opens xyz.brassgoggledcoders.minescribe.editor.scene to javafx.fxml;
 
+    exports xyz.brassgoggledcoders.minescribe.editor.file;
     exports xyz.brassgoggledcoders.minescribe.editor.service;
 }

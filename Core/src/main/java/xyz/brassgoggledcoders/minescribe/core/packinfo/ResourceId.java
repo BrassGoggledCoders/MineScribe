@@ -20,7 +20,7 @@ public record ResourceId(
     public ResourceId(String id) {
         this(
                 id.indexOf(':') != -1 ? id.substring(0, id.indexOf(':')) : "minescribe",
-                id.indexOf(':') != -1 ? id.substring(id.indexOf(':') + 1) : id
+                id.indexOf(':') != -1 ? id.substring(id.indexOf(':') + 1).replace("\\", "/") : id.replace("\\", "/")
         );
     }
 

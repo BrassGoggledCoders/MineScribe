@@ -58,6 +58,8 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
             Path.of("validation")
     );
 
+    private static final FolderContentsRegistry FOLDER_COLLECTION_REGISTRY = new FolderContentsRegistry();
+
     private static final EditorFormFieldRegistry editorFormFieldTransforms = new EditorFormFieldRegistry(registry -> {
         registry.accept("checkbox", new EditorFormFieldTransform<>(
                 CheckBoxFileFieldDefinition.class,
@@ -129,7 +131,8 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 contentChildTypes,
                 objectTypes,
                 serializerTypes,
-                editorFormFieldTransforms
+                editorFormFieldTransforms,
+                FOLDER_COLLECTION_REGISTRY
         );
         this.registryNames = this.registries.stream()
                 .map(Registry::getName)
@@ -175,8 +178,8 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
     @Override
     public void addSourcePath(Path sourcePath) {
         for (Registry<?, ?> registry : registries) {
-            if (registry instanceof FileLoadedRegistry<?, ?> fileLoadedRegistry) {
-                fileLoadedRegistry.load(sourcePath);
+            if (registry instanceof ISourceRootListener sourceRootListener) {
+                sourceRootListener.addSourceRoot(sourcePath);
             }
         }
     }

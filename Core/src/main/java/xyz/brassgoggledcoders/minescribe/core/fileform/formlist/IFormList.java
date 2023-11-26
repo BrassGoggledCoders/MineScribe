@@ -1,13 +1,11 @@
 package xyz.brassgoggledcoders.minescribe.core.fileform.formlist;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.LazyCodec;
 import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -34,9 +32,9 @@ public interface IFormList<T> {
         return value.toString();
     }
 
-    List<T> getValues();
+    List<T> getValues() throws Exception;
 
-    default List<FormListValue> getFormListValues() {
+    default List<FormListValue> getFormListValues() throws Exception {
         return this.getValues()
                 .stream()
                 .map(value -> new FormListValue(

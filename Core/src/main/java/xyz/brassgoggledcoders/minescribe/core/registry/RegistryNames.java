@@ -12,4 +12,5 @@ public class RegistryNames {
     public static final String PACK_REPOSITORY_LOCATIONS = "packRepositoryLocations";
     public static final String PACK_TYPES = "packTypes";
     public static final String VALIDATIONS = "validations";
+    public static final String FOLDER_COLLECTIONS = "folderCollections";
 }

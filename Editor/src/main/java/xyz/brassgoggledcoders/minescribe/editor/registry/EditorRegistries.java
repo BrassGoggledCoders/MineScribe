@@ -5,6 +5,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
+import xyz.brassgoggledcoders.minescribe.editor.file.FileUpdate;
 
 import java.nio.file.Path;
 
@@ -52,11 +53,11 @@ public class EditorRegistries {
         }
     }
 
-    public static void tryUpdate(Path path) {
+    public static void tryUpdate(FileUpdate fileUpdate) {
         for (IRegistryProviderService service : Registries.REGISTRY_PROVIDER_SERVICE_LOADER) {
             for (Registry<?, ?> registry : service.getRegistries()) {
-                if (registry instanceof FileLoadedRegistry<?,?> fileLoadedRegistry) {
-                    fileLoadedRegistry.updateFile(path);
+                if (registry instanceof IFileUpdateListener fileUpdateListener) {
+                    fileUpdateListener.fileUpdated(fileUpdate);
                 }
             }
         }

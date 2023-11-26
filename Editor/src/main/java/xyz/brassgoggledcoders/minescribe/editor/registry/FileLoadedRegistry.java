@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
+import xyz.brassgoggledcoders.minescribe.editor.file.FileUpdate;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.nio.file.PathMatcher;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
+public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements IFileUpdateListener, ISourceRootListener {
     private final Logger logger;
     private final Set<Path> sourcePaths;
     private final String directory;
@@ -61,6 +62,11 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
             }
             logger.info("Loaded {} values for registry {} from {}", loaded, this.getName(), sourcePath);
         }
+    }
+
+    @Override
+    public void addSourceRoot(Path sourceRoot) {
+        this.load(sourceRoot);
     }
 
     private int readFolder(Path parent, PathMatcher matcher) {
@@ -122,7 +128,9 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
         return 0;
     }
 
-    public void updateFile(Path path) {
+    @Override
+    public void fileUpdated(FileUpdate fileUpdate) {
+        Path path = fileUpdate.path();
         Path sourcePath = findSourcePath(path);
         if (sourcePath != null) {
             PathMatcher pathMatcher = createPathMatcher(sourcePath);
