@@ -62,7 +62,7 @@ public class FileWatcher extends Thread implements AutoCloseable {
             WatchKey key;
             try {
                 key = this.watchService.take();
-            } catch (InterruptedException x) {
+            } catch (InterruptedException | ClosedWatchServiceException x) {
                 return;
             }
 
@@ -112,7 +112,7 @@ public class FileWatcher extends Thread implements AutoCloseable {
     @Override
     public void close() throws Exception {
         this.shutdown();
-        this.join();
+        this.join(100);
         this.watchService.close();
     }
 
