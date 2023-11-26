@@ -1,11 +1,12 @@
 package xyz.brassgoggledcoders.minescribe.core.packinfo;
 
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 
 import java.nio.file.Path;
 import java.util.Optional;
 
-public class PackContentType {
+public class PackContentType implements ILabeledValue {
     private final String label;
     private final Path path;
     private final FileForm form;
@@ -16,6 +17,7 @@ public class PackContentType {
         this.form = form;
     }
 
+    @Override
     public String getLabel() {
         return label;
     }

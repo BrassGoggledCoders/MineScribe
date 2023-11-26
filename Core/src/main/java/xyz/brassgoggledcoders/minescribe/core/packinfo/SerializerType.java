@@ -3,15 +3,15 @@ package xyz.brassgoggledcoders.minescribe.core.packinfo;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 
 public record SerializerType(
         ResourceId parentId,
         ResourceId serializerId,
         String label,
         FileForm fileForm
-) implements IFullName {
+) implements IFullName, ILabeledValue {
     public static final Codec<SerializerType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceId.CODEC.fieldOf("parentId").forGetter(SerializerType::parentId),
             ResourceId.CODEC.fieldOf("serializerId").forGetter(SerializerType::serializerId),
@@ -27,5 +27,10 @@ public record SerializerType(
                 id.namespace(),
                 "types/serializer/" + id.path()
         );
+    }
+
+    @Override
+    public String getLabel() {
+        return this.label();
     }
 }
