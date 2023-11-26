@@ -10,7 +10,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ValueFormList implements IFormList {
+public class ValueFormList implements IFormList<String> {
     public static final Codec<ValueFormList> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceId.CODEC.fieldOf("id").forGetter(ValueFormList::getId)
     ).apply(instance, ValueFormList::new));
@@ -36,7 +36,7 @@ public class ValueFormList implements IFormList {
     }
 
     @Override
-    public @NotNull Codec<? extends IFormList> getCodec() {
+    public @NotNull Codec<? extends IFormList<?>> getCodec() {
         return CODEC;
     }
 }

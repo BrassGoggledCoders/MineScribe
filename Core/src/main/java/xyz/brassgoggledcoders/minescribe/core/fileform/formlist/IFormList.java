@@ -1,16 +1,18 @@
 package xyz.brassgoggledcoders.minescribe.core.fileform.formlist;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.LazyCodec;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-public interface IFormList {
-    Codec<IFormList> CODEC = LazyCodec.of(() -> Registries.getFormListCodecs()
+public interface IFormList<T> {
+    Codec<IFormList<?>> CODEC = LazyCodec.of(() -> Registries.getFormListCodecs()
             .getCodec()
             .dispatch(
                     IFormList::getCodec,
@@ -18,8 +20,32 @@ public interface IFormList {
             )
     );
 
-    List<String> getValues();
+    @NotNull
+    default String getLabel(T value) {
+        if (value instanceof ILabeledValue labeledValue) {
+            return labeledValue.getLabel();
+        } else {
+            return value.toString();
+        }
+    }
 
     @NotNull
-    Codec<? extends IFormList> getCodec();
+    default String getKey(T value) {
+        return value.toString();
+    }
+
+    List<T> getValues();
+
+    default List<FormListValue> getFormListValues() {
+        return this.getValues()
+                .stream()
+                .map(value -> new FormListValue(
+                        this.getKey(value),
+                        this.getLabel(value)
+                ))
+                .toList();
+    }
+
+    @NotNull
+    Codec<? extends IFormList<?>> getCodec();
 }

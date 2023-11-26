@@ -59,7 +59,6 @@ public class ScriptHandler implements Closeable {
         } catch (PolyglotException polyglotException) {
             LOGGER.error("Failed to run Script {}", filePath, polyglotException);
         }
-
     }
 
     public void putBinding(String name, Object value) {

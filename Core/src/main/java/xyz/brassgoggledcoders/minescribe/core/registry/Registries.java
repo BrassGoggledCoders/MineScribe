@@ -36,7 +36,7 @@ public class Registries {
         return Registries.getRegistry(RegistryNames.FORM_LIST_VALUES);
     }
 
-    public static Registry<ResourceId, Codec<? extends IFormList>> getFormListCodecs() {
+    public static Registry<ResourceId, Codec<? extends IFormList<?>>> getFormListCodecs() {
         return Registries.getRegistry(RegistryNames.FORM_LISTS);
     }
 

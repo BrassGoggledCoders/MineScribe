@@ -8,24 +8,27 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 
 import java.util.List;
 
-public record RegistryFormList(
-        Registry<?, ?> registry
-) implements IFormList {
-    public static final Codec<RegistryFormList> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+public record RegistryFormList<V>(
+        Registry<?, V> registry
+) implements IFormList<V> {
+    public static final Codec<RegistryFormList<?>> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             new RegistryCodec().fieldOf("registry").forGetter(RegistryFormList::registry)
     ).apply(instance, RegistryFormList::new));
 
     @Override
-    public List<String> getValues() {
-        return registry.getKeys()
-                .stream()
-                .map(Object::toString)
-                .toList();
+    public @NotNull String getKey(V value) {
+        return registry.getKey(value)
+                .toString();
+    }
+
+    @Override
+    public List<V> getValues() {
+        return registry.getValues();
     }
 
     @Override
     @NotNull
-    public Codec<? extends IFormList> getCodec() {
+    public Codec<? extends IFormList<?>> getCodec() {
         return CODEC;
     }
 }

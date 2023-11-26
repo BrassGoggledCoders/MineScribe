@@ -145,14 +145,12 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                                     serializerTypes,
                                     serializerType -> serializerType.serializerId()
                                             .toString(),
+                                    SerializerType::label,
                                     SerializerType.class
                             )
                             .withId(serializerInfo.fieldName())
                             .withLabel(serializerInfo.label())
                             .withRequired(true);
-
-
-                    field.setLabelMaker(SerializerType::label);
 
                     return new SerializerEditorFieldPane(fileForm, serializerInfo, field);
                 });

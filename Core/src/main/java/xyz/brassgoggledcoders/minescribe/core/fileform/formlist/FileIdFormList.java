@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
-public class FileIdFormList implements IFormList {
+public class FileIdFormList implements IFormList<String> {
     private static final ServiceLoader<IPackFileWatcherService> SERVICE = ServiceLoader.load(IPackFileWatcherService.class);
 
     public static final Codec<FileIdFormList> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -38,7 +38,7 @@ public class FileIdFormList implements IFormList {
     }
 
     @Override
-    public @NotNull Codec<? extends IFormList> getCodec() {
+    public @NotNull Codec<? extends IFormList<?>> getCodec() {
         return CODEC;
     }
 }
