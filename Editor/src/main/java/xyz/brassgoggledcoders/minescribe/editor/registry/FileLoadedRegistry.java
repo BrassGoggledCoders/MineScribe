@@ -19,20 +19,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileLoadedRegistry.class);
+    private final Logger logger;
     private final Set<Path> sourcePaths;
     private final String directory;
     private final String fileType;
 
     public FileLoadedRegistry(String name, Codec<K> kCodec, String directory, String fileType) {
         super(name, kCodec);
+        this.logger = LoggerFactory.getLogger(name + " registry");
         this.sourcePaths = new HashSet<>();
         this.directory = directory.replace("/", File.separator)
                 .replace("\\", File.separator);
         this.fileType = fileType;
     }
 
-    protected abstract void handleFileInFolder(Path path, ResourceId id, String fileContents);
+    protected abstract int handleFileInFolder(Path path, ResourceId id, String fileContents);
 
     public void load(Path sourcePath) {
         if (this.sourcePaths.add(sourcePath)) {
@@ -43,53 +44,50 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> {
             PathMatcher matcher = sourcePath.getFileSystem()
                     .getPathMatcher("glob:" + stringMatcher);
 
+            int loaded = 0;
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(sourcePath)) {
                 for (Path path : stream) {
                     if (Files.isDirectory(path)) {
-                        readFolder(path, matcher);
+                        loaded += readFolder(path, matcher);
                     }
                 }
             } catch (IOException e) {
-                LOGGER.error("Failed to load Values for registry {}", this.getName(), e);
+                logger.error("Failed to load Values for registry {}", this.getName(), e);
             }
-            LOGGER.info("Loaded {} values for registry {}", this.getMap().size(), this.getName());
+            logger.info("Loaded {} values for registry {} from {}", loaded, this.getName(), sourcePath);
         }
     }
 
-    private void readFolder(Path parent, PathMatcher matcher) {
+    private int readFolder(Path parent, PathMatcher matcher) {
+        int loaded = 0;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(parent, Files::exists)) {
             for (Path path : stream) {
                 if (Files.isDirectory(path)) {
-                    readFolder(path, matcher);
+                    loaded += readFolder(path, matcher);
                 } else if (matcher.matches(path)) {
                     String fileName = parent.relativize(path).toString();
                     try {
                         String jsonString = Files.readString(path, StandardCharsets.UTF_8);
                         ResourceId id = getResourceId(path);
                         if (id != null) {
-                            handleFileInFolder(path, id, jsonString);
+                            loaded += handleFileInFolder(path, id, jsonString);
                         } else {
-                            LOGGER.error("Failed to convert {} to an id", path);
+                            logger.error("Failed to convert {} to an id", path);
                         }
                     } catch (IOException e) {
-                        LOGGER.error("Failed to load Value for file {}", fileName, e);
+                        logger.error("Failed to load Value for file {}", fileName, e);
                     }
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Failed to load Values for registry {}", this.getName(), e);
+            logger.error("Failed to load Values for registry {}", this.getName(), e);
         }
+        return loaded;
     }
 
     @Nullable
     private ResourceId getResourceId(Path path) {
-        Path sourceRoot = null;
-        for (Path testingRoot : this.sourcePaths) {
-            if (path.startsWith(testingRoot)) {
-                sourceRoot = testingRoot;
-                break;
-            }
-        }
+        Path sourceRoot = findSourcePath(path);
         ResourceId id = null;
         if (sourceRoot != null) {
             String relativePath = sourceRoot.relativize(path).toString().replace("." + this.fileType, "");

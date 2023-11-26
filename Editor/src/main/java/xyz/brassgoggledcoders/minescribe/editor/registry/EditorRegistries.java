@@ -1,6 +1,5 @@
 package xyz.brassgoggledcoders.minescribe.editor.registry;
 
-import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
@@ -26,10 +25,6 @@ public class EditorRegistries {
         } else {
             throw new IllegalStateException("Failed to find Editor Field Transform Registry");
         }
-    }
-
-    public static Registry<ResourceId, FormList> getFormLists() {
-        return Registries.getRegistry(RegistryNames.FORM_LIST_VALUES);
     }
 
     public static SerializerTypeRegistry getSerializerTypes() {

@@ -37,8 +37,10 @@ public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
     }
 
     @Override
-    protected void handleFileInFolder(Path path, ResourceId id, String fileContents) {
+    protected int handleFileInFolder(Path path, ResourceId id, String fileContents) {
+        int currentlyLoaded = this.getMap().size();
         ScriptHandler.getInstance()
                 .runScript(path, fileContents);
+        return this.getMap().size() - currentlyLoaded;
     }
 }

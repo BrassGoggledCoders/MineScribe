@@ -9,25 +9,27 @@ import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.nio.file.Path;
-import java.util.function.Function;
 
 public class BasicJsonRegistry<V> extends FileLoadedRegistry<ResourceId, V> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicJsonRegistry.class);
+
     private static final Gson GSON = new Gson();
+    private final Logger logger;
     private final Codec<V> vCodec;
 
     public BasicJsonRegistry(String name, String directory, Codec<V> vCodec) {
         super(name, ResourceId.CODEC, directory, "json");
+        this.logger = LoggerFactory.getLogger(name + " registry");
         this.vCodec = vCodec;
     }
 
     @Override
-    protected void handleFileInFolder(Path path, ResourceId id, String fileContents) {
+    protected int handleFileInFolder(Path path, ResourceId id, String fileContents) {
         JsonElement jsonElement = GSON.fromJson(fileContents, JsonElement.class);
-        this.vCodec.decode(JsonOps.INSTANCE, jsonElement)
+        return this.vCodec.decode(JsonOps.INSTANCE, jsonElement)
                 .get()
                 .ifLeft(result -> this.register(id, result.getFirst()))
-                .ifRight(partial -> LOGGER.error("Failed to decode file {} due to {}", path, partial.message()));
-
+                .ifRight(partial -> logger.error("Failed to decode file {} due to {}", path, partial.message()))
+                .left()
+                .isPresent() ? 1 : 0;
     }
 }
