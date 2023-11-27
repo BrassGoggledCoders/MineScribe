@@ -184,7 +184,7 @@ public class ForgeCommonEventHandler {
                                                 new ListSelectionFileFieldDefinition(List.of(
                                                         new ValueFormList(new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath())),
                                                         new ValueFormList(new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath())),
-                                                        new FileIdFormList("**tags/" + tagPath, "#")
+                                                        new FileIdFormList("**data/*/tags/" + tagPath + "**", "#")
                                                 )),
                                                 new FileFieldInfoData(
                                                         "Values",

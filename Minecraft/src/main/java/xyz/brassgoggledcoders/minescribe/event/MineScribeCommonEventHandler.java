@@ -94,7 +94,7 @@ public class MineScribeCommonEventHandler {
                         ),
                         new FileFieldData<>(
                                 new SingleSelectionFileFieldDefinition(
-                                        new RegistryFormList(Registries.getPackTypeRegistry())
+                                        new RegistryFormList<>(Registries.getPackTypeRegistry())
                                 ),
                                 new FileFieldInfoData(
                                         "Pack Type",
