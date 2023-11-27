@@ -4,9 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Pair;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import org.controlsfx.control.ListSelectionView;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFieldContent<T>, ObjectProperty<ObservableList<T>>, ObservableList<T>> {
+public class ListSelectionFieldContent<T extends Comparable<T>> extends FieldControl<ListSelectionFieldContent<T>, ObjectProperty<ObservableList<T>>, ObservableList<T>> {
     private final ListSelectionView<T> listSelection = new ListSelectionView<>();
     private final Function<T, String> getId;
     private final List<T> items;
@@ -34,6 +34,20 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
         this.listSelection.setSourceItems(FXCollections.observableArrayList(items));
         this.getId = getId;
         this.listSelection.setCellFactory(new LabeledCellFactory<>(getLabel));
+    }
+
+    @Override
+    public void finishSetup() {
+        super.finishSetup();
+        this.valueProperty()
+                .get()
+                .addListener((ListChangeListener<T>) c -> ListSelectionFieldContent.super.onChanged());
+        this.valueProperty()
+                .addListener(((observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        newValue.addListener((ListChangeListener<T>) c -> ListSelectionFieldContent.super.onChanged());
+                    }
+                }));
     }
 
     @Override
@@ -63,8 +77,8 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
     protected void loadControl(JsonElement jsonElement) {
         List<String> selectedNames = MineScribeJsonHelper.getAsStrings(jsonElement);
         selectedNames.sort(String::compareTo);
-        this.listSelection.setSourceItems(FXCollections.observableArrayList(this.items));
-        this.listSelection.setTargetItems(FXCollections.observableArrayList());
+        this.items.sort(Comparable::compareTo);
+        this.listSelection.getSourceItems().setAll(this.items);
         if (!selectedNames.isEmpty()) {
             for (T object : this.items) {
                 if (selectedNames.contains(getId.apply(object))) {

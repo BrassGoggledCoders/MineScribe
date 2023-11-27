@@ -63,14 +63,17 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         super.finishSetup();
         this.bindFields();
         this.valueProperty()
-                .addListener((observable, oldValue, newValue) -> {
-                    this.checkValid(newValue);
-                    if (!this.changedProperty().isBound()) {
-                        changedProperty()
-                                .set(true);
-                    }
-                });
+                .addListener((observable, oldValue, newValue) -> this.onChanged());
     }
+
+    protected void onChanged() {
+        this.checkValid(this.valueProperty().getValue());
+        if (!this.changedProperty().isBound()) {
+            changedProperty()
+                    .set(true);
+        }
+    }
+
 
     protected void bindFields() {
         this.valid.bind(Bindings.isEmpty(this.messages));

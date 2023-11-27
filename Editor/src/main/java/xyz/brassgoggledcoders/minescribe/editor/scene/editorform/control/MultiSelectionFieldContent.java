@@ -7,6 +7,7 @@ import com.mojang.datafixers.util.Either;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
@@ -40,6 +41,12 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
         this.selectedValues = new SimpleListProperty<>(this.listView.getSelectionModel()
                 .getSelectedItems()
         );
+    }
+
+    @Override
+    public void finishSetup() {
+        super.finishSetup();
+        this.valueProperty().addListener((ListChangeListener<T>) c -> this.onChanged());
     }
 
     @Override
