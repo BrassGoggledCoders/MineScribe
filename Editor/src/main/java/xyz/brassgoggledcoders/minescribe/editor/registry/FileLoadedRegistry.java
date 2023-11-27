@@ -16,19 +16,20 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements IFileUpdateListener, ISourceRootListener {
     private final Logger logger;
-    private final Set<Path> sourcePaths;
+    private final Map<Path, PathMatcher> sourcePaths;
     private final String directory;
     private final String fileType;
 
     public FileLoadedRegistry(String name, Codec<K> kCodec, String directory, String fileType) {
         super(name, kCodec);
         this.logger = LoggerFactory.getLogger(name + " registry");
-        this.sourcePaths = new HashSet<>();
+        this.sourcePaths = new HashMap<>();
         this.directory = directory.replace("/", File.separator)
                 .replace("\\", File.separator);
         this.fileType = fileType;
@@ -46,9 +47,9 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
     }
 
     public void load(Path sourcePath) {
-        if (this.sourcePaths.add(sourcePath)) {
-
+        if (!this.sourcePaths.containsKey(sourcePath)) {
             PathMatcher matcher = createPathMatcher(sourcePath);
+            this.sourcePaths.put(sourcePath, matcher);
 
             int loaded = 0;
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(sourcePath)) {
@@ -87,10 +88,13 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
 
     @Nullable
     private ResourceId getResourceId(Path path) {
-        Path sourceRoot = findSourcePath(path);
+        Entry<Path, PathMatcher> sourceRoot = findSourcePath(path);
         ResourceId id = null;
         if (sourceRoot != null) {
-            String relativePath = sourceRoot.relativize(path).toString().replace("." + this.fileType, "");
+            String relativePath = sourceRoot.getKey()
+                    .relativize(path)
+                    .toString()
+                    .replace("." + this.fileType, "");
             int directoryIndex = relativePath.indexOf(this.directory);
             if (directoryIndex > 0) {
                 String[] parts = relativePath.split(directory.replace("\\", "\\\\"));
@@ -106,9 +110,10 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
     }
 
     @Nullable
-    protected Path findSourcePath(@NotNull Path path) {
-        return this.sourcePaths.stream()
-                .filter(path::startsWith)
+    protected Entry<Path, PathMatcher> findSourcePath(@NotNull Path path) {
+        return this.sourcePaths.entrySet()
+                .stream()
+                .filter(entry -> path.startsWith(entry.getKey()))
                 .findFirst()
                 .orElse(null);
     }
@@ -131,10 +136,9 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
     @Override
     public void fileUpdated(FileUpdate fileUpdate) {
         Path path = fileUpdate.path();
-        Path sourcePath = findSourcePath(path);
+        Entry<Path, PathMatcher> sourcePath = findSourcePath(path);
         if (sourcePath != null) {
-            PathMatcher pathMatcher = createPathMatcher(sourcePath);
-            if (pathMatcher.matches(path)) {
+            if (sourcePath.getValue().matches(path)) {
                 loadFile(path);
             }
         }

@@ -39,7 +39,7 @@ public record IdPath(
                             this.namespacePath()
                                     .getFileName()
                                     .toString(),
-                            relativePath
+                            relativePath.replace("\\", "/")
                     ));
                 }
             }

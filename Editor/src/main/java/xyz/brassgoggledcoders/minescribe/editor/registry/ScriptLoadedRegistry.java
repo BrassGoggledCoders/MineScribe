@@ -7,8 +7,10 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
     private final Multimap<Path, K> registeredPaths;
@@ -25,10 +27,11 @@ public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
         Path currentScript = ScriptHandler.getInstance()
                 .getCurrentScript();
         if (currentScript != null) {
-            Path sourcePath = this.findSourcePath(currentScript);
+            Entry<Path, PathMatcher> sourcePath = this.findSourcePath(currentScript);
             if (sourcePath != null) {
                 this.registeredPaths.put(
-                        sourcePath.relativize(currentScript),
+                        sourcePath.getKey()
+                                .relativize(currentScript),
                         key
                 );
             }
