@@ -3,29 +3,50 @@
     "fields": [
       {
         "definition": {
-          "type": "list_of_fields",
-          "value": {
-            "minimum": 0,
-            "valueField": {
-              "type": "object_ref",
-              "objectId": "minescribe:file_field"
-            }
+          "type": "string"
+        },
+        "info": {
+          "field": "label",
+          "label": "Label",
+          "required": true,
+          "sortOrder": 1
+        }
+      },
+      {
+        "definition": {
+          "type": "string"
+        },
+        "info": {
+          "field": "path",
+          "label": "Path",
+          "required": true,
+          "sortOrder": 2
+        }
+      },
+      {
+        "definition": {
+          "type": "single_selection",
+          "list": {
+            "type": "registry",
+            "registry": "packTypes"
           }
         },
         "info": {
-          "field": "fields",
-          "label": "Fields"
+          "field": "packType",
+          "label": "Pack Type",
+          "required": true,
+          "sortOrder": 3
         }
       },
       {
         "definition": {
           "type": "object_ref",
-          "objectId": "minescribe:serializer_info"
+          "objectId": "minescribe:file_form"
         },
         "info": {
-          "field": "serializer",
-          "label": "Serializer Info",
-          "sortOrder": 1
+          "field": "form",
+          "label": "File Form",
+          "sortOrder": 4
         }
       }
     ]

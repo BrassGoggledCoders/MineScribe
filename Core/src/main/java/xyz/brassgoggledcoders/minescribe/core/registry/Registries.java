@@ -1,137 +1,78 @@
 package xyz.brassgoggledcoders.minescribe.core.registry;
 
-import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
+import xyz.brassgoggledcoders.minescribe.core.util.FolderCollection;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 
-import java.nio.file.Path;
-import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.ServiceLoader;
 
 public class Registries {
-    private static final Supplier<BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>>> FILE_FIELD_CODECS =
-            Suppliers.memoize(() -> new BasicStaticRegistry<>(
-                    "fileFields",
-                    Codec.STRING,
-                    initializer -> {
-                        initializer.accept("checkbox", CheckBoxFileFieldDefinition.CODEC);
-                        initializer.accept("list_selection", ListSelectionFileFieldDefinition.CODEC);
-                        initializer.accept("list_of_fields", ListOfFileFieldDefinition.CODEC);
-                        initializer.accept("string", StringFileFieldDefinition.CODEC);
-                        initializer.accept("single_selection", SingleSelectionFileFieldDefinition.CODEC);
-                        initializer.accept("integer", IntegerFileFieldDefinition.CODEC);
-                        initializer.accept("double", DoubleFileFieldDefinition.CODEC);
-                        initializer.accept("object_ref", ReferencedObjectFileFieldDefinition.CODEC);
-                    }
-            ));
+    public static final ServiceLoader<IRegistryProviderService> REGISTRY_PROVIDER_SERVICE_LOADER =
+            ServiceLoader.load(IRegistryProviderService.class);
 
-    private static final Supplier<BasicJsonRegistry<String, MineScribePackType>> PACK_TYPES = Suppliers.memoize(() -> BasicJsonRegistry.ofString(
-            "packTypes",
-            MineScribePackType.CODEC,
-            MineScribePackType::name
-    ));
-
-    private static final Supplier<BasicJsonRegistry<String, PackRepositoryLocation>> PACK_REPOSITORY_LOCATIONS =
-            Suppliers.memoize(() -> BasicJsonRegistry.ofString(
-                    "packRepositories",
-                    PackRepositoryLocation.CODEC,
-                    PackRepositoryLocation::label
-            ));
-
-    private static final Supplier<BasicJsonRegistry<ResourceId, PackContentParentType>> CONTENT_PARENT_TYPES =
-            Suppliers.memoize(() -> new BasicJsonRegistry<>(
-                    "contentParentTypes",
-                    Path.of("types", "parent"),
-                    ResourceId.CODEC,
-                    PackContentParentType.CODEC,
-                    PackContentType::getId
-            ));
-
-    private static final Supplier<BasicJsonRegistry<ResourceId, PackContentChildType>> CONTENT_CHILD_TYPES =
-            Suppliers.memoize(() -> new BasicJsonRegistry<>(
-                    "contentChildTypes",
-                    Path.of("types", "child"),
-                    ResourceId.CODEC,
-                    PackContentChildType.CODEC,
-                    PackContentType::getId
-            ));
-
-    private static final Supplier<LoadOnGetJsonRegistry<FormList>> FORM_LISTS = Suppliers.memoize(
-            () -> new LoadOnGetJsonRegistry<>(
-                    "formLists",
-                    Path.of("formLists"),
-                    FormList.CODEC
-            )
-    );
-
-    private static final Supplier<SerializerTypeRegistry> SERIALIZER_TYPES =
-            Suppliers.memoize(SerializerTypeRegistry::new);
-
-    private static final Supplier<BasicJsonRegistry<ResourceId, ObjectType>> OBJECT_TYPES =
-            Suppliers.memoize(() -> new BasicJsonRegistry<>(
-                    "objectTypes",
-                    Path.of("types", "object"),
-                    ResourceId.CODEC,
-                    ObjectType.CODEC,
-                    ObjectType::id
-            ));
-
-    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations = null;
-
-    public static BasicStaticRegistry<String, Codec<? extends IFileFieldDefinition>> getFileFieldCodecRegistry() {
-        return FILE_FIELD_CODECS.get();
+    public static Registry<String, PackRepositoryLocation> getPackRepositoryLocationRegistry() {
+        return getRegistry(RegistryNames.PACK_REPOSITORY_LOCATIONS);
     }
 
-    public static BasicJsonRegistry<String, MineScribePackType> getPackTypes() {
-        return PACK_TYPES.get();
+    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidationCodecRegistry() {
+        return getRegistry(RegistryNames.VALIDATIONS);
     }
 
-    public static BasicJsonRegistry<String, PackRepositoryLocation> getPackRepositoryLocations() {
-        return PACK_REPOSITORY_LOCATIONS.get();
+    public static Registry<String, MineScribePackType> getPackTypeRegistry() {
+        return getRegistry(RegistryNames.PACK_TYPES);
     }
 
-    public static BasicJsonRegistry<ResourceId, PackContentParentType> getContentParentTypes() {
-        return CONTENT_PARENT_TYPES.get();
+    public static Registry<String, Codec<? extends IFileFieldDefinition>> getFileFieldDefinitionCodecRegistry() {
+        return getRegistry(RegistryNames.FILE_FIELD_DEFINITIONS);
     }
 
-    public static BasicJsonRegistry<ResourceId, PackContentChildType> getContentChildTypes() {
-        return CONTENT_CHILD_TYPES.get();
+    public static Registry<ResourceId, FormList> getFormListValues() {
+        return Registries.getRegistry(RegistryNames.FORM_LIST_VALUES);
     }
 
-    public static LoadOnGetJsonRegistry<FormList> getFormLists() {
-        return FORM_LISTS.get();
+    public static Registry<ResourceId, Codec<? extends IFormList<?>>> getFormListCodecs() {
+        return Registries.getRegistry(RegistryNames.FORM_LISTS);
     }
 
-    public static SerializerTypeRegistry getSerializerTypes() {
-        return SERIALIZER_TYPES.get();
+    public static Registry<ResourceId, PackContentParentType> getContentParentTypes() {
+        return Registries.getRegistry(RegistryNames.CONTENT_PARENT_TYPES);
     }
 
-    public static BasicJsonRegistry<ResourceId, ObjectType> getObjectTypes() {
-        return OBJECT_TYPES.get();
+    public static Registry<ResourceId, PackContentChildType> getContentChildTypes() {
+        return Registries.getRegistry(RegistryNames.CONTENT_CHILD_TYPES);
     }
 
-    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidations() {
-        return Objects.requireNonNull(validations);
+    public static Registry<ResourceId, SerializerType> getSerializerTypes() {
+        return Registries.getRegistry(RegistryNames.SERIALIZER_TYPES);
     }
 
-    public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidationsNullable() {
-        return validations;
+    public static Registry<ResourceId, ObjectType> getObjectTypes() {
+        return Registries.getRegistry(RegistryNames.OBJECT_TYPES);
     }
 
-    public static void load(Path mineScribeRoot, Registry<ResourceId, Codec<? extends Validation<?>>> validations) {
-        Registries.validations = validations;
-        PACK_REPOSITORY_LOCATIONS.get().load(mineScribeRoot);
-        PACK_TYPES.get().load(mineScribeRoot);
-        FORM_LISTS.get().setMineScribePath(mineScribeRoot);
-        CONTENT_PARENT_TYPES.get().load(mineScribeRoot);
-        CONTENT_CHILD_TYPES.get().load(mineScribeRoot);
-        SERIALIZER_TYPES.get().load(mineScribeRoot);
-        OBJECT_TYPES.get().load(mineScribeRoot);
+    public static Registry<String, FolderCollection> getFolderCollectionRegistry() {
+        return Registries.getRegistry(RegistryNames.FOLDER_COLLECTIONS);
+    }
+
+    public static <K, V> Registry<K, V> getRegistry(String name) {
+        return Registries.<K, V>getRegistryOpt(name)
+                .orElseThrow(() -> new NoSuchElementException("No value %s present".formatted(name)));
+    }
+
+    public static <K, V> Optional<Registry<K, V>> getRegistryOpt(String name) {
+        return REGISTRY_PROVIDER_SERVICE_LOADER.stream()
+                .map(ServiceLoader.Provider::get)
+                .sorted(IRegistryProviderService::compareTo)
+                .flatMap(registryProvider -> registryProvider.<K, V>getRegistry(name)
+                        .stream()
+                )
+                .findFirst();
     }
 }

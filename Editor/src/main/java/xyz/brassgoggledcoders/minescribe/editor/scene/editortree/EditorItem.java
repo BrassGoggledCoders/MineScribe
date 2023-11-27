@@ -8,13 +8,11 @@ import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.function.Function;
+import java.util.List;
 
 public abstract class EditorItem implements Comparable<EditorItem> {
     private final Logger LOGGER = LoggerFactory.getLogger(EditorItem.class);
@@ -96,35 +94,7 @@ public abstract class EditorItem implements Comparable<EditorItem> {
     }
 
     @NotNull
-    public abstract List<EditorItem> createChildren();
-
-    protected List<File> getChildrenFiles() {
-        return this.getChildrenFiles(null);
-    }
-
-    protected List<File> getChildrenFiles(FileFilter fileFilter) {
-        File[] files = this.getFile().listFiles(fileFilter);
-
-        if (files != null) {
-            return Arrays.asList(files);
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    protected <T> List<T> runForChildren(Function<Path, Optional<T>> runOnPath) {
-        try (DirectoryStream<Path> childrenPaths = Files.newDirectoryStream(this.getPath())) {
-            List<T> values = new ArrayList<>();
-            for (Path childPath : childrenPaths) {
-                runOnPath.apply(childPath)
-                        .ifPresent(values::add);
-            }
-            return values;
-        } catch (IOException e) {
-            LOGGER.error("Failed to open Directory Stream for {}", this.getPath(), e);
-            return Collections.emptyList();
-        }
-    }
+    public abstract List<EditorItem> createChildren(DirectoryStream<Path> childPaths);
 
     @Override
     public int compareTo(@NotNull EditorItem o) {

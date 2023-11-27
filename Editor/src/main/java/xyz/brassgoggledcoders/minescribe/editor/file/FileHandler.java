@@ -1,24 +1,29 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.editor.project.Project;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.PackRepositoryEditorItem;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Queue;
+import java.nio.file.PathMatcher;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class FileHandler {
-
+    private static final Pattern PATH_NAME_PATTERN = Pattern.compile("\\$\\{PATH:(?<number>-?\\d)}");
     private static FileHandler INSTANCE;
     private static FileWatcher WATCHER;
 
@@ -99,15 +104,31 @@ public class FileHandler {
     }
 
     private void createChildren(TreeItem<EditorItem> treeItem) {
-        treeItem.getChildren().removeIf(childItem -> childItem.getValue() == null || childItem.getValue().isAutomatic());
-        List<EditorItem> children = treeItem.getValue().createChildren();
-        children.removeIf(Predicate.not(EditorItem::isValid));
-        children.sort(EditorItem::compareTo);
-        for (EditorItem child : children) {
-            TreeItem<EditorItem> childTreeItem = new TreeItem<>(child);
-            treeItem.getChildren().add(childTreeItem);
-            createChildren(childTreeItem);
+        if (treeItem.getValue() != null && treeItem.getValue().isDirectory()) {
+            Path currentPath = treeItem.getValue().getPath();
+            ObservableList<TreeItem<EditorItem>> currentChildren = treeItem.getChildren();
+            List<Path> childrenPaths = currentChildren.stream()
+                    .map(TreeItem::getValue)
+                    .filter(Objects::nonNull)
+                    .map(EditorItem::getPath)
+                    .toList();
+            currentChildren.removeIf(childItem -> childItem.getValue() == null || !childItem.getValue().isValid());
+
+            try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(currentPath, path -> !childrenPaths.contains(path))) {
+                List<EditorItem> children = treeItem.getValue().createChildren(childPaths);
+                children.removeIf(Predicate.not(EditorItem::isValid));
+                children.sort(EditorItem::compareTo);
+                for (EditorItem child : children) {
+                    TreeItem<EditorItem> childTreeItem = new TreeItem<>(child);
+                    treeItem.getChildren().add(childTreeItem);
+                    createChildren(childTreeItem);
+                }
+            } catch (IOException ioException) {
+                ExceptionDialog.showDialog("Failed to generate file list for %s".formatted(currentPath), ioException);
+            }
         }
+
+
     }
 
     public TreeItem<EditorItem> getRootModel() {
@@ -126,22 +147,72 @@ public class FileHandler {
             ExceptionDialog.showDialog("Failed to initialize FileWatcher", e);
             Platform.exit();
         }
-        for (PackRepositoryLocation location : Registries.getPackRepositoryLocations()) {
-            PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(location);
-            INSTANCE.rootItem.getChildren()
-                    .add(new TreeItem<>(editorItem));
-            WATCHER.watchDirectory(editorItem.getPath());
-            INSTANCE.reloadDirectory(editorItem);
+        Project project = InfoRepository.getInstance()
+                .getValue(Project.KEY);
+        if (project != null) {
+            for (PackRepositoryLocation location : Registries.getPackRepositoryLocationRegistry()) {
+                PathMatcher pathMatcher = project.getRootPath()
+                        .getFileSystem()
+                        .getPathMatcher("glob:" + location.pathMatcher());
+                List<Path> packRepositoryPaths = findPackRepositories(project.getRootPath(), pathMatcher, 1);
+
+                for (Path packRepositoryPath : packRepositoryPaths) {
+                    String repositoryLabel = location.label();
+
+                    repositoryLabel = PATH_NAME_PATTERN.matcher(repositoryLabel)
+                            .replaceAll(matchResult -> {
+                                int pathPosition = Integer.parseInt(matchResult.group(1));
+                                if (Math.abs(pathPosition) < packRepositoryPath.getNameCount()) {
+                                    if (pathPosition >= 0) {
+                                        return packRepositoryPath.getName(pathPosition)
+                                                .toString();
+                                    } else {
+                                        return packRepositoryPath.getName(packRepositoryPath.getNameCount() - Math.abs(pathPosition))
+                                                .toString();
+                                    }
+                                }
+
+                                return "";
+                            });
+
+                    PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(repositoryLabel, packRepositoryPath);
+                    INSTANCE.rootItem.getChildren()
+                            .add(new TreeItem<>(editorItem));
+                    WATCHER.watchDirectory(editorItem.getPath());
+                    INSTANCE.reloadDirectory(editorItem);
+                }
+            }
         }
+    }
+
+    @NotNull
+    private static List<Path> findPackRepositories(Path folder, PathMatcher pathMatcher, int depth) {
+        List<Path> matchedPaths = new ArrayList<>();
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
+            for (Path path : directoryStream) {
+                if (pathMatcher.matches(path)) {
+                    matchedPaths.add(path);
+                } else if (depth < 3 && Files.isDirectory(path)) {
+                    matchedPaths.addAll(findPackRepositories(path, pathMatcher, depth + 1));
+                }
+            }
+        } catch (IOException ioException) {
+            ExceptionDialog.showDialog("Failed to find pack repository", ioException);
+
+        }
+        return matchedPaths;
     }
 
     private void handleUpdates(FileUpdate fileUpdate) {
         this.reloadClosestNode(fileUpdate.path());
+        EditorRegistries.tryUpdate(fileUpdate);
     }
 
     public static void dispose() {
         try {
-            WATCHER.close();
+            if (WATCHER != null) {
+                WATCHER.close();
+            }
         } catch (Exception e) {
             ExceptionDialog.showDialog("Failed to clean up FileHandler", e);
         }

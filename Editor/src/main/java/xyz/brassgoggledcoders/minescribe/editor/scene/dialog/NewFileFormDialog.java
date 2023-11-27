@@ -17,8 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
 import xyz.brassgoggledcoders.minescribe.editor.validation.StringRegexValidator;
@@ -48,11 +49,11 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                 .toList();
 
         if (parentTypes.isEmpty()) {
-            parentTypes = Registries.getContentParentTypes()
+            parentTypes = EditorRegistries.getContentParentTypes()
                     .getValues();
         }
         if (childTypes.isEmpty()) {
-            childTypes = Registries.getContentChildTypes()
+            childTypes = EditorRegistries.getContentChildTypes()
                     .getValues();
         }
 
@@ -77,8 +78,10 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
 
 
         this.parentType.addListener(((observable, oldValue, newValue) -> {
+            ResourceId parentId = EditorRegistries.getContentParentTypes()
+                    .getKey(newValue);
             this.childTypesFiltered.setPredicate(
-                    childValue -> childValue.getParentId().equals(newValue.getId())
+                    childValue -> childValue.getParentId().equals(parentId)
             );
             childField.required(!this.childTypesFiltered.isEmpty());
             childField.editable(!this.childTypesFiltered.isEmpty());
@@ -102,8 +105,8 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                         .label("File Name")
                         .required(true)
                         .validate(StringRegexValidator.forRegex(
-                                "^[a-z0-9\\.\\-_]+$",
-                                "Characters must be lower case letters, numbers 0-9, or symbols . - or _"
+                                "^[a-z0-9/\\.\\-_]+$",
+                                "Characters must be lower case letters, numbers 0-9, or symbols . - / or _"
                         ))
         ));
 

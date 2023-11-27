@@ -27,7 +27,7 @@ public class MineScribeCodecs {
     public static final Codec<PackType> PACK_TYPE = new EnumCodec<>(PackType.class);
 
     public static final Codec<MineScribePackType> MS_PACK_TYPE = PACK_TYPE.xmap(
-            mcPackType -> Registries.getPackTypes().getValue(mcPackType.name()),
+            mcPackType -> Registries.getPackTypeRegistry().getValue(mcPackType.name()),
             msPackType -> PackType.valueOf(msPackType.name())
     );
 
@@ -37,29 +37,25 @@ public class MineScribeCodecs {
     );
 
     public static final Codec<PackContentParentType> PACK_CONTENT_PARENT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            RESOURCE_ID.fieldOf("id").forGetter(PackContentType::getId),
             LABEL_STRING.fieldOf("label").forGetter(PackContentType::getLabel),
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentType::getPath),
             ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentType::getForm),
             MS_PACK_TYPE.fieldOf("packType").forGetter(PackContentParentType::getPackType)
-    ).apply(instance, (id, label, path, form, packType) -> new PackContentParentType(id, label, path, form.orElse(null), packType)));
+    ).apply(instance, (label, path, form, packType) -> new PackContentParentType(label, path, form.orElse(null), packType)));
 
     public static final Codec<PackContentChildType> PACK_CONTENT_CHILD_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            RESOURCE_ID.fieldOf("id").forGetter(PackContentType::getId),
             LABEL_STRING.fieldOf("label").forGetter(PackContentType::getLabel),
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentType::getPath),
             ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentType::getForm),
-            RESOURCE_ID.fieldOf("parentId").forGetter(PackContentType::getId)
-    ).apply(instance, (id, label, path, form, packType) -> new PackContentChildType(id, label, path, form.orElse(null), packType)));
+            RESOURCE_ID.fieldOf("parentId").forGetter(PackContentChildType::getParentId)
+    ).apply(instance, (label, path, form, packType) -> new PackContentChildType(label, path, form.orElse(null), packType)));
 
     public static final Codec<ObjectType> OBJECT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            RESOURCE_ID.fieldOf("id").forGetter(ObjectType::id),
             FileForm.CODEC.fieldOf("form").forGetter(ObjectType::fileForm)
     ).apply(instance, ObjectType::new));
 
     public static final Codec<SerializerType> SERIALIZER_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             RESOURCE_ID.fieldOf("parentId").forGetter(SerializerType::parentId),
-            RESOURCE_ID.fieldOf("id").forGetter(SerializerType::id),
             RESOURCE_ID.fieldOf("serializerId").forGetter(SerializerType::serializerId),
             LABEL_STRING.fieldOf("label").forGetter(SerializerType::label),
             FileForm.CODEC.fieldOf("form").forGetter(SerializerType::fileForm)

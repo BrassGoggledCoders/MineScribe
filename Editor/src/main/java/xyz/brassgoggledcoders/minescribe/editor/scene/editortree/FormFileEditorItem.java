@@ -5,11 +5,12 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
 import java.io.File;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +31,7 @@ public class FormFileEditorItem extends EditorItem {
     }
 
     @Override
-    public @NotNull List<EditorItem> createChildren() {
+    public @NotNull List<EditorItem> createChildren(DirectoryStream<Path> childPaths) {
         return Collections.emptyList();
     }
 

@@ -1,11 +1,12 @@
-package xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
+package xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
 
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -26,7 +27,7 @@ public record NodeTracker(
                 if (childDepth > 0 && childDepth < childSubPath.getNameCount()) {
                     childSubPath = childSubPath.subpath(childDepth, childSubPath.getNameCount());
                 }
-                if (childDepth > childSubPath.getNameCount() || childSubPath.startsWith(path)) {
+                if (childDepth >= childSubPath.getNameCount() || childSubPath.startsWith(path)) {
                     return Collections.singletonList(new NodeTracker(
                             this.parentType(),
                             this.childTypeOpt(),
@@ -58,8 +59,10 @@ public record NodeTracker(
     @NotNull
     private List<NodeTracker> createNodeTracksForChildren(Path path) {
         List<NodeTracker> nodeTrackerList = new ArrayList<>();
-        for (PackContentChildType childType : Registries.getContentChildTypes()) {
-            if (childType.getParentId().equals(this.parentType().getId()) && childType.getPath().startsWith(path)) {
+        for (PackContentChildType childType : EditorRegistries.getContentChildTypes()) {
+            ResourceId parentId = EditorRegistries.getContentParentTypes()
+                    .getKey(this.parentType());
+            if (childType.getParentId().equals(parentId) && childType.getPath().startsWith(path)) {
                 nodeTrackerList.add(new NodeTracker(
                         this.parentType(),
                         Optional.of(childType),

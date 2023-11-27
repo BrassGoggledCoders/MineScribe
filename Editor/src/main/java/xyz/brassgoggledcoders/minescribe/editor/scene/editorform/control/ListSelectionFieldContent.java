@@ -4,19 +4,21 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import org.controlsfx.control.ListSelectionView;
-import org.controlsfx.control.ListSelectionView.MoveToTarget;
-import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -26,17 +28,12 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
     private final List<T> items;
 
 
-    public ListSelectionFieldContent(List<T> items, Function<T, String> getId) {
+    public ListSelectionFieldContent(List<T> items, Function<T, String> getId, Function<T, String> getLabel) {
         super();
         this.items = items;
         this.listSelection.setSourceItems(FXCollections.observableArrayList(items));
         this.getId = getId;
-        this.listSelection.getActions()
-                .stream()
-                .filter(MoveToTarget.class::isInstance)
-                .map(MoveToTarget.class::cast)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No Move To Target Action Found"));
+        this.listSelection.setCellFactory(new LabeledCellFactory<>(getLabel));
     }
 
     @Override
@@ -89,15 +86,19 @@ public class ListSelectionFieldContent<T> extends FieldControl<ListSelectionFiel
         return !value.isEmpty();
     }
 
-    public static ListSelectionFieldContent<String> of(ListSelectionFileFieldDefinition definition) throws FormException {
-        return new ListSelectionFieldContent<>(
-                definition.listNames()
-                        .stream()
-                        .map(Registries.getFormLists()::getValue)
-                        .map(FormList::values)
-                        .flatMap(List::stream)
-                        .toList(),
-                Function.identity()
-        );
+    public static ListSelectionFieldContent<FormListValue> of(ListSelectionFileFieldDefinition definition) throws FormException {
+        try {
+            List<FormListValue> values = new ArrayList<>();
+            for (IFormList<?> formList : definition.listNames()) {
+                values.addAll(formList.getFormListValues());
+            }
+            return new ListSelectionFieldContent<>(
+                    values,
+                    FormListValue::id,
+                    FormListValue::label
+            );
+        } catch (Exception e) {
+            throw new FormException(e.getMessage(), e);
+        }
     }
 }

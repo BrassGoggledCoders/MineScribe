@@ -16,7 +16,10 @@
       {
         "definition": {
           "type": "single_selection",
-          "list": "minecraft:registry/item"
+          "list": {
+            "type": "list",
+            "id": "minecraft:registry/item"
+          }
         },
         "info": {
           "field": "result",

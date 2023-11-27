@@ -1,10 +1,10 @@
-package xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
+package xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
 
 import com.google.common.base.Suppliers;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -64,7 +64,7 @@ public class RootPackContentNode implements IPackContentNode {
 
     private List<PackContentParentType> collectParents() {
         List<PackContentParentType> packContentParentTypes = new ArrayList<>();
-        for (PackContentParentType parentType : Registries.getContentParentTypes()) {
+        for (PackContentParentType parentType : EditorRegistries.getContentParentTypes()) {
             if (parentType.getPackType() == mineScribePackType) {
                 packContentParentTypes.add(parentType);
             }

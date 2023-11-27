@@ -1,7 +1,6 @@
-package xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
+package xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
 
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

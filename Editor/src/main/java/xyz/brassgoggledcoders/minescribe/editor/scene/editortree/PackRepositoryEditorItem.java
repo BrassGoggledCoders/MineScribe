@@ -4,17 +4,17 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.NewPackController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 
-import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PackRepositoryEditorItem extends EditorItem {
-    public PackRepositoryEditorItem(PackRepositoryLocation location) {
-        super(location.label(), location.path());
+    public PackRepositoryEditorItem(String label, Path path) {
+        super(label, path);
     }
 
     @Override
@@ -36,16 +36,10 @@ public class PackRepositoryEditorItem extends EditorItem {
 
     @Override
     @NotNull
-    public List<EditorItem> createChildren() {
-        File[] childrenFolders = this.getPath()
-                .toFile()
-                .listFiles(File::isDirectory);
-
+    public List<EditorItem> createChildren(DirectoryStream<Path> childPaths) {
         List<EditorItem> childrenEditorItems = new ArrayList<>();
-        if (childrenFolders != null) {
-            for (File childFolder : childrenFolders) {
-                childrenEditorItems.add(new PackEditorItem(childFolder.getName(), childFolder.toPath()));
-            }
+        for (Path childFolder : childPaths) {
+            childrenEditorItems.add(new PackEditorItem(childFolder.getFileName().toString(), childFolder));
         }
 
         return childrenEditorItems;

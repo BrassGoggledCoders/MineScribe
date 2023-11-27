@@ -11,7 +11,7 @@ public abstract class Validation<T> implements Function<T, ValidationResult> {
     @SuppressWarnings("RedundantTypeArguments")
     public static final Codec<Validation<?>> DIRECT_DISPATCH_CODEC = LazyCodec.of(() ->
             MappedKeyDispatchCodec.<Codec<? extends Validation<?>>, Validation<?>>dispatch(
-                    Registries.getValidations()
+                    Registries.getValidationCodecRegistry()
                             .getCodec(),
                     Validation::getCodec,
                     Function.identity()

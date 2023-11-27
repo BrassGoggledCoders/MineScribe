@@ -4,14 +4,16 @@ import javafx.scene.control.*;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.IPackContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.IPackContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
 
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,29 +26,29 @@ public class PackContentTypeEditorItem extends EditorItem {
     }
 
     @Override
-    public @NotNull List<EditorItem> createChildren() {
-        return this.runForChildren(childPath -> {
+    public @NotNull List<EditorItem> createChildren(DirectoryStream<Path> childPaths) {
+        List<EditorItem> editorItems = new ArrayList<>();
+        for (Path childPath : childPaths) {
             Path relativePath = this.getPath().relativize(childPath);
             if (Files.isDirectory(childPath)) {
                 IPackContentNode packContentNode = contentNode.getNode(relativePath);
 
                 if (packContentNode != null) {
-                    return Optional.of(new PackContentTypeEditorItem(
+                    editorItems.add(new PackContentTypeEditorItem(
                             relativePath.toString(),
                             childPath,
                             packContentNode
                     ));
                 }
             } else if (Files.isRegularFile(childPath)) {
-                return Optional.of(new FormFileEditorItem(
+                editorItems.add(new FormFileEditorItem(
                         relativePath.toString(),
                         childPath,
                         contentNode.getNodeTrackers()
                 ));
             }
-
-            return Optional.empty();
-        });
+        }
+        return editorItems;
     }
 
     @Override

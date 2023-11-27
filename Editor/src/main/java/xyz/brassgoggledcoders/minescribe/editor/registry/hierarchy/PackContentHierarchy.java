@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype;
+package xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
 
 import com.google.common.base.Suppliers;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
@@ -24,7 +24,7 @@ public class PackContentHierarchy {
 
     public static PackContentHierarchy build() {
         Map<MineScribePackType, RootPackContentNode> hierarchy = new HashMap<>();
-        for (MineScribePackType packType : Registries.getPackTypes()) {
+        for (MineScribePackType packType : Registries.getPackTypeRegistry()) {
             hierarchy.put(packType, new RootPackContentNode(packType));
         }
         return new PackContentHierarchy(hierarchy);

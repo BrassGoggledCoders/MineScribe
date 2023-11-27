@@ -8,13 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.IPackContentNode;
-import xyz.brassgoggledcoders.minescribe.core.registry.packcontenttype.PackContentHierarchy;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.IPackContentNode;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.PackContentHierarchy;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
 
-import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +31,15 @@ public class NamespaceEditorItem extends EditorItem {
     }
 
     @Override
-    public @NotNull List<EditorItem> createChildren() {
-        List<File> childrenFiles = this.getChildrenFiles();
+    public @NotNull List<EditorItem> createChildren(DirectoryStream<Path> childPaths) {
         List<EditorItem> editorItems = new ArrayList<>();
-        for (File childFile : childrenFiles) {
-            if (childFile.isDirectory()) {
-                Path childPath = this.getPath().relativize(childFile.toPath());
-                IPackContentNode packContentNode = contentNode.getNode(childPath);
+        for (Path childPath : childPaths) {
+            if (Files.isDirectory(childPath)) {
+                Path relativePath = this.getPath().relativize(childPath);
+                IPackContentNode packContentNode = contentNode.getNode(relativePath);
 
                 if (packContentNode != null) {
-                    editorItems.add(new PackContentTypeEditorItem(childFile.getName(), childFile.toPath(), packContentNode));
+                    editorItems.add(new PackContentTypeEditorItem(childPath.getFileName().toString(), childPath, packContentNode));
                 }
             }
         }

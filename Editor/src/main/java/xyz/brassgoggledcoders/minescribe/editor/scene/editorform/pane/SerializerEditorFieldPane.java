@@ -10,6 +10,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.SingleSelectionFieldControl;
 
@@ -69,13 +70,13 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         if (jsonElement != null && jsonElement.isJsonPrimitive()) {
             ResourceId.fromString(jsonElement.getAsString())
                     .result()
-                    .map(Registries.getSerializerTypes()::getValue)
+                    .map(EditorRegistries.getSerializerTypes()::getValue)
                     .ifPresent(selected::set);
         }
 
         if (selected.get() == null) {
             serializerInfo.defaultType()
-                    .map(Registries.getSerializerTypes()::getValue)
+                    .map(EditorRegistries.getSerializerTypes()::getValue)
                     .ifPresent(selected::set);
         }
 
@@ -86,7 +87,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         if (selected.get() == null) {
             items.stream()
                     .filter(Objects::nonNull)
-                    .filter(serializerType -> serializerType.id().equals(ResourceId.NULL))
+                    .filter(serializerType -> Registries.getSerializerTypes().getKey(serializerType) == null)
                     .findFirst()
                     .ifPresent(selected::set);
         }
@@ -101,7 +102,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         SerializerType serializerType = this.getContent()
                 .valueProperty()
                 .get();
-        if (serializerType != null && !serializerType.id().equals(ResourceId.NULL)) {
+        if (serializerType != null && Registries.getSerializerTypes().getKey(serializerType) != null) {
             return new JsonPrimitive(serializerType.serializerId().toString());
         } else {
             return JsonNull.INSTANCE;
@@ -133,7 +134,6 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                         SerializerType defaultFieldsType = new SerializerType(
                                 ResourceId.NULL,
                                 ResourceId.NULL,
-                                ResourceId.NULL,
                                 "Default",
                                 serializerInfo.defaultForm()
                                         .get()
@@ -143,15 +143,14 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
                     SingleSelectionFieldControl<SerializerType> field = SingleSelectionFieldControl.of(
                                     serializerTypes,
-                                    serializerType -> serializerType.id().toString(),
+                                    serializerType -> serializerType.serializerId()
+                                            .toString(),
+                                    SerializerType::label,
                                     SerializerType.class
                             )
                             .withId(serializerInfo.fieldName())
                             .withLabel(serializerInfo.label())
                             .withRequired(true);
-
-
-                    field.setLabelMaker(SerializerType::label);
 
                     return new SerializerEditorFieldPane(fileForm, serializerInfo, field);
                 });

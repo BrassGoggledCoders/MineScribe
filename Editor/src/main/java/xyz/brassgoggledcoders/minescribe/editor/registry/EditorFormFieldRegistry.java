@@ -5,28 +5,27 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.registry.BasicStaticRegistry;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
+import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 
-public class EditorFormFieldRegistry extends Registry<String, EditorFormFieldTransform<?, ?>> {
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+public class EditorFormFieldRegistry extends BasicStaticRegistry<String, EditorFormFieldTransform<?, ?>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditorFormFieldRegistry.class);
 
-    public EditorFormFieldRegistry() {
-        super("editorFormField", Codec.STRING);
-    }
-
-    public <T extends IFileFieldDefinition, U extends FieldContent<U>> void register(
-            String name, EditorFormFieldTransform<T, U> transforms
-    ) {
-        this.getMap().put(name, transforms);
+    public EditorFormFieldRegistry(Consumer<BiConsumer<String, EditorFormFieldTransform<?, ?>>> register) {
+        super(RegistryNames.EDITOR_FIELD_TRANSFORMS, Codec.STRING, register);
     }
 
     @NotNull
     @SuppressWarnings("unchecked")
     public <U extends FieldContent<U>> U createEditorFieldFor(IFileFieldDefinition fileFieldDefinition) throws FormException {
-        String key = Registries.getFileFieldCodecRegistry()
+        String key = Registries.getFileFieldDefinitionCodecRegistry()
                 .getKey(fileFieldDefinition.getCodec());
         if (key != null) {
             EditorFormFieldTransform<?, ?> transform = this.getValue(key);
@@ -40,8 +39,9 @@ public class EditorFormFieldRegistry extends Registry<String, EditorFormFieldTra
         }
     }
 
+    @Override
     public void validate() {
-        for (String key : Registries.getFileFieldCodecRegistry().getKeys()) {
+        for (String key : Registries.getFileFieldDefinitionCodecRegistry().getKeys()) {
             if (!this.hasKey(key)) {
                 LOGGER.error("Failed to find value for key {}", key);
             }

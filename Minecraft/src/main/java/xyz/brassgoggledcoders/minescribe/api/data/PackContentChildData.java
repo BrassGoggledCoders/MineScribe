@@ -38,7 +38,6 @@ public record PackContentChildData(
 
     public PackContentChildType toType() {
         return new PackContentChildType(
-                new ResourceId(this.id().getNamespace(), this.id().getPath()),
                 this.label().getString(),
                 this.path(),
                 this.form()

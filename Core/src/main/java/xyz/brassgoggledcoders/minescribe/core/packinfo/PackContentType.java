@@ -1,27 +1,23 @@
 package xyz.brassgoggledcoders.minescribe.core.packinfo;
 
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 
 import java.nio.file.Path;
 import java.util.Optional;
 
-public class PackContentType {
-    private final ResourceId id;
+public class PackContentType implements ILabeledValue {
     private final String label;
     private final Path path;
     private final FileForm form;
 
-    public PackContentType(ResourceId id, String label, Path path, FileForm form) {
-        this.id = id;
+    public PackContentType(String label, Path path, FileForm form) {
         this.label = label;
         this.path = path;
         this.form = form;
     }
 
-    public ResourceId getId() {
-        return id;
-    }
-
+    @Override
     public String getLabel() {
         return label;
     }

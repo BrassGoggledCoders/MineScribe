@@ -1,0 +1,4 @@
+{
+  "label": "${PATH:-2} Data Packs",
+  "path_matcher": "**saves/*/datapacks"
+}

@@ -2,11 +2,14 @@ package xyz.brassgoggledcoders.minescribe.editor.javascript;
 
 import com.google.common.base.Suppliers;
 import org.graalvm.polyglot.*;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.Closeable;
+import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class ScriptHandler implements Closeable {
@@ -16,6 +19,7 @@ public class ScriptHandler implements Closeable {
     private final Engine engine;
     private final Context context;
     private final SLF4JBridgeHandler handler;
+    private final AtomicReference<Path> currentScript;
 
     public ScriptHandler() {
         this.engine = Engine.newBuilder()
@@ -27,6 +31,7 @@ public class ScriptHandler implements Closeable {
                 .putMember("minescribe", helper);
         this.context.getBindings("js")
                 .putMember("validationHelper", helper.validationHelper);
+        this.currentScript = new AtomicReference<>();
     }
 
     private Context buildContext(Engine engine) {
@@ -38,17 +43,22 @@ public class ScriptHandler implements Closeable {
                 .build();
     }
 
+    @Nullable
+    public Path getCurrentScript() {
+        return this.currentScript.get();
+    }
 
-    public void runScript(String fileName, String fileContents) {
+
+    public void runScript(Path filePath, String fileContents) {
         try {
             Source source = Source.create("js", fileContents);
-
+            this.currentScript.set(filePath);
             this.context.parse(source)
                     .executeVoid();
+            this.currentScript.set(null);
         } catch (PolyglotException polyglotException) {
-            LOGGER.error("Failed to run Script {}", fileName, polyglotException);
+            LOGGER.error("Failed to run Script {}", filePath, polyglotException);
         }
-
     }
 
     public void putBinding(String name, Object value) {
