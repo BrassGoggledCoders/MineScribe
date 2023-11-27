@@ -14,7 +14,6 @@ module xyz.brassgoggledcoders.minescribe.editor {
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
-    requires com.dlsc.preferencesfx;
     requires org.kordamp.bootstrapfx.core;
     requires xyz.brassgoggledcoders.minescribe.core;
     requires org.jetbrains.annotations;
@@ -22,6 +21,8 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires datafixerupper;
     requires com.google.common;
     requires org.graalvm.polyglot;
+
+    requires atlantafx.base;
 
     exports xyz.brassgoggledcoders.minescribe.editor;
     opens xyz.brassgoggledcoders.minescribe.editor to javafx.fxml;

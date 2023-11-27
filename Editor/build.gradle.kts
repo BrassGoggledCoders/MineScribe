@@ -46,7 +46,9 @@ dependencies {
         exclude(group = "org.openjfx")
     }
     implementation("org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0")
-    implementation("com.dlsc.preferencesfx:preferencesfx-core:11.16.0")
+
+    implementation("io.github.mkpaz:atlantafx-base:2.0.1")
+    implementation("io.github.mkpaz:atlantafx-styles:2.0.1")
 
     implementation("com.google.code.gson:gson:2.10.1")
 

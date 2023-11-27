@@ -9,6 +9,7 @@ import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
+import xyz.brassgoggledcoders.minescribe.editor.theme.ThemeManager;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -24,6 +25,12 @@ public class Application extends javafx.application.Application {
                 .add(Objects.requireNonNull(this.getClass().getResource("minescribe_style.css"))
                         .toExternalForm()
                 );
+        ThemeManager.getInstance()
+                        .setScene(scene);
+        ThemeManager.getInstance()
+                        .setTheme(ThemeManager.getInstance()
+                                .getDefaultTheme()
+                        );
         scene.getStylesheets().add("/com/dlsc/formsfx/view/renderer/style.css");
         stage.setTitle("MineScribe!");
         stage.setScene(scene);
