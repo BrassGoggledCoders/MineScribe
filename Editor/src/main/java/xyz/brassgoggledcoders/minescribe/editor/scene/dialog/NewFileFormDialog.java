@@ -105,8 +105,8 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                         .label("File Name")
                         .required(true)
                         .validate(StringRegexValidator.forRegex(
-                                "^[a-z0-9\\.\\-_]+$",
-                                "Characters must be lower case letters, numbers 0-9, or symbols . - or _"
+                                "^[a-z0-9/\\.\\-_]+$",
+                                "Characters must be lower case letters, numbers 0-9, or symbols . - / or _"
                         ))
         ));
 
