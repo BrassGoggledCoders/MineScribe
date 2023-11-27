@@ -27,7 +27,7 @@ public record NodeTracker(
                 if (childDepth > 0 && childDepth < childSubPath.getNameCount()) {
                     childSubPath = childSubPath.subpath(childDepth, childSubPath.getNameCount());
                 }
-                if (childDepth > childSubPath.getNameCount() || childSubPath.startsWith(path)) {
+                if (childDepth >= childSubPath.getNameCount() || childSubPath.startsWith(path)) {
                     return Collections.singletonList(new NodeTracker(
                             this.parentType(),
                             this.childTypeOpt(),
