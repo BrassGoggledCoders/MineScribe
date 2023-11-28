@@ -27,10 +27,12 @@ public class Application extends javafx.application.Application {
                 );
         ThemeManager.getInstance()
                         .setScene(scene);
-        ThemeManager.getInstance()
-                        .setTheme(ThemeManager.getInstance()
-                                .getDefaultTheme()
-                        );
+        if (ThemeManager.getInstance().getTheme() == null) {
+            ThemeManager.getInstance()
+                    .setTheme(ThemeManager.getInstance()
+                            .getDefaultTheme()
+                    );
+        }
         scene.getStylesheets().add("/com/dlsc/formsfx/view/renderer/style.css");
         stage.setTitle("MineScribe!");
         stage.setScene(scene);

@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
+import xyz.brassgoggledcoders.minescribe.editor.util.EditorSettings;
 
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +46,15 @@ public final class ThemeManager {
     }
 
     public Theme getTheme() {
+        if (this.currentTheme == null) {
+            String savedThemeName = EditorSettings.getThemeName();
+            if (savedThemeName != null) {
+                PROJECT_THEMES.stream()
+                        .filter(theme -> theme.getName().equals(savedThemeName))
+                        .findFirst()
+                        .ifPresent(this::setTheme);
+            }
+        }
         return currentTheme;
     }
 
@@ -59,12 +69,14 @@ public final class ThemeManager {
     public void setTheme(Theme theme) {
         Objects.requireNonNull(theme);
 
-        if (this.getTheme() != null) {
+        EditorSettings.setThemeName(theme.getName());
+
+        if (this.currentTheme != null) {
             animateThemeChange(Duration.millis(750));
         }
 
         Application.setUserAgentStylesheet(Objects.requireNonNull(theme.getUserAgentStylesheet()));
-        if (this.getTheme() != null) {
+        if (this.currentTheme != null) {
             getScene()
                     .getStylesheets()
                     .remove(this.getTheme().getUserAgentStylesheet());
