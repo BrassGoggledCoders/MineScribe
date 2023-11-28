@@ -47,6 +47,9 @@ dependencies {
     }
     implementation("org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0")
 
+    implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
+    implementation("org.kordamp.ikonli:ikonli-feather-pack:12.3.1")
+
     implementation("io.github.mkpaz:atlantafx-base:2.0.1")
     implementation("io.github.mkpaz:atlantafx-styles:2.0.1")
 

@@ -4,17 +4,12 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import xyz.brassgoggledcoders.minescribe.editor.Application;
-
-import java.util.Objects;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class EditorTreeCell extends TreeCell<EditorItem> {
-    private final Image folderImage = new Image(Objects.requireNonNull(Application.class.getResourceAsStream("icon/folder_16.png")));
-
     private final ObjectProperty<EventHandler<MouseEvent>> clickHandlerProperty;
 
     public EditorTreeCell() {
@@ -35,8 +30,9 @@ public class EditorTreeCell extends TreeCell<EditorItem> {
             this.setText(item.getName());
             this.setContextMenu(item.createContextMenu(this));
             if (item.isDirectory()) {
-                this.setGraphic(new ImageView(folderImage));
+                this.setGraphic(new FontIcon(Feather.FOLDER));
             } else {
+                this.setGraphic(new FontIcon(Feather.FILE));
                 ClickHandler clickHandler = new ClickHandler(this);
                 this.clickHandlerProperty.set(clickHandler);
                 this.setEventHandler(MouseEvent.MOUSE_CLICKED, clickHandler);

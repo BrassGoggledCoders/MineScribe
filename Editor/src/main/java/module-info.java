@@ -23,6 +23,8 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires org.graalvm.polyglot;
 
     requires atlantafx.base;
+    requires org.kordamp.ikonli.feather;
+    requires org.kordamp.ikonli.javafx;
 
     exports xyz.brassgoggledcoders.minescribe.editor;
     opens xyz.brassgoggledcoders.minescribe.editor to javafx.fxml;

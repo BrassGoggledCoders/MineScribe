@@ -2,15 +2,16 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.table;
 
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableRow;
-import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import org.kordamp.ikonli.javafx.FontIcon;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 
 public class MessageTypeCell<S> extends TableCell<S, MessageType> {
-    private final ImageView imageView;
+    private final FontIcon fontIcon;
 
     public MessageTypeCell() {
-        this.imageView = new ImageView();
-        this.setGraphic(imageView);
+        this.fontIcon = new FontIcon();
+        this.setGraphic(this.fontIcon);
     }
 
     @Override
@@ -27,10 +28,11 @@ public class MessageTypeCell<S> extends TableCell<S, MessageType> {
             }
         }
         if (item != null) {
-            this.imageView.setImage(item.getImage());
-
+            this.setGraphic(this.fontIcon);
+            this.fontIcon.setIconCode(item.getFeather());
+            this.fontIcon.setIconColor(Color.RED);
         } else {
-            this.imageView.setImage(null);
+            this.setGraphic(null);
         }
     }
 }
