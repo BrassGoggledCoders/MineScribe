@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane minHeight="25" prefHeight="25" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+<AnchorPane minHeight="30" prefHeight="30" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.element.InfoPaneController">
     <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0">
         <MenuBar>
@@ -18,7 +18,7 @@
                     <TableColumn text="Type" prefWidth="50" fx:id="typeColumn" styleClass="table-column-centered"/>
                     <TableColumn text="Field" prefWidth="100" fx:id="fieldColumn" styleClass="table-column-centered-left"/>
                     <TableColumn text="Message" prefWidth="400" fx:id="messageColumn" styleClass="table-column-centered-left"/>
-                    <TableColumn text="Path" prefWidth="200" fx:id="pathColumn" styleClass="table-column-centered-left"/>
+                    <TableColumn text="Path" prefWidth="600" fx:id="pathColumn" styleClass="table-column-centered-left"/>
                 </columns>
             </TableView>
         </StackPane>

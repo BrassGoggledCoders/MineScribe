@@ -12,6 +12,7 @@ public class SceneUtils {
         AnchorPane.setRightAnchor(node, 0D);
     }
 
+    @SuppressWarnings("unused")
     public static ColumnConstraints createConstraintsForPercent(double percent) {
         ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setPercentWidth(percent);
