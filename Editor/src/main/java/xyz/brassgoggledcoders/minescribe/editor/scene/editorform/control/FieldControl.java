@@ -164,6 +164,10 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         return this.messages;
     }
 
+    public BooleanProperty requiredProperty() {
+        return this.required;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public C withValidations(List<Validation<?>> validations) {

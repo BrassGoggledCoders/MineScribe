@@ -8,9 +8,9 @@ import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.TitledPane;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ObjectType;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
@@ -19,20 +19,27 @@ import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnlyListProperty<Pair<String, Property<?>>>, ObservableList<Pair<String, Property<?>>>> {
+    private final TitledPane titledPane;
     private final EditorFormPane formPane;
 
     public ObjectFieldControl(EditorFormPane editorFieldPane) {
         super();
+        this.titledPane = new TitledPane();
         this.formPane = editorFieldPane;
+        this.titledPane.setContent(this.formPane);
     }
 
     @Override
     protected void bindFields() {
         super.bindFields();
         this.changedProperty().bind(this.formPane.changedProperty());
+        this.requiredProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                this.titledPane.setExpanded(newValue);
+            }
+        }));
     }
 
     @Override
@@ -45,6 +52,7 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     protected void loadControl(JsonElement jsonElement) {
         if (jsonElement != null && jsonElement.isJsonObject()) {
             this.formPane.setPersistedObject(jsonElement.getAsJsonObject());
+            this.titledPane.setExpanded(true);
         } else {
             this.formPane.setPersistedObject(new JsonObject());
         }
@@ -57,7 +65,7 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
 
     @Override
     public Node getNode() {
-        return this.formPane;
+        return this.titledPane;
     }
 
     @Override
