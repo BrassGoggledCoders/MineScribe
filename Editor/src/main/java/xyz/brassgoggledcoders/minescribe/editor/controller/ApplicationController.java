@@ -1,10 +1,13 @@
 package xyz.brassgoggledcoders.minescribe.editor.controller;
 
+import atlantafx.base.theme.Theme;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.event.page.RequestPageEvent;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
+import xyz.brassgoggledcoders.minescribe.editor.theme.ThemeManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +33,7 @@ public class ApplicationController {
 
     @FXML
     public AnchorPane content;
+    public Menu themeMenu;
 
     @FXML
     public void initialize() {
@@ -49,6 +54,15 @@ public class ApplicationController {
 
         if (InfoRepository.getInstance().getValue(Project.KEY) == null) {
             this.content.fireEvent(new RequestPageEvent("select_project"));
+        }
+
+        for (Theme theme : ThemeManager.getInstance().getThemes()) {
+            MenuItem themeItem = new MenuItem(theme.getName());
+            themeItem.setOnAction(event -> ThemeManager.getInstance()
+                    .setTheme(theme)
+            );
+            this.themeMenu.getItems()
+                    .add(themeItem);
         }
     }
 

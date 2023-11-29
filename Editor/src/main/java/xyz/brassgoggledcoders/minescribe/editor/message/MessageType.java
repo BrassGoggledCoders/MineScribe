@@ -1,31 +1,32 @@
 package xyz.brassgoggledcoders.minescribe.editor.message;
 
-import javafx.scene.image.Image;
-import xyz.brassgoggledcoders.minescribe.editor.Application;
-
-import java.util.Objects;
+import atlantafx.base.theme.Styles;
+import org.kordamp.ikonli.feather.Feather;
 
 public enum MessageType {
-    INFO("info"),
-    WARNING("warning"),
-    ERROR("error");
+    INFO("info", Styles.BG_NEUTRAL_EMPHASIS, Feather.INFO),
+    WARNING("warning", Styles.BG_WARNING_EMPHASIS, Feather.ALERT_TRIANGLE),
+    ERROR("error", Styles.BG_DANGER_EMPHASIS, Feather.ALERT_OCTAGON);
 
-    private final Image image;
+    private final Feather feather;
+    private final String style;
     private final String name;
 
-    MessageType(String name) {
+    MessageType(String name, String style, Feather feather) {
         this.name = name;
-        this.image = new Image(Objects.requireNonNull(
-                Application.class.getResourceAsStream("icon/message/" + name + ".png"),
-                "Failed to find " + name
-        ));
+        this.style = style;
+        this.feather = feather;
     }
 
     public String getName() {
         return this.name;
     }
 
-    public Image getImage() {
-        return this.image;
+    public String getStyle() {
+        return style;
+    }
+
+    public Feather getFeather() {
+        return this.feather;
     }
 }

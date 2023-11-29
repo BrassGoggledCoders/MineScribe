@@ -53,8 +53,10 @@ public class InfoPaneController {
         this.infoStackPane.getChildren().add(this.messageView);
         this.messageView.setVisible(true);
         if (this.parentPane != null) {
-            if (this.parentPane.getDividers().get(0).getPosition() > 0.95) {
-                this.parentPane.setDividerPosition(0, 0.8);
+            if (this.parentPane.getDividers().get(0).getPosition() > 0.94) {
+                this.parentPane.setDividerPosition(0, 0.75);
+            } else {
+                this.parentPane.setDividerPosition(0, 0.98);
             }
         } else {
             this.messageView.setPrefHeight(100);

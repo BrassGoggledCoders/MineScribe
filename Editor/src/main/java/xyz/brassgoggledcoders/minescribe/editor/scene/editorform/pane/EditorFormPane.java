@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
+import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
@@ -13,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -25,7 +27,6 @@ import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
-import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
 import java.util.ArrayList;
@@ -39,8 +40,16 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class EditorFormPane extends GridPane {
-    private static final ColumnConstraints LABEL = SceneUtils.createConstraintsForPercent(15D);
-    private static final ColumnConstraints CONTENT = SceneUtils.createConstraintsForPercent(85D);
+    private static final ColumnConstraints LABEL = Suppliers.memoize(() -> {
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setHgrow(Priority.SOMETIMES);
+        return columnConstraints;
+    }).get();
+    private static final ColumnConstraints CONTENT = Suppliers.memoize(() -> {
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setHgrow(Priority.ALWAYS);
+        return columnConstraints;
+    }).get();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EditorFormPane.class);
     private final ReadOnlyObjectProperty<FileForm> primaryForm;
@@ -73,6 +82,7 @@ public class EditorFormPane extends GridPane {
         this.messages = new SimpleSetProperty<>(FXCollections.observableSet());
 
         this.getColumnConstraints().setAll(LABEL, CONTENT);
+        this.setHgap(5);
 
         this.getChildren().addListener((ListChangeListener<Node>) c -> {
             while (c.next()) {
@@ -228,43 +238,40 @@ public class EditorFormPane extends GridPane {
             setField(newField, currentObject);
         }
 
-        List<Node> children = new ArrayList<>(this.getChildren());
+        List<EditorFieldPane<?>> editorFieldPanes = this.getEditorFieldPanes()
+                .collect(Collectors.toList());
 
-        if (children.contains(newField)) {
+        if (editorFieldPanes.contains(newField)) {
             LOGGER.error("Editor Form already contains: " + newField);
         } else {
-            children.add(newField);
-            children.sort(this::sortChildren);
+            editorFieldPanes.add(newField);
+            editorFieldPanes.sort(this::sortChildren);
+
             this.getChildren().clear();
 
             int currentRow = 0;
-            for (Node node : children) {
-                if (node instanceof EditorFieldPane<?> editorFieldPane) {
-                    Label label = editorFieldPane.labelProperty().get();
-                    if (label != null) {
-                        this.add(label, 0, currentRow);
-                        label.setAlignment(Pos.CENTER_LEFT);
-                    }
-
-                    this.add(editorFieldPane, 1, currentRow++);
+            for (EditorFieldPane<?> editorFieldPane : editorFieldPanes) {
+                Label label = editorFieldPane.labelProperty().get();
+                if (label != null) {
+                    this.add(label, 0, currentRow);
+                    label.setAlignment(Pos.CENTER_LEFT);
                 }
+
+                this.add(editorFieldPane, 1, currentRow++);
             }
         }
 
     }
 
-    private int sortChildren(Node nodeA, Node nodeB) {
-        int compared = 0;
-        if (nodeA instanceof EditorFieldPane<?> editorFieldPaneOne &&
-                nodeB instanceof EditorFieldPane<?> editorFieldPaneTwo) {
-            boolean paneOneMain = editorFieldPaneOne.getFileForm() == this.primaryForm.get();
-            boolean paneTwoMain = editorFieldPaneTwo.getFileForm() == this.primaryForm.get();
+    private int sortChildren(EditorFieldPane<?> editorFieldPaneOne, EditorFieldPane<?> editorFieldPaneTwo) {
+        int compared;
+        boolean paneOneMain = editorFieldPaneOne.getFileForm() == this.primaryForm.get();
+        boolean paneTwoMain = editorFieldPaneTwo.getFileForm() == this.primaryForm.get();
 
-            compared = -Boolean.compare(paneOneMain, paneTwoMain);
+        compared = -Boolean.compare(paneOneMain, paneTwoMain);
 
-            if (compared == 0) {
-                compared = Integer.compare(editorFieldPaneOne.getSortOrder(), editorFieldPaneTwo.getSortOrder());
-            }
+        if (compared == 0) {
+            compared = Integer.compare(editorFieldPaneOne.getSortOrder(), editorFieldPaneTwo.getSortOrder());
         }
         return compared;
     }

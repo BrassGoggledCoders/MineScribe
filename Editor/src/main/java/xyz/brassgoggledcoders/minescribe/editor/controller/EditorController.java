@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.controller;
 
+import atlantafx.base.theme.Styles;
 import com.mojang.datafixers.util.Pair;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -44,6 +45,8 @@ public class EditorController {
         TreeView<EditorItem> treeView = new TreeView<>(FileHandler.getInstance().getRootModel());
         treeView.setShowRoot(false);
         treeView.setCellFactory(param -> new EditorTreeCell());
+        treeView.getStyleClass()
+                .add(Styles.DENSE);
 
         this.files.setContent(treeView);
         this.infoPaneController.setParentPane(this.parentPane);

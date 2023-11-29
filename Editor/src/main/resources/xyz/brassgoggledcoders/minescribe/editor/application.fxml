@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 
+<?import com.sun.javafx.scene.control.ContextMenuContent.MenuBox?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
             prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.ApplicationController">
@@ -11,6 +12,9 @@
        <MenuBar BorderPane.alignment="CENTER">
            <Menu mnemonicParsing="false" text="File">
                <MenuItem mnemonicParsing="false" text="Open Project" onAction="#openProject"/>
+               <Menu mnemonicParsing="false" text="Settings">
+                   <Menu mnemonicParsing="false" text="Themes" fx:id="themeMenu"/>
+               </Menu>
                <MenuItem mnemonicParsing="false" text="Close"/>
            </Menu>
            <Menu mnemonicParsing="false" text="Edit">
