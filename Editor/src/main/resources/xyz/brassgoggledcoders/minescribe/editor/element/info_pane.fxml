@@ -2,10 +2,12 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane minHeight="30" prefHeight="30" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+<!--suppress JavaFxUnresolvedStyleClassReference -->
+<!-- styleClass dense is in AtlantaFX -->
+<AnchorPane minHeight="40" prefHeight="40" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.element.InfoPaneController">
     <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0">
-        <MenuBar>
+        <MenuBar styleClass="dense">
             <Menu>
                 <graphic>
                     <Label text="Messages" onMouseClicked="#showMessagePane"/>
@@ -13,7 +15,7 @@
             </Menu>
         </MenuBar>
         <StackPane fx:id="infoStackPane" VBox.vgrow="ALWAYS" minHeight="0" maxHeight="Infinity">
-            <TableView fx:id="messageView" minHeight="0" maxHeight="Infinity">
+            <TableView fx:id="messageView" minHeight="0" maxHeight="Infinity" styleClass="dense">
                 <columns>
                     <TableColumn text="Type" prefWidth="50" fx:id="typeColumn" styleClass="table-column-centered"/>
                     <TableColumn text="Field" prefWidth="100" fx:id="fieldColumn" styleClass="table-column-centered-left"/>
