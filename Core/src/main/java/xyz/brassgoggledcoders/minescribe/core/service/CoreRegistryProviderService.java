@@ -10,12 +10,10 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.RegistryFormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.ValueFormList;
 import xyz.brassgoggledcoders.minescribe.core.registry.BasicStaticRegistry;
-import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
+import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 
-import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

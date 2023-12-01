@@ -1,0 +1,51 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "integer",
+          "range": {
+            "min": -2147483648,
+            "start": 2147483647
+          }
+        },
+        "info": {
+          "field": "max",
+          "label": "Maximum Value"
+        }
+      },
+      {
+        "definition": {
+          "type": "integer",
+          "range": {
+            "min": -2147483648,
+            "start": 0
+          }
+        },
+        "info": {
+          "field": "min",
+          "label": "Minimum Value"
+        }
+      },
+      {
+        "definition": {
+          "type": "integer",
+          "range": {
+            "min": -2147483648,
+            "start": 0
+          }
+        },
+        "info": {
+          "field": "start",
+          "label": "Start Value"
+        }
+      }
+    ]
+  },
+  "id": "minescribe:file_field_definitions/integer",
+  "label": {
+    "text": "Number Field (Integer)"
+  },
+  "parentId": "minescribe:types/object/file_field_definition",
+  "serializerId": "minescribe:integer"
+}

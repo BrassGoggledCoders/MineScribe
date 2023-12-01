@@ -13,4 +13,7 @@ public class JsonFieldNames {
     public static final String INFO = "info";
     public static final String DEFINITION = "definition";
     public static final String VALIDATIONS = "validations";
+    public static final String MIN = "min";
+    public static final String START = "start";
+    public static final String MAX = "max";
 }

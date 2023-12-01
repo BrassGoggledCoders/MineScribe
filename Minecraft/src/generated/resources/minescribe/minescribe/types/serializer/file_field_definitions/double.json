@@ -1,0 +1,51 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "double",
+          "range": {
+            "min": 4.9E-324,
+            "start": 1.7976931348623157E308
+          }
+        },
+        "info": {
+          "field": "max",
+          "label": "Maximum Value"
+        }
+      },
+      {
+        "definition": {
+          "type": "double",
+          "range": {
+            "min": 4.9E-324,
+            "start": 0.0
+          }
+        },
+        "info": {
+          "field": "min",
+          "label": "Minimum Value"
+        }
+      },
+      {
+        "definition": {
+          "type": "double",
+          "range": {
+            "min": 4.9E-324,
+            "start": 0.0
+          }
+        },
+        "info": {
+          "field": "start",
+          "label": "Start Value"
+        }
+      }
+    ]
+  },
+  "id": "minescribe:file_field_definitions/double",
+  "label": {
+    "text": "Number Field (Double)"
+  },
+  "parentId": "minescribe:types/object/file_field_definition",
+  "serializerId": "minescribe:double"
+}

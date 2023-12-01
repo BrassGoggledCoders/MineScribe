@@ -552,6 +552,93 @@ public class MineScribeCommonEventHandler {
                         )
                 )
         ));
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "file_field_definitions/string"),
+                new ResourceLocation(MineScribe.ID, "string"),
+                new ResourceLocation(MineScribe.ID, "types/object/file_field_definition"),
+                Component.literal("Text Field"),
+                FileFormData.of(
+                        new FileFieldData<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "Default Value",
+                                        JsonFieldNames.DEFAULT_VALUE,
+                                        0,
+                                        false
+                                )
+                        )
+                )
+        ));
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "file_field_definitions/double"),
+                new ResourceLocation(MineScribe.ID, "double"),
+                new ResourceLocation(MineScribe.ID, "types/object/file_field_definition"),
+                Component.literal("Number Field (Double)"),
+                FileFormData.of(
+                        new FileFieldData<>(
+                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 0D, Double.MAX_VALUE)),
+                                new FileFieldInfoData(
+                                        "Minimum Value",
+                                        JsonFieldNames.MIN,
+                                        0,
+                                        false
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 0D, Double.MAX_VALUE)),
+                                new FileFieldInfoData(
+                                        "Start Value",
+                                        JsonFieldNames.START,
+                                        0,
+                                        false
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, Double.MAX_VALUE, Double.MAX_VALUE)),
+                                new FileFieldInfoData(
+                                        "Maximum Value",
+                                        JsonFieldNames.MAX,
+                                        0,
+                                        false
+                                )
+                        )
+                )
+        ));
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "file_field_definitions/integer"),
+                new ResourceLocation(MineScribe.ID, "integer"),
+                new ResourceLocation(MineScribe.ID, "types/object/file_field_definition"),
+                Component.literal("Number Field (Integer)"),
+                FileFormData.of(
+                        new FileFieldData<>(
+                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 0, Integer.MAX_VALUE)),
+                                new FileFieldInfoData(
+                                        "Minimum Value",
+                                        JsonFieldNames.MIN,
+                                        0,
+                                        false
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 0, Integer.MAX_VALUE)),
+                                new FileFieldInfoData(
+                                        "Start Value",
+                                        JsonFieldNames.START,
+                                        0,
+                                        false
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)),
+                                new FileFieldInfoData(
+                                        "Maximum Value",
+                                        JsonFieldNames.MAX,
+                                        0,
+                                        false
+                                )
+                        )
+                )
+        ));
     }
 
     private static void generatePackLocations(BiConsumer<ResourceLocation, PackRepositoryLocation> mapConsumer) {

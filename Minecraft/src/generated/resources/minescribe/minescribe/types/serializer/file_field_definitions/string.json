@@ -1,0 +1,21 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "string"
+        },
+        "info": {
+          "field": "defaultValue",
+          "label": "Default Value"
+        }
+      }
+    ]
+  },
+  "id": "minescribe:file_field_definitions/string",
+  "label": {
+    "text": "Text Field"
+  },
+  "parentId": "minescribe:types/object/file_field_definition",
+  "serializerId": "minescribe:string"
+}
