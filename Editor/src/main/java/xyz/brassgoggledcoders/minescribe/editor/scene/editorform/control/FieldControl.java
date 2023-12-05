@@ -1,19 +1,25 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
+import atlantafx.base.layout.InputGroup;
 import atlantafx.base.theme.Styles;
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
+import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.SetChangeListener;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Tooltip;
+import javafx.util.Duration;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -24,6 +30,7 @@ import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IHelpTextContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
@@ -33,19 +40,23 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends ReadOnlyProperty<V>, V>
-        extends FieldContent<C> implements IValueContent<C, P, V>, ILabeledContent<C> {
+        extends FieldContent<C> implements IValueContent<C, P, V>, ILabeledContent<C>, IHelpTextContent {
     private final BooleanProperty valid;
     private final BooleanProperty changed;
     private final BooleanProperty required;
 
     private final ObjectProperty<Label> label;
     private final ObservableValue<String> labelString;
+    private final StringProperty helpText;
 
     private final ObjectProperty<JsonElement> persistedValue;
     private final SetProperty<MineScribeMessage> messages;
     private final Set<Function<Object, ValidationResult>> validations;
     private final Supplier<Tooltip> supplierValidationTooltip;
     private final Supplier<Button> resetButton;
+    private final Supplier<Button> helpButton;
+
+    private InputGroup inputGroup = null;
 
     protected FieldControl() {
         this.valid = new SimpleBooleanProperty(true);
@@ -54,6 +65,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.label = new SimpleObjectProperty<>();
         this.labelString = this.label.map(Labeled::getText);
         this.persistedValue = new SimpleObjectProperty<>();
+        this.helpText = new SimpleStringProperty();
 
         this.messages = new SimpleSetProperty<>(FXCollections.observableSet());
         this.messages.addListener((SetChangeListener<? super MineScribeMessage>) c -> handleValidationChange());
@@ -63,6 +75,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.supplierValidationTooltip = Suppliers.memoize(this::creatValidationToolTip);
 
         this.resetButton = Suppliers.memoize(this::createResetButton);
+        this.helpButton = Suppliers.memoize(this::createHelpButton);
     }
 
     @Override
@@ -121,6 +134,16 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     @Nullable
     public Label getLabel() {
         return label.get();
+    }
+
+    @Override
+    public @Nullable String getHelpText() {
+        return this.helpText.get();
+    }
+
+    @Override
+    public void setHelpText(String helpText) {
+        this.helpText.set(helpText);
     }
 
     @Override
@@ -293,5 +316,42 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         resetButton.onActionProperty()
                 .set(event -> reset());
         return resetButton;
+    }
+
+    @NotNull
+    protected Button getHelpButton() {
+        return this.helpButton.get();
+    }
+
+    private Button createHelpButton() {
+        FontIcon helpIcon = new FontIcon(Feather.HELP_CIRCLE);
+        Button helpButton = new Button("&nbsp;", helpIcon);
+        helpButton.getStyleClass().add(Styles.BUTTON_ICON);
+        helpButton.visibleProperty().bind(Bindings.isNotEmpty(this.helpText));
+        Tooltip tooltip = new Tooltip();
+        tooltip.textProperty().bind(this.helpText);
+        helpButton.setTooltip(tooltip);
+        helpButton.onActionProperty()
+                .set(action -> {
+                    Point2D p = helpButton.localToScreen(0, 0);
+                    tooltip.show(helpButton, p.getX(), p.getY());
+
+                    PauseTransition pt = new PauseTransition(Duration.millis(2000));
+                    pt.setOnFinished(e -> tooltip.hide());
+                    pt.play();
+                });
+        return helpButton;
+    }
+
+    protected InputGroup createInputGroup(Node node) {
+        this.inputGroup = new InputGroup(node, this.getResetButton());
+        this.helpText.addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                this.inputGroup.getChildren().remove(this.getHelpButton());
+            } else if (!this.inputGroup.getChildren().contains(this.getHelpButton())) {
+                this.inputGroup.getChildren().add(0, this.getHelpButton());
+            }
+        });
+        return this.inputGroup;
     }
 }

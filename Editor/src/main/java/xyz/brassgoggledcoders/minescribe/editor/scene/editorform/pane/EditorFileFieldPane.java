@@ -8,6 +8,7 @@ import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IHelpTextContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
@@ -36,6 +37,9 @@ public class EditorFileFieldPane<F extends FieldContent<F>> extends EditorFieldP
         if (this.content instanceof ILabeledContent<?> labeledControl) {
             labeledControl.withLabel(this.fieldInfo.label());
             this.labelProperty().set(labeledControl.getLabel());
+        }
+        if (this.content instanceof IHelpTextContent helpTextContent) {
+            this.fieldInfo.helpText().ifPresent(helpTextContent::setHelpText);
         }
 
         SceneUtils.setAnchors(content.getNode());
