@@ -333,10 +333,10 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         helpButton.setTooltip(tooltip);
         helpButton.onActionProperty()
                 .set(action -> {
-                    Point2D p = helpButton.localToScreen(0, 0);
+                    Point2D p = helpButton.localToScreen(helpButton.getHeight() - 5, helpButton.getWidth() - 5);
                     tooltip.show(helpButton, p.getX(), p.getY());
 
-                    PauseTransition pt = new PauseTransition(Duration.millis(2000));
+                    PauseTransition pt = new PauseTransition(Duration.millis(5000));
                     pt.setOnFinished(e -> tooltip.hide());
                     pt.play();
                 });
