@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
+import atlantafx.base.theme.Styles;
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
@@ -9,10 +10,13 @@ import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.SetChangeListener;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Tooltip;
 import org.jetbrains.annotations.Nullable;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
@@ -41,6 +45,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     private final SetProperty<MineScribeMessage> messages;
     private final Set<Function<Object, ValidationResult>> validations;
     private final Supplier<Tooltip> supplierValidationTooltip;
+    private final Supplier<Button> resetButton;
 
     protected FieldControl() {
         this.valid = new SimpleBooleanProperty(true);
@@ -56,6 +61,8 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
         this.validations = new HashSet<>();
         this.supplierValidationTooltip = Suppliers.memoize(this::creatValidationToolTip);
+
+        this.resetButton = Suppliers.memoize(this::createResetButton);
     }
 
     @Override
@@ -273,5 +280,18 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
             this.getNode()
                     .pseudoClassStateChanged(INVALID, false);
         }
+    }
+
+    protected Button getResetButton() {
+        return this.resetButton.get();
+    }
+
+    private Button createResetButton() {
+        FontIcon resetIcon = new FontIcon(Feather.REPEAT);
+        Button resetButton = new Button("&nbsp;", resetIcon);
+        resetButton.getStyleClass().add(Styles.BUTTON_ICON);
+        resetButton.onActionProperty()
+                .set(event -> reset());
+        return resetButton;
     }
 }

@@ -26,10 +26,7 @@ public class StringFieldControl extends FieldControl<StringFieldControl, StringP
         super();
         this.textField = new TextField();
         HBox.setHgrow(this.textField, Priority.ALWAYS);
-        FontIcon resetIcon = new FontIcon(Feather.REPEAT);
-        Button resetButton = new Button("", resetIcon);
-        resetButton.getStyleClass().add(Styles.BUTTON_ICON);
-        this.inputGroup = new InputGroup(textField, resetButton);
+        this.inputGroup = new InputGroup(textField, this.getResetButton());
         this.valueProperty()
                 .set(text);
     }
