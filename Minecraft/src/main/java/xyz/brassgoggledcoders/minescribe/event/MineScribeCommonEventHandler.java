@@ -201,7 +201,8 @@ public class MineScribeCommonEventHandler {
                                                                 .withInt("minLength", 4)
                                                                 .build()
                                                 )
-                                        )
+                                        ),
+                                        Optional.of("This is a String Field. It must be at least 4 characters long")
                                 )
                         ),
                         new FileFieldData<>(
@@ -222,7 +223,8 @@ public class MineScribeCommonEventHandler {
                                                                 .withInt("minLength", 4)
                                                                 .build()
                                                 )
-                                        )
+                                        ),
+                                        Optional.of("This is a List of Strings. It also requires at least 4 characters pre row")
                                 )
                         )
                 ))

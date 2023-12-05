@@ -9,13 +9,15 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public record FileFieldInfoData(
         String label,
         String field,
         int sortOrder,
         boolean required,
-        List<ValidationData<?>> validations
+        List<ValidationData<?>> validations,
+        Optional<String> helpText
 ) implements Comparable<FileFieldInfoData> {
     public static final Codec<FileFieldInfoData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf(JsonFieldNames.LABEL).forGetter(FileFieldInfoData::label),
@@ -23,7 +25,8 @@ public record FileFieldInfoData(
             Codec.INT.optionalFieldOf(JsonFieldNames.SORT_ORDER, 0).forGetter(FileFieldInfoData::sortOrder),
             Codec.BOOL.optionalFieldOf(JsonFieldNames.REQUIRED, false).forGetter(FileFieldInfoData::required),
             ValidationData.LIST_CODEC.optionalFieldOf(JsonFieldNames.VALIDATIONS, Collections.emptyList())
-                    .forGetter(FileFieldInfoData::validations)
+                    .forGetter(FileFieldInfoData::validations),
+            Codec.STRING.optionalFieldOf(JsonFieldNames.HELP_TEXT).forGetter(FileFieldInfoData::helpText)
     ).apply(instance, FileFieldInfoData::new));
 
     public FileFieldInfoData(
@@ -33,6 +36,16 @@ public record FileFieldInfoData(
             boolean required
     ) {
         this(label, field, sortOrder, required, Collections.emptyList());
+    }
+
+    public FileFieldInfoData(
+            String label,
+            String field,
+            int sortOrder,
+            boolean required,
+            List<ValidationData<?>> validations
+    ) {
+        this(label, field, sortOrder, required, validations, Optional.empty());
     }
 
 
@@ -52,7 +65,8 @@ public record FileFieldInfoData(
                 this.field(),
                 this.sortOrder(),
                 this.required(),
-                new ArrayList<>(this.validations())
+                new ArrayList<>(this.validations()),
+                this.helpText()
         );
     }
 }

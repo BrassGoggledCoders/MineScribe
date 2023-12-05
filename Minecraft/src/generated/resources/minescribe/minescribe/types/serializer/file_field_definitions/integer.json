@@ -5,6 +5,7 @@
         "definition": {
           "type": "integer",
           "range": {
+            "max": 2147483647,
             "min": -2147483648,
             "start": 2147483647
           }
@@ -18,6 +19,7 @@
         "definition": {
           "type": "integer",
           "range": {
+            "max": 2147483647,
             "min": -2147483648,
             "start": 0
           }
@@ -31,6 +33,7 @@
         "definition": {
           "type": "integer",
           "range": {
+            "max": 2147483647,
             "min": -2147483648,
             "start": 0
           }

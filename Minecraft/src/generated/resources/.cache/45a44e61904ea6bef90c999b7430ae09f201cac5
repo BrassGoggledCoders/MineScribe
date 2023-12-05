@@ -1,7 +1,7 @@
-// 1.19.2	2023-11-28T20:36:07.7817369	types/serializer generator for minescribe
+// 1.19.2	2023-12-04T23:28:11.5819403	types/serializer generator for minescribe
 de775f7e340b7aa5e74d9744ec5baa45a534e139 minescribe/forge/types/serializer/ingredients/compound.json
-9b536dfa115f5fff0159ad6439401f89760876ed minescribe/minecraft/types/serializer/recipes/blasting.json
+2370837b9b5eed4bf4bead304fe93023c8b06cc7 minescribe/minecraft/types/serializer/recipes/blasting.json
 a599777f846b09683012db313c3e10c34f769e81 minescribe/minescribe/types/serializer/file_field_definitions/checkbox.json
-f9ca262a9ac98200515dbd94ee0f2dc882878cb5 minescribe/minescribe/types/serializer/file_field_definitions/double.json
-7fd646b88171b837a882a1b87c7b9847ea1946c5 minescribe/minescribe/types/serializer/file_field_definitions/integer.json
+6fd3be55335182b63e98a71f3f77f77c879f78cc minescribe/minescribe/types/serializer/file_field_definitions/double.json
+2c11ed7aceef3790dacdda88043d0c1d42c19fb8 minescribe/minescribe/types/serializer/file_field_definitions/integer.json
 6a3dccf5cbd40dde27f037fe213d2eace525fd77 minescribe/minescribe/types/serializer/file_field_definitions/string.json

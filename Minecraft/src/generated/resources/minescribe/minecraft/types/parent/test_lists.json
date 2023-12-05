@@ -7,6 +7,7 @@
         },
         "info": {
           "field": "string",
+          "helpText": "This is a String Field. It must be at least 4 characters long",
           "label": "String Field",
           "validations": [
             {
@@ -29,6 +30,7 @@
         },
         "info": {
           "field": "stringList",
+          "helpText": "This is a List of Strings. It also requires at least 4 characters pre row",
           "label": "String List",
           "sortOrder": 1,
           "validations": [

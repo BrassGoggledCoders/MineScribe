@@ -32,6 +32,8 @@
         "definition": {
           "type": "double",
           "range": {
+            "max": 1.7976931348623157E308,
+            "min": 0.0,
             "start": 0.7
           }
         },
@@ -45,6 +47,7 @@
         "definition": {
           "type": "integer",
           "range": {
+            "max": 2147483647,
             "min": 1,
             "start": 100
           }
