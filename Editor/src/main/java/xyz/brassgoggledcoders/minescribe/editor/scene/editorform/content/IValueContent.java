@@ -12,8 +12,6 @@ import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import java.util.List;
 
 public interface IValueContent<C extends IValueContent<C, P, V>, P extends ReadOnlyProperty<V>, V> {
-    PseudoClass INVALID = PseudoClass.getPseudoClass("invalid");
-
     BooleanProperty changedProperty();
 
     BooleanProperty validProperty();

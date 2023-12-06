@@ -9,9 +9,10 @@ import javafx.scene.layout.AnchorPane;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IFieldContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 
-public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorPane {
+public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorPane implements IFieldContentNode {
     private final FileForm fileForm;
     private final BooleanProperty changed;
     private final BooleanProperty valid;
@@ -93,6 +94,11 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
 
     public ObjectProperty<Label> labelProperty() {
         return this.label;
+    }
+
+    @Override
+    public FieldContent<?> getFieldContent() {
+        return this.getContent();
     }
 
     public abstract String getFieldName();

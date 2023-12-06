@@ -7,6 +7,7 @@ import com.mojang.datafixers.util.Pair;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
@@ -27,7 +28,10 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     public ObjectFieldControl(EditorFormPane editorFieldPane) {
         super();
         this.titledPane = new TitledPane();
+        this.titledPane.getStyleClass()
+                .add("paned-field");
         this.formPane = editorFieldPane;
+        this.formPane.setPadding(Insets.EMPTY);
         this.titledPane.setContent(this.formPane);
     }
 

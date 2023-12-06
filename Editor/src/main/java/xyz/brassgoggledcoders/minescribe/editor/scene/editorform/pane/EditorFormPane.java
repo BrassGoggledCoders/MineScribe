@@ -117,7 +117,7 @@ public class EditorFormPane extends GridPane {
         updateChangedProperty();
 
 
-        this.getStyleClass().add("borders");
+        //this.getStyleClass().add("borders");
         this.setPadding(new Insets(10));
     }
 

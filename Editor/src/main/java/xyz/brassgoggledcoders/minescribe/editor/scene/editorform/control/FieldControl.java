@@ -294,14 +294,12 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
             if (!SceneUtils.hasToolTip(this.getNode())) {
                 Tooltip.install(this.getNode(), this.supplierValidationTooltip.get());
             }
-            this.getNode()
-                    .pseudoClassStateChanged(INVALID, true);
+            this.setPseudoClass(Styles.STATE_DANGER, true);
         } else {
             if (SceneUtils.hasToolTip(this.getNode())) {
                 Tooltip.uninstall(this.getNode(), this.supplierValidationTooltip.get());
             }
-            this.getNode()
-                    .pseudoClassStateChanged(INVALID, false);
+            this.setPseudoClass(Styles.STATE_DANGER, false);
         }
     }
 

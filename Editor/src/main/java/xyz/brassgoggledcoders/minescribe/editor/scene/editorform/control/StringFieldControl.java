@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
+import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.layout.InputGroup;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -7,7 +8,6 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.jetbrains.annotations.Nullable;
@@ -15,12 +15,12 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileField
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 
 public class StringFieldControl extends FieldControl<StringFieldControl, StringProperty, String> {
-    private final TextField textField;
+    private final CustomTextField textField;
     private final InputGroup inputGroup;
 
     public StringFieldControl(String text) {
         super();
-        this.textField = new TextField();
+        this.textField = new CustomTextField();
         HBox.setHgrow(this.textField, Priority.ALWAYS);
         this.inputGroup = this.createInputGroup(this.textField);
         this.valueProperty()
