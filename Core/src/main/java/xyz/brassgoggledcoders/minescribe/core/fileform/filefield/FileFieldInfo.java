@@ -34,7 +34,17 @@ public record FileFieldInfo(
             int sortOrder,
             boolean required
     ) {
-        this(label, field, sortOrder, required, Collections.emptyList(), Optional.empty());
+        this(label, field, sortOrder, required, Collections.emptyList());
+    }
+
+    public FileFieldInfo(
+            String label,
+            String field,
+            int sortOrder,
+            boolean required,
+            List<Validation<?>> validations
+    ) {
+        this(label, field, sortOrder, required, validations, Optional.empty());
     }
 
 
