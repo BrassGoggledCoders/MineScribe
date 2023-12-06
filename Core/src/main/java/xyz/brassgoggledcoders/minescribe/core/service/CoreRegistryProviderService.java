@@ -28,6 +28,7 @@ public class CoreRegistryProviderService implements IRegistryProviderService {
                 initializer.accept("list_of_fields", ListOfFileFieldDefinition.CODEC);
                 initializer.accept("string", StringFileFieldDefinition.CODEC);
                 initializer.accept("single_selection", SingleSelectionFileFieldDefinition.CODEC);
+                initializer.accept("multiple_selection", MultiSelectionFileFieldDefinition.CODEC);
                 initializer.accept("integer", IntegerFileFieldDefinition.CODEC);
                 initializer.accept("double", DoubleFileFieldDefinition.CODEC);
                 initializer.accept("object_ref", ReferencedObjectFileFieldDefinition.CODEC);
@@ -64,5 +65,4 @@ public class CoreRegistryProviderService implements IRegistryProviderService {
         }
         return Optional.empty();
     }
-
 }

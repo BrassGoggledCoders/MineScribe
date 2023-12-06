@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
+import atlantafx.base.theme.Styles;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -12,7 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.MultiSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
@@ -33,6 +34,9 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
     public MultiSelectionFieldContent(List<T> items, Function<T, String> getId, Function<T, String> getLabel) {
         super();
         this.listView = new ListView<>();
+        this.listView.getStyleClass()
+                .add(Styles.DENSE);
+        this.listView.setPrefHeight(Math.min(items.size() * 30, 300));
         this.listView.setItems(FXCollections.observableArrayList(items));
         this.listView.getSelectionModel()
                 .setSelectionMode(SelectionMode.MULTIPLE);
@@ -99,10 +103,10 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
         return !value.isEmpty();
     }
 
-    public static MultiSelectionFieldContent<FormListValue> of(ListSelectionFileFieldDefinition definition) throws FormException {
+    public static MultiSelectionFieldContent<FormListValue> of(MultiSelectionFileFieldDefinition definition) throws FormException {
         try {
             List<FormListValue> values = new ArrayList<>();
-            for (IFormList<?> formList : definition.listNames()) {
+            for (IFormList<?> formList : definition.formLists()) {
                 values.addAll(formList.getFormListValues());
             }
             return new MultiSelectionFieldContent<>(

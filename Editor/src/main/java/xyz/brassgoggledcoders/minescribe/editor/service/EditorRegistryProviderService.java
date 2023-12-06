@@ -82,6 +82,10 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 SingleSelectionFileFieldDefinition.class,
                 SingleSelectionFieldControl::of
         ));
+        registry.accept("multiple_selection", new EditorFormFieldTransform<>(
+                MultiSelectionFileFieldDefinition.class,
+                MultiSelectionFieldContent::of
+        ));
         registry.accept("integer", new EditorFormFieldTransform<>(
                 IntegerFileFieldDefinition.class,
                 integerFileField -> {
