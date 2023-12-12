@@ -125,7 +125,7 @@ public class EditorFormPane extends GridPane {
         });
         fieldPanes.forEach(this::addFieldPanel);
 
-        validate();
+        //validate();
         updateChangedProperty();
 
         this.setPadding(new Insets(10));

@@ -203,6 +203,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
     @Override
     public void persist() {
+        this.validate();
         if (this.validProperty().get()) {
             JsonElement saved = this.saveControl();
             this.persistedValue.set(saved);

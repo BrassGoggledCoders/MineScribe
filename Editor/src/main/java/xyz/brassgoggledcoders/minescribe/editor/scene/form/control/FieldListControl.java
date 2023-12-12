@@ -117,7 +117,7 @@ public class FieldListControl extends TitledPane {
             if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                 valueContent.withValidations(new ArrayList<>(this.fieldValidationSupplier.get()))
                         .withRequired(true);
-                valueContent.validate();
+                //valueContent.validate();
             }
             int size = this.fieldPane.getChildren()
                     .size();

@@ -104,4 +104,10 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
     public abstract String getFieldName();
 
     public abstract int getSortOrder();
+
+    public void validate() {
+        if (this.getFieldContent() instanceof IValueContent<?,?,?> valueContent) {
+            valueContent.validate();
+        }
+    }
 }

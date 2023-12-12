@@ -70,6 +70,11 @@ public class FormController implements IFileEditorController {
         this.fileSaved = new SimpleBooleanProperty(false);
     }
 
+    @FXML
+    public void initialize() {
+        this.formPane.addEventHandler(FieldMessagesEvent.EVENT_TYPE, this::handleMessages);
+    }
+
     public void setFormInfo(Path filePath, PackContentParentType parentType, @Nullable PackContentChildType childType) {
         Optional<FileForm> fileFormOpt = parentType.getForm()
                 .or(() -> Optional.ofNullable(childType)
@@ -104,32 +109,8 @@ public class FormController implements IFileEditorController {
                         fileForm,
                         EditorRegistries.getSerializerTypes()
                                 .supplyList(parentType, childType),
-                        persistableObject
+                        null
                 );
-                this.editorForm.persistedObjectProperty()
-                        .addListener((observable, oldValue, newValue) -> {
-                            if (newValue != null && !newValue.isEmpty()) {
-                                try {
-                                    Files.createDirectories(filePath.getParent());
-                                    Files.writeString(
-                                            filePath,
-                                            GSON.toJson(newValue),
-                                            StandardCharsets.UTF_8,
-                                            StandardOpenOption.WRITE,
-                                            StandardOpenOption.CREATE,
-                                            StandardOpenOption.TRUNCATE_EXISTING
-                                    );
-                                    this.fileSaved.set(true);
-                                    FileHandler.getInstance().reloadClosestNode(filePath);
-                                } catch (IOException e) {
-                                    LOGGER.error("Failed to write file {}", this.filePath, e);
-                                    ExceptionDialog.showDialog(
-                                            "Failed to write file %s".formatted(this.filePath),
-                                            e
-                                    );
-                                }
-                            }
-                        });
 
                 validationToolTip = new Tooltip();
 
@@ -162,7 +143,34 @@ public class FormController implements IFileEditorController {
                 this.formPane.getChildren()
                         .add(this.editorForm);
 
-                this.formPane.addEventHandler(FieldMessagesEvent.EVENT_TYPE, this::handleMessages);
+                if (persistableObject != null) {
+                    this.editorForm.setPersistedObject(persistableObject);
+                }
+
+                this.editorForm.persistedObjectProperty()
+                        .addListener((observable, oldValue, newValue) -> {
+                            if (newValue != null && !newValue.isEmpty()) {
+                                try {
+                                    Files.createDirectories(filePath.getParent());
+                                    Files.writeString(
+                                            filePath,
+                                            GSON.toJson(newValue),
+                                            StandardCharsets.UTF_8,
+                                            StandardOpenOption.WRITE,
+                                            StandardOpenOption.CREATE,
+                                            StandardOpenOption.TRUNCATE_EXISTING
+                                    );
+                                    this.fileSaved.set(true);
+                                    FileHandler.getInstance().reloadClosestNode(filePath);
+                                } catch (IOException e) {
+                                    LOGGER.error("Failed to write file {}", this.filePath, e);
+                                    ExceptionDialog.showDialog(
+                                            "Failed to write file %s".formatted(this.filePath),
+                                            e
+                                    );
+                                }
+                            }
+                        });
 
                 if (!this.fileSaved.get()) {
                     try {
