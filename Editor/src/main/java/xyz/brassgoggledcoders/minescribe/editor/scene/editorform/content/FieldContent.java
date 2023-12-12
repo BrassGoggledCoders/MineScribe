@@ -3,8 +3,22 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content;
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldInfo;
+
+import java.util.UUID;
 
 public abstract class FieldContent<C extends FieldContent<C>> {
+    private final UUID uniqueId;
+
+    public FieldContent() {
+        this.uniqueId = UUID.randomUUID();
+    }
+
+    public abstract FieldInfo getFieldInfo();
+
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
 
     public abstract Node getNode();
 

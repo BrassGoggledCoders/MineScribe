@@ -12,14 +12,17 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileField
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
+import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
+import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
-import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.FieldListControl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldControl, ListProperty<Property<?>>, ObservableList<Property<?>>> {
 
@@ -30,8 +33,11 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
         super();
         this.fieldListControl = new FieldListControl(definition, this::getFieldValidations);
         this.fieldValidations = new ArrayList<>();
-        this.fieldListControl.invalidChildren()
-                .addListener((observable, oldValue, newValue) -> updateInvalidChildren(newValue.longValue()));
+        this.fieldListControl.addEventHandler(FieldMessagesEvent.EVENT_TYPE, this::handleFieldMessagesEvent);
+    }
+
+    public void handleFieldMessagesEvent(FieldMessagesEvent event) {
+        this.validate();
     }
 
     @Override
@@ -85,30 +91,17 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     }
 
     @Override
-    protected void checkValid(ObservableList<Property<?>> newValue) {
-        super.checkValid(newValue);
-
+    protected Set<FieldMessage> additionalChecks(ObservableList<Property<?>> newValue) {
         long numberInvalid = this.fieldListControl.invalidChildren().get();
         if (numberInvalid > 0) {
-            this.messagesProperty().add(new MineScribeMessage(
+            return Collections.singleton(new FieldMessage(
+                    this.getFieldInfo(),
                     MessageType.ERROR,
-                    null,
-                    this.getLabelString(),
                     "Field contains %s invalid fields".formatted(numberInvalid)
             ));
         }
-    }
 
-    private void updateInvalidChildren(long numberInvalid) {
-        this.messagesProperty().clear();
-        if (numberInvalid > 0) {
-            this.messagesProperty().add(new MineScribeMessage(
-                    MessageType.ERROR,
-                    null,
-                    this.getLabelString(),
-                    "Field contains %s invalid fields".formatted(numberInvalid)
-            ));
-        }
+        return super.additionalChecks(newValue);
     }
 
     @Override

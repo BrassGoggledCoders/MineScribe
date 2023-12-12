@@ -17,10 +17,12 @@ public class MineScribeMessage {
     private final StringProperty field;
     private final StringProperty message;
     private final BooleanProperty valid;
+    private final Object context;
 
-    public MineScribeMessage(@NotNull MessageType type, @Nullable Path filePath, @Nullable String field, @NotNull String message) {
+    public MineScribeMessage(@NotNull MessageType type, @Nullable Path filePath, @Nullable String field, @NotNull String message, Object context) {
         this.type = new SimpleObjectProperty<>(type);
         this.filePath = new SimpleObjectProperty<>(filePath);
+        this.context = context;
         this.relativePath = this.filePath.map(fullPath -> InfoRepository.getInstance()
                 .getValue(Project.KEY)
                 .getRootPath()
@@ -68,5 +70,9 @@ public class MineScribeMessage {
     @Override
     public int hashCode() {
         return Objects.hash(type, filePath, relativePath, field, message, valid);
+    }
+
+    public Object getContext() {
+        return context;
     }
 }

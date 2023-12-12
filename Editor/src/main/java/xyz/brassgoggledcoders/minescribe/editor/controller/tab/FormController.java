@@ -5,16 +5,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.SetChangeListener;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +21,10 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
+import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
+import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
@@ -132,15 +133,21 @@ public class FormController implements IFileEditorController {
 
                 validationToolTip = new Tooltip();
 
-                validationToolTip.textProperty().bind(this.editorForm.messagesProperty()
-                        .map(errorSet -> errorSet.stream()
-                                .map(MineScribeMessage::messageProperty)
-                                .map(StringExpression::getValue)
-                                .filter(Objects::nonNull)
-                                .reduce((messageA, messageB) -> messageA + System.lineSeparator() + messageB)
-                                .orElse("")
-                        )
-                );
+                validationToolTip.textProperty().bind(Bindings.concat(
+                        this.editorForm.formMessagesProperty()
+                                .map(errorSet -> errorSet.stream()
+                                        .map(FieldMessage::message)
+                                        .filter(Objects::nonNull)
+                                        .reduce("Form Errors: ", (messageA, messageB) -> messageA + System.lineSeparator() + " * " + messageB)
+                                ),
+                        System.lineSeparator(),
+                        this.editorForm.fieldMessagesProperty()
+                                .map(errorSet -> errorSet.stream()
+                                        .map(FieldMessage::message)
+                                        .filter(Objects::nonNull)
+                                        .reduce("Field Errors: ", (messageA, messageB) -> messageA + System.lineSeparator() + " * " + messageB)
+                                )
+                ));
 
                 this.resetButton.disableProperty()
                         .bind(this.editorForm.changedProperty()
@@ -151,32 +158,11 @@ public class FormController implements IFileEditorController {
                                 this.editorForm.changedProperty(),
                                 this.editorForm.validProperty()
                         ).not());
-                this.editorForm.messagesProperty()
-                        .addListener((SetChangeListener<MineScribeMessage>) change -> {
-                            if (change.getSet().isEmpty()) {
-                                Tooltip.uninstall(saveButtonPane, validationToolTip);
-                            } else {
-                                Tooltip.install(saveButtonPane, validationToolTip);
-                            }
-                        });
+
                 this.formPane.getChildren()
                         .add(this.editorForm);
 
-                this.editorForm.messagesProperty()
-                        .addListener((SetChangeListener<MineScribeMessage>) change -> {
-                            if (change.wasAdded()) {
-                                change.getElementAdded()
-                                        .filePathProperty()
-                                        .set(this.getPath());
-                                MessageHandler.getInstance()
-                                        .addMessage(change.getElementAdded());
-                            } else if (change.wasRemoved()) {
-                                MineScribeMessage message = change.getElementRemoved();
-                                if (!message.validProperty().isBound()) {
-                                    message.validProperty().set(false);
-                                }
-                            }
-                        });
+                this.formPane.addEventHandler(FieldMessagesEvent.EVENT_TYPE, this::handleMessages);
 
                 if (!this.fileSaved.get()) {
                     try {
@@ -208,7 +194,8 @@ public class FormController implements IFileEditorController {
                             MessageType.WARNING,
                             this.filePath,
                             null,
-                            "File is not saved"
+                            "File is not saved",
+                            this.getPath()
                     );
 
                     notSavedMessage.validProperty()
@@ -224,6 +211,35 @@ public class FormController implements IFileEditorController {
             new Alert(Alert.AlertType.ERROR, "Failed to Find Form")
                     .showAndWait();
         }
+    }
+
+    private void handleMessages(FieldMessagesEvent fieldMessagesEvent) {
+        for (FieldMessage fieldMessage : fieldMessagesEvent.getAddedMessages()) {
+            MessageHandler.getInstance()
+                    .addMessage(getMineScribeMessage(fieldMessage));
+        }
+        for (FieldMessage fieldMessage : fieldMessagesEvent.getRemovedMessages()) {
+            MessageHandler.getInstance()
+                    .removeByContext(fieldMessage);
+        }
+        if (this.editorForm.fieldMessagesProperty().isEmpty() && this.editorForm.formMessagesProperty().isEmpty()) {
+            Tooltip.uninstall(saveButtonPane, validationToolTip);
+        } else {
+            Tooltip.install(saveButtonPane, validationToolTip);
+        }
+    }
+
+    @NotNull
+    private MineScribeMessage getMineScribeMessage(FieldMessage newMessage) {
+        return new MineScribeMessage(
+                newMessage.type(),
+                this.getPath(),
+                newMessage.fieldInfo()
+                        .name()
+                        .getValue(),
+                newMessage.message(),
+                newMessage
+        );
     }
 
     public void saveForm(MouseEvent ignoredMouseEvent) {

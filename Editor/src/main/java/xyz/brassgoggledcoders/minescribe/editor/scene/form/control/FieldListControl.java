@@ -55,6 +55,8 @@ public class FieldListControl extends TitledPane {
         this.fieldPane = new VBox();
         this.values = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
         this.invalidChildren = new SimpleLongProperty(0);
+        this.getStyleClass()
+                .addAll("paned-field");
 
         this.setup();
     }

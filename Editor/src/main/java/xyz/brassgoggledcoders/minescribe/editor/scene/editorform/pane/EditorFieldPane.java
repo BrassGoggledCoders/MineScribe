@@ -7,7 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
+import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IFieldContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
@@ -17,7 +17,7 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
     private final BooleanProperty changed;
     private final BooleanProperty valid;
     private final ObjectProperty<Label> label;
-    private final SetProperty<MineScribeMessage> messages;
+    private final SetProperty<FieldMessage> messages;
 
     private EditorFormPane formPane;
 
@@ -31,7 +31,7 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
         this.setPadding(new Insets(5));
     }
 
-    public SetProperty<MineScribeMessage> messagesProperty() {
+    public SetProperty<FieldMessage> messagesProperty() {
         return this.messages;
     }
 

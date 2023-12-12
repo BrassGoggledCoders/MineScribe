@@ -36,6 +36,7 @@ module xyz.brassgoggledcoders.minescribe.editor {
     opens xyz.brassgoggledcoders.minescribe.editor.controller.tab to javafx.fxml;
 
     exports xyz.brassgoggledcoders.minescribe.editor.exception;
+    exports xyz.brassgoggledcoders.minescribe.editor.event.field;
     exports xyz.brassgoggledcoders.minescribe.editor.message;
     exports xyz.brassgoggledcoders.minescribe.editor.registry;
     exports xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;

@@ -15,11 +15,15 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.ObjectType;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
+import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
+import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnlyListProperty<Pair<String, Property<?>>>, ObservableList<Pair<String, Property<?>>>> {
     private final TitledPane titledPane;
@@ -33,6 +37,11 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
         this.formPane = editorFieldPane;
         this.formPane.setPadding(Insets.EMPTY);
         this.titledPane.setContent(this.formPane);
+        this.titledPane.addEventHandler(FieldMessagesEvent.EVENT_TYPE, this::handleFieldMessagesEvent);
+    }
+
+    public void handleFieldMessagesEvent(FieldMessagesEvent fieldMessagesEvent) {
+        this.validate();
     }
 
     @Override
@@ -78,14 +87,16 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     }
 
     @Override
-    protected void checkValid(ObservableList<Pair<String, Property<?>>> newValue) {
-        super.checkValid(newValue);
+    protected Set<FieldMessage> additionalChecks(ObservableList<Pair<String, Property<?>>> newValue) {
         this.formPane.validate();
-        this.formPane.messagesProperty().forEach(message -> message.fieldProperty()
-                .set(this.getLabelString())
-        );
-        this.messagesProperty()
-                .addAll(this.formPane.messagesProperty());
+        return this.formPane.formMessagesProperty()
+                .stream()
+                .map(message -> new FieldMessage(
+                        this.getFieldInfo(),
+                        message.type(),
+                        message.message()
+                ))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -127,12 +138,13 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
                 .getValue(definition.objectId());
 
         if (objectType != null) {
-            return new ObjectFieldControl(EditorFormPane.of(
+            EditorFormPane editorFormPane = EditorFormPane.of(
                     objectType.fileForm(),
                     EditorRegistries.getSerializerTypes()
                             .supplyList(objectType),
                     null
-            ));
+            );
+            return new ObjectFieldControl(editorFormPane);
         } else {
             throw new FormException("No Object with Id: %s".formatted(definition.objectId()));
         }

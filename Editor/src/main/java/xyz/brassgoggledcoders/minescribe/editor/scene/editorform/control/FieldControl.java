@@ -7,9 +7,7 @@ import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringExpression;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.Point2D;
@@ -26,8 +24,10 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
+import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldInfo;
+import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
+import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
-import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IHelpTextContent;
@@ -36,7 +36,6 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueC
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends ReadOnlyProperty<V>, V>
@@ -46,15 +45,15 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     private final BooleanProperty required;
 
     private final ObjectProperty<Label> label;
-    private final ObservableValue<String> labelString;
     private final StringProperty helpText;
 
     private final ObjectProperty<JsonElement> persistedValue;
-    private final SetProperty<MineScribeMessage> messages;
+    private final SetProperty<FieldMessage> messages;
     private final Set<Function<Object, ValidationResult>> validations;
     private final Supplier<Tooltip> supplierValidationTooltip;
     private final Supplier<Button> resetButton;
     private final Supplier<Button> helpButton;
+    private final FieldInfo fieldInfo;
 
     private InputGroup inputGroup = null;
 
@@ -63,12 +62,11 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.changed = new SimpleBooleanProperty(false);
         this.required = new SimpleBooleanProperty(false);
         this.label = new SimpleObjectProperty<>();
-        this.labelString = this.label.map(Labeled::getText);
         this.persistedValue = new SimpleObjectProperty<>();
         this.helpText = new SimpleStringProperty();
 
         this.messages = new SimpleSetProperty<>(FXCollections.observableSet());
-        this.messages.addListener((SetChangeListener<? super MineScribeMessage>) c -> handleValidationChange());
+        this.messages.addListener((SetChangeListener<? super FieldMessage>) c -> handleValidationChange());
         this.messages.addListener((observable, oldValue, newValue) -> handleValidationChange());
 
         this.validations = new HashSet<>();
@@ -76,6 +74,16 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
         this.resetButton = Suppliers.memoize(this::createResetButton);
         this.helpButton = Suppliers.memoize(this::createHelpButton);
+
+        this.fieldInfo = new FieldInfo(
+                this.getUniqueId(),
+                this.label.map(Labeled::getText)
+        );
+    }
+
+    @Override
+    public FieldInfo getFieldInfo() {
+        return fieldInfo;
     }
 
     @Override
@@ -99,21 +107,44 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.valid.bind(Bindings.isEmpty(this.messages));
     }
 
-    protected void checkValid(V newValue) {
-        List<MineScribeMessage> newErrors = new ArrayList<>();
+    private void checkValid(V newValue) {
+        List<FieldMessage> newErrors = new ArrayList<>();
         for (Function<Object, ValidationResult> fieldValidation : this.validations) {
             ValidationResult result = fieldValidation.apply(newValue);
             if (!result.isValid()) {
-                newErrors.add(new MineScribeMessage(
+                newErrors.add(new FieldMessage(
+                        this.fieldInfo,
                         MessageType.ERROR,
-                        null,
-                        this.labelString.getValue(),
                         result.getMessage()
                 ));
             }
         }
-        this.messages.get().removeIf(Predicate.not(newErrors::contains));
-        this.messages.get().addAll(newErrors);
+        newErrors.addAll(this.additionalChecks(newValue));
+
+        Set<FieldMessage> removed = new HashSet<>();
+        Iterator<FieldMessage> messageIterator = this.messages.iterator();
+        while (messageIterator.hasNext()) {
+            FieldMessage mineScribeMessage = messageIterator.next();
+            if (!newErrors.contains(mineScribeMessage)) {
+                messageIterator.remove();
+                removed.add(mineScribeMessage);
+            }
+        }
+        Set<FieldMessage> added = new HashSet<>();
+        for (FieldMessage fieldMessage : newErrors) {
+            if (this.messages.add(fieldMessage)) {
+                added.add(fieldMessage);
+            }
+        }
+
+        if (!removed.isEmpty() || !added.isEmpty()) {
+            this.getNode()
+                    .fireEvent(new FieldMessagesEvent(this.getFieldInfo(), added, removed, this.messages));
+        }
+    }
+
+    protected Set<FieldMessage> additionalChecks(V newValue) {
+        return Collections.emptySet();
     }
 
     @SuppressWarnings("unchecked")
@@ -190,7 +221,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     }
 
     @Override
-    public SetProperty<MineScribeMessage> messagesProperty() {
+    public SetProperty<FieldMessage> messagesProperty() {
         return this.messages;
     }
 
@@ -267,18 +298,13 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.checkValid(this.valueProperty().getValue());
     }
 
-    protected String getLabelString() {
-        return this.labelString.getValue();
-    }
-
     private Tooltip creatValidationToolTip() {
         if (this.hasValidations()) {
             Tooltip validationTooltip = new Tooltip();
 
             validationTooltip.textProperty().bind(this.messagesProperty()
                     .map(errorSet -> errorSet.stream()
-                            .map(MineScribeMessage::messageProperty)
-                            .map(StringExpression::getValue)
+                            .map(FieldMessage::message)
                             .filter(Objects::nonNull)
                             .reduce((stringA, stringB) -> stringA + System.lineSeparator() + stringB)
                             .orElse("")

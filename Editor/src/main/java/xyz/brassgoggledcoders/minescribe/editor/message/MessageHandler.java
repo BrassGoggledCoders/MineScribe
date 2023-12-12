@@ -34,6 +34,10 @@ public class MessageHandler {
         return this.validMessages;
     }
 
+    public void removeByContext(Object context) {
+        this.messages.removeIf(message -> message.getContext().equals(context));
+    }
+
     public static MessageHandler getInstance() {
         return INSTANCE;
     }
