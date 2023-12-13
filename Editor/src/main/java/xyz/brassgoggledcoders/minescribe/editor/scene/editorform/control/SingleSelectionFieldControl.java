@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Pair;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,12 +11,12 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -91,9 +90,10 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
 
     public static SingleSelectionFieldControl<FormListValue> of(SingleSelectionFileFieldDefinition definition) throws FormException {
         try {
-            List<FormListValue> values = new ArrayList<>(definition.formList()
-                    .getFormListValues()
-            );
+            List<FormListValue> values = new ArrayList<>();
+            for (IFormList<?> formList : definition.formList()) {
+                values.addAll(formList.getFormListValues());
+            }
             values.add(0, null);
             return new SingleSelectionFieldControl<>(
                     values,
