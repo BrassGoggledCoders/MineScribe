@@ -125,6 +125,12 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     }
 
     @Override
+    public void validateAll() {
+        super.validateAll();
+        this.formPane.validateAll();
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     protected Either<ObservableList<Pair<String, Property<?>>>, ValidationResult> castObject(Object value) {
         if (value instanceof ObservableList<?> list) {

@@ -145,6 +145,16 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
         return super.withLabel(label);
     }
 
+    @Override
+    public void validateAll() {
+        super.validateAll();
+        for (FieldContent<?> fieldContent : this.fieldListControl.contentsProperty()) {
+            if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                valueContent.validateAll();
+            }
+        }
+    }
+
     public static ListOfFieldFieldControl of(ListOfFileFieldDefinition definition) {
         return new ListOfFieldFieldControl(definition.getChildField());
     }

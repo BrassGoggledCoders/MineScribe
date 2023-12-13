@@ -203,6 +203,16 @@ public class EditorFormPane extends GridPane {
         updatePersistableProperty();
     }
 
+    public void validateAll() {
+        this.validate();
+        this.getEditorFieldPanes()
+                .forEach(editorFieldPane -> {
+                    if (editorFieldPane.getFieldContent() instanceof IValueContent<?,?,?> valueContent) {
+                        valueContent.validateAll();
+                    }
+                });
+    }
+
     public void handleFieldMessagesEvent(FieldMessagesEvent fieldMessagesEvent) {
         this.fieldMessages.addAll(fieldMessagesEvent.getAddedMessages());
         this.fieldMessages.removeAll(fieldMessagesEvent.getRemovedMessages());
@@ -215,6 +225,7 @@ public class EditorFormPane extends GridPane {
     }
 
     public void persist() {
+        this.validateAll();
         if (this.valid.get()) {
             JsonObject newPersisted = new JsonObject();
             this.getEditorFieldPanes().forEach(editorFieldPane -> {

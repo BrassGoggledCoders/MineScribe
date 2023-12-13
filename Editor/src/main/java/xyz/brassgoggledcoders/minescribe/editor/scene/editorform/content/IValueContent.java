@@ -4,11 +4,8 @@ import com.google.gson.JsonElement;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SetProperty;
-import javafx.css.PseudoClass;
-import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
-import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
 
 import java.util.List;
 
@@ -37,4 +34,8 @@ public interface IValueContent<C extends IValueContent<C, P, V>, P extends ReadO
     boolean hasValidations();
 
     void validate();
+
+    default void validateAll() {
+        this.validate();
+    }
 }
