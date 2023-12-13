@@ -163,6 +163,66 @@ public class MineScribeCommonEventHandler {
                 ))
         ));
         consumer.accept(new PackContentParentData(
+                MineScribe.rl("serializer_type"),
+                Component.literal("Serializer Type"),
+                Path.of("types", "serializer"),
+                MineScribeAPI.PACK_TYPE,
+                Optional.of(FileFormData.of(
+                        new FileFieldData<>(
+                                new SingleSelectionFileFieldDefinition(List.of(
+                                        new RegistryFormList<>(Registries.getContentParentTypes(), true),
+                                        new RegistryFormList<>(Registries.getContentChildTypes(), true),
+                                        new RegistryFormList<>(Registries.getObjectTypes(), true)
+                                )),
+                                new FileFieldInfoData(
+                                        "Parent",
+                                        "parentId",
+                                        1,
+                                        true
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "Label",
+                                        "label",
+                                        2,
+                                        true
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "file_form")
+                                ),
+                                new FileFieldInfoData(
+                                        "File Form",
+                                        "form",
+                                        3,
+                                        false
+                                )
+                        )
+                ))
+        ));
+        consumer.accept(new PackContentParentData(
+                MineScribe.rl("object_type"),
+                Component.literal("Object Type"),
+                Path.of("types", "object"),
+                MineScribeAPI.PACK_TYPE,
+                Optional.of(FileFormData.of(
+                        new FileFieldData<>(
+                                new ReferencedObjectFileFieldDefinition(
+                                        new ResourceId(MineScribe.ID, "file_form")
+                                ),
+                                new FileFieldInfoData(
+                                        "File Form",
+                                        "form",
+                                        0,
+                                        false
+                                )
+                        )
+                ))
+        ));
+        consumer.accept(new PackContentParentData(
                 new ResourceLocation("tag"),
                 Component.literal("Tag"),
                 Path.of("tags"),

@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface IRegistryProviderService extends Comparable<IRegistryProviderService> {
-    Collection<String> getRegistryNames();
-
     Collection<? extends Registry<?, ?>> getRegistries();
 
     <K, V> Optional<Registry<K, V>> getRegistry(String name);
@@ -27,9 +25,8 @@ public interface IRegistryProviderService extends Comparable<IRegistryProviderSe
     }
 
     default void validate() {
-        for (String name : this.getRegistryNames()) {
-            this.getRegistry(name)
-                    .ifPresent(Registry::validate);
+        for (Registry<?, ?> registry : this.getRegistries()) {
+            registry.validate();
         }
     }
 

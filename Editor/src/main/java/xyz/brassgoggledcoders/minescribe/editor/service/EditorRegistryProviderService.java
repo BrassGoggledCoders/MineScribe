@@ -121,8 +121,6 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 ObjectFieldControl::of
         ));
     });
-
-    private final Collection<String> registryNames;
     private final Collection<Registry<?, ?>> registries;
 
     public EditorRegistryProviderService() {
@@ -138,15 +136,6 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 editorFormFieldTransforms,
                 FOLDER_COLLECTION_REGISTRY
         );
-        this.registryNames = this.registries.stream()
-                .map(Registry::getName)
-                .toList();
-    }
-
-
-    @Override
-    public Collection<String> getRegistryNames() {
-        return this.registryNames;
     }
 
     @Override

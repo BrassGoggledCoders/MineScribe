@@ -4,21 +4,60 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.RegistryCodec;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
+import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 
 import java.util.List;
 
 public record RegistryFormList<V>(
-        Registry<?, V> registry
+        Registry<?, V> registry,
+        boolean fullNameId
 ) implements IFormList<V> {
     public static final Codec<RegistryFormList<?>> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            new RegistryCodec().fieldOf("registry").forGetter(RegistryFormList::registry)
+            new RegistryCodec().fieldOf("registry").forGetter(RegistryFormList::registry),
+            Codec.BOOL.optionalFieldOf("fullNameId", false).forGetter(RegistryFormList::fullNameId)
     ).apply(instance, RegistryFormList::new));
+
+    public RegistryFormList(Registry<?, V> registry) {
+        this(registry, false);
+    }
 
     @Override
     public @NotNull String getKey(V value) {
-        return registry.getKey(value)
-                .toString();
+        if (this.fullNameId() && value instanceof IFullName fullName) {
+            return fullName.getFullName()
+                    .toString();
+        } else {
+            return registry.getKey(value)
+                    .toString();
+        }
+    }
+
+    @Override
+    public @NotNull String getLabel(V value) {
+        String label = "";
+        if (value instanceof ILabeledValue labeledValue) {
+            label += labeledValue.getLabel();
+        }
+
+        if (this.fullNameId() && value instanceof IFullName fullName) {
+            if (!label.isEmpty()) {
+                label += " (";
+            }
+            label += fullName.getFullName()
+                    .toString();
+
+            if (label.contains(" (") && !label.contains(")")) {
+                label += ")";
+            }
+        }
+
+        if (label.isEmpty()) {
+            label = value.toString();
+        }
+
+        return label;
     }
 
     @Override
