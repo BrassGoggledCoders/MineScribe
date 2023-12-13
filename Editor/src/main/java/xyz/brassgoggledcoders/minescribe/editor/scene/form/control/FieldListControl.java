@@ -36,7 +36,6 @@ import java.util.function.Supplier;
 
 public class FieldListControl extends TitledPane {
     private final Logger LOGGER = LoggerFactory.getLogger(FieldListControl.class);
-
     private final IntegerProperty minimumFields = new SimpleIntegerProperty(0);
     private final IntegerProperty maximumFields = new SimpleIntegerProperty(Integer.MAX_VALUE);
     private final LongProperty invalidChildren;
@@ -119,6 +118,24 @@ public class FieldListControl extends TitledPane {
                         .withRequired(true);
                 //valueContent.validate();
             }
+
+            StringProperty fieldName = fieldContent.getFieldInfo()
+                    .name();
+            if (fieldName.isBound()) {
+                fieldName.unbind();
+            }
+
+            fieldContent.getFieldInfo()
+                    .name()
+                    .bind(Bindings.concat(
+                            this.textProperty(),
+                            "[",
+                            Bindings.createIntegerBinding(
+                                    () -> this.contents.indexOf(fieldContent),
+                                    this.contents
+                            ),
+                            "]"
+                    ));
             int size = this.fieldPane.getChildren()
                     .size();
             this.fieldPane.getChildren()
@@ -141,7 +158,7 @@ public class FieldListControl extends TitledPane {
         );
     }
 
-    public LongProperty invalidChildren() {
+    public ReadOnlyLongProperty invalidChildren() {
         return invalidChildren;
     }
 

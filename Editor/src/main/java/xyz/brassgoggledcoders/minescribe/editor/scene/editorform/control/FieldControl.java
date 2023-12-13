@@ -75,9 +75,11 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
         this.resetButton = Suppliers.memoize(this::createResetButton);
         this.helpButton = Suppliers.memoize(this::createHelpButton);
 
+        StringProperty fieldInfoName = new SimpleStringProperty();
+        fieldInfoName.bind(this.label.map(Labeled::getText));
         this.fieldInfo = new FieldInfo(
                 this.getUniqueId(),
-                this.label.map(Labeled::getText)
+                fieldInfoName
         );
     }
 

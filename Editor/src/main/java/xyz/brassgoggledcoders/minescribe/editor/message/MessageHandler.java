@@ -22,8 +22,10 @@ public class MessageHandler {
     }
 
     public void addMessage(MineScribeMessage newMessage) {
-        this.messages.add(newMessage);
-        this.messages.removeIf(message -> !message.validProperty().get());
+        if (!this.messages.contains(newMessage)) {
+            this.messages.add(newMessage);
+            this.messages.removeIf(message -> !message.validProperty().get());
+        }
     }
 
     public void removeByPath(@NotNull Path path) {

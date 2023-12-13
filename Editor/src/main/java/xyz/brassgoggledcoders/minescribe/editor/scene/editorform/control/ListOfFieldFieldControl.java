@@ -7,6 +7,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
@@ -19,10 +20,7 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldCo
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.FieldListControl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldControl, ListProperty<Property<?>>, ObservableList<Property<?>>> {
 
@@ -135,6 +133,16 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     @Override
     public boolean fulfillsRequired(ObservableList<Property<?>> value) {
         return !value.isEmpty();
+    }
+
+    @Override
+    public ListOfFieldFieldControl withLabel(Label label) {
+        this.fieldListControl.textProperty()
+                .setValue(Optional.ofNullable(label)
+                        .map(Label::getText)
+                        .orElse("")
+                );
+        return super.withLabel(label);
     }
 
     public static ListOfFieldFieldControl of(ListOfFileFieldDefinition definition) {
