@@ -1,8 +1,10 @@
+import java.net.URI
+
 plugins {
     id("java")
-    id("net.minecraftforge.gradle") version("5.1.+")
+    id("net.minecraftforge.gradle") version ("5.1.+")
     id("org.parchmentmc.librarian.forgegradle") version ("1.+")
-    id("org.spongepowered.mixin") version("0.7-SNAPSHOT")
+    id("org.spongepowered.mixin") version ("0.7-SNAPSHOT")
 }
 
 group = "xyz.brassgoggledcoders.minescribe"
@@ -16,10 +18,19 @@ java {
 
 repositories {
     mavenCentral()
+
+    mavenLocal()
+    maven {
+        name = "Registrate"
+        url = URI("https://maven.tterrag.com/")
+    }
 }
 
 dependencies {
     "minecraft"("net.minecraftforge:forge:1.19.2-43.2.0")
+
+    implementation(fg.deobf("com.minerarcana:Transfiguration:1.19.2-1.5.1:nodep"))
+    implementation(fg.deobf("com.tterrag.registrate:Registrate:MC1.19-1.1.5"))
 
     implementation(project(":Core"))
 
@@ -53,12 +64,14 @@ minecraft {
             taskName("data")
             workingDirectory(project.file("run/data"))
             ideaModule("${rootProject.name}.${project.name}.main")
-            args.addAll(listOf(
-                "--mod", "minescribe",
-                "--all",
-                "--output", file("src/generated/resources/").toString(),
-                "--existing", file("src/main/resources/").toString()
-            ))
+            args.addAll(
+                listOf(
+                    "--mod", "minescribe",
+                    "--all",
+                    "--output", file("src/generated/resources/").toString(),
+                    "--existing", file("src/main/resources/").toString()
+                )
+            )
             mods {
                 create("minescribe") {
                     source(sourceSets.main.get())

@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.event;
 
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +10,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.registries.tags.ITagManager;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 import xyz.brassgoggledcoders.minescribe.api.data.FileFieldData;
@@ -34,6 +38,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -146,6 +151,42 @@ public class ForgeCommonEventHandler {
                         );
                     })
                     .forEach(formListsEvent::register);
+
+            List<ResourceLocation> registries = RegistryManager.getRegistryNamesForSyncToClient();
+            Set<ResourceLocation> resourceKeys = Registry.REGISTRY.keySet();
+            registries.removeAll(resourceKeys);
+            for (ResourceLocation registryId : registries) {
+                ResourceId id = new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath());
+                IForgeRegistry<?> forgeRegistry = RegistryManager.ACTIVE.getRegistry(registryId);
+                if (forgeRegistry != null) {
+                    formListsEvent.register(new FormList(
+                            id,
+                            MineScribeStringHelper.toTitleCase(registryId.getPath()
+                                    .replace("_", " ")
+                                    .replace("/", " ")
+                            ),
+                            forgeRegistry.getKeys()
+                                    .stream()
+                                    .map(ResourceLocation::toString)
+                                    .toList()
+                    ));
+
+                    ITagManager<?> tagManager = forgeRegistry.tags();
+                    if (tagManager != null) {
+                        ResourceId tagId = new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath());
+                        formListsEvent.register(new FormList(
+                                tagId,
+                                MineScribeStringHelper.toTitleCase(registryId.getPath()
+                                        .replace("_", " ")
+                                        .replace("/", " ")
+                                ),
+                                tagManager.getTagNames()
+                                        .map(tagKey -> "#" + tagKey.location())
+                                        .toList()
+                        ));
+                    }
+                }
+            }
         }
     }
 
