@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.form.control;
 
+import atlantafx.base.layout.InputGroup;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -10,27 +11,27 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.GlyphFont;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
+import org.kordamp.ikonli.feather.Feather;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
+import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
+import xyz.brassgoggledcoders.minescribe.editor.util.ButtonUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -43,14 +44,11 @@ public class FieldListControl extends TitledPane {
     private final ListProperty<Property<?>> values;
     private final IFileFieldDefinition fieldDefinition;
     private final Supplier<List<FieldValidation>> fieldValidationSupplier;
-
-    private final GlyphFont glyphFont;
     private final VBox fieldPane;
 
     public FieldListControl(IFileFieldDefinition fieldDefinition, Supplier<List<FieldValidation>> fieldValidationSupplier) {
         this.fieldDefinition = fieldDefinition;
         this.fieldValidationSupplier = fieldValidationSupplier;
-        this.glyphFont = GlyphFontRegistry.font("FontAwesome");
         this.fieldPane = new VBox();
         this.values = new SimpleListProperty<>(FXCollections.observableArrayList(p -> new Observable[]{p}));
         this.invalidChildren = new SimpleLongProperty(0);
@@ -82,7 +80,24 @@ public class FieldListControl extends TitledPane {
                     for (FieldContent<?> fieldContent : c.getRemoved()) {
                         if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                             this.values.remove((Property<?>) valueContent.valueProperty());
+                            if (!valueContent.messagesProperty().isEmpty()) {
+                                fieldContent.getNode()
+                                        .fireEvent(new FieldMessagesEvent(
+                                                fieldContent.getFieldInfo(),
+                                                Collections.emptySet(),
+                                                valueContent.messagesProperty(),
+                                                valueContent.messagesProperty()
+                                        ));
+                            }
+
                         }
+                        fieldPane.getChildren()
+                                .removeIf(node -> {
+                                    if (node instanceof FieldNode fieldNode) {
+                                        return fieldNode.field == fieldContent;
+                                    }
+                                    return false;
+                                });
                     }
                 }
             }
@@ -93,19 +108,17 @@ public class FieldListControl extends TitledPane {
         this.setContent(this.fieldPane);
         HBox newElementBox = new HBox();
         newElementBox.alignmentProperty().set(Pos.BOTTOM_RIGHT);
-        newElementBox.setMinHeight(10);
-        Label newFieldLabel = glyphFont.create(FontAwesome.Glyph.PLUS_SQUARE);
-        newFieldLabel.setOnMouseClicked(event -> {
-            if (newFieldLabel.isVisible()) {
-                this.addNewContent();
-            }
-        });
-        Bindings.size(this.getChildren())
-                .addListener((observable, oldValue, newValue) -> newFieldLabel.visibleProperty()
-                        .set(newValue.intValue() <= this.maximumFields.get())
-                );
 
-        newElementBox.getChildren().add(newFieldLabel);
+        Button newFieldButton = ButtonUtils.createIconButton(Feather.PLUS_SQUARE, "Add Field");
+        InputGroup newFieldGroup = new InputGroup(newFieldButton);
+        newFieldButton.setOnMouseClicked(event -> this.addNewContent());
+        newFieldButton.disableProperty()
+                .bind(Bindings.greaterThanOrEqual(
+                        Bindings.size(this.getChildren()),
+                        this.maximumFields
+                ));
+        newElementBox.setMinHeight(newFieldGroup.getMinHeight());
+        newElementBox.getChildren().add(newFieldGroup);
         this.fieldPane.getChildren().add(newElementBox);
     }
 
@@ -165,7 +178,6 @@ public class FieldListControl extends TitledPane {
     private FieldNode createFieldNode(FieldContent<?> newField) {
         FieldNode fieldNode = new FieldNode(
                 newField,
-                this.glyphFont.create(FontAwesome.Glyph.MINUS_SQUARE),
                 this.contents
         );
         this.contents.sizeProperty()
@@ -190,27 +202,31 @@ public class FieldListControl extends TitledPane {
         private final FieldContent<?> field;
         private final BooleanProperty valid;
 
-        public FieldNode(FieldContent<?> field, Label label, ObservableList<FieldContent<?>> listOfFields) {
+        public FieldNode(FieldContent<?> field, ObservableList<FieldContent<?>> listOfFields) {
             this.listOfFields = listOfFields;
             this.field = field;
-
-            label.setOnMouseClicked(this::handleClick);
-
-            StackPane removePane = new StackPane();
-            removePane.setAlignment(Pos.CENTER_RIGHT);
-            removePane.getChildren().add(label);
-            removePane.setPadding(new Insets(5));
 
             this.valid = new SimpleBooleanProperty(true);
             if (field instanceof IValueContent<?, ?, ?> valueContent) {
                 valid.bind(valueContent.validProperty());
             }
 
-            this.minusButtonVisible = new SimpleBooleanProperty();
-            label.visibleProperty().bind(this.minusButtonVisible);
             HBox.setHgrow(field.getNode(), Priority.ALWAYS);
-            HBox.setHgrow(label, Priority.NEVER);
-            this.getChildren().addAll(field.getNode(), label);
+            this.minusButtonVisible = new SimpleBooleanProperty();
+            if (field.getNode() instanceof InputGroup inputGroup) {
+                Button minusButton = ButtonUtils.createIconButton(Feather.X_SQUARE, "Remove Field");
+                minusButton.setOnMouseClicked(this::handleClick);
+                inputGroup.getChildren()
+                        .add(minusButton);
+                this.getChildren().add(inputGroup);
+            } else {
+                Button minusButton = ButtonUtils.createIconButton(Feather.X_SQUARE, "Remove Field");
+                minusButton.setOnMouseClicked(this::handleClick);
+                InputGroup minusInputGroup = new InputGroup(minusButton);
+                minusButton.setOnMouseClicked(this::handleClick);
+                this.getChildren().addAll(field.getNode(), minusInputGroup);
+            }
+
         }
 
         private void handleClick(MouseEvent mouseEvent) {

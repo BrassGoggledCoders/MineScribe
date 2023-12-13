@@ -33,6 +33,7 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.FieldCo
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IHelpTextContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.ILabeledContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
+import xyz.brassgoggledcoders.minescribe.editor.util.ButtonUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -337,9 +338,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     }
 
     private Button createResetButton() {
-        FontIcon resetIcon = new FontIcon(Feather.REPEAT);
-        Button resetButton = new Button("&nbsp;", resetIcon);
-        resetButton.getStyleClass().add(Styles.BUTTON_ICON);
+        Button resetButton = ButtonUtils.createIconButton(Feather.REFRESH_CW, "Reset");
         resetButton.onActionProperty()
                 .set(event -> reset());
         return resetButton;
