@@ -305,7 +305,8 @@ public class MineScribeCommonEventHandler {
                                 new IntegerFileFieldDefinition(new Range<>(
                                         0,
                                         0,
-                                        Integer.MAX_VALUE
+                                        10000,
+                                        1
                                 )),
                                 new FileFieldInfoData(
                                         "Sort Order",
@@ -486,7 +487,8 @@ public class MineScribeCommonEventHandler {
                                         new Range<>(
                                                 0.0,
                                                 0.7,
-                                                Double.MAX_VALUE
+                                                Double.MAX_VALUE,
+                                                0.1
                                         )
                                 ),
                                 new FileFieldInfoData(
@@ -501,7 +503,8 @@ public class MineScribeCommonEventHandler {
                                         new Range<>(
                                                 1,
                                                 100,
-                                                Integer.MAX_VALUE
+                                                Integer.MAX_VALUE,
+                                                1
                                         )
                                 ),
                                 new FileFieldInfoData(
@@ -578,7 +581,7 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Number Field (Double)"),
                 FileFormData.of(
                         new FileFieldData<>(
-                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 0D, Double.MAX_VALUE)),
+                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 0D, Double.MAX_VALUE, 0.1)),
                                 new FileFieldInfoData(
                                         "Minimum Value",
                                         JsonFieldNames.MIN,
@@ -587,7 +590,7 @@ public class MineScribeCommonEventHandler {
                                 )
                         ),
                         new FileFieldData<>(
-                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 0D, Double.MAX_VALUE)),
+                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 0D, Double.MAX_VALUE, 0.1)),
                                 new FileFieldInfoData(
                                         "Start Value",
                                         JsonFieldNames.START,
@@ -596,7 +599,7 @@ public class MineScribeCommonEventHandler {
                                 )
                         ),
                         new FileFieldData<>(
-                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, Double.MAX_VALUE, Double.MAX_VALUE)),
+                                new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 1000D, Double.MAX_VALUE, 0.1)),
                                 new FileFieldInfoData(
                                         "Maximum Value",
                                         JsonFieldNames.MAX,
@@ -613,7 +616,7 @@ public class MineScribeCommonEventHandler {
                 Component.literal("Number Field (Integer)"),
                 FileFormData.of(
                         new FileFieldData<>(
-                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 0, Integer.MAX_VALUE)),
+                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 0, Integer.MAX_VALUE, 1)),
                                 new FileFieldInfoData(
                                         "Minimum Value",
                                         JsonFieldNames.MIN,
@@ -622,7 +625,7 @@ public class MineScribeCommonEventHandler {
                                 )
                         ),
                         new FileFieldData<>(
-                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 0, Integer.MAX_VALUE)),
+                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 0, Integer.MAX_VALUE, 1)),
                                 new FileFieldInfoData(
                                         "Start Value",
                                         JsonFieldNames.START,
@@ -631,7 +634,7 @@ public class MineScribeCommonEventHandler {
                                 )
                         ),
                         new FileFieldData<>(
-                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)),
+                                new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 10000, Integer.MAX_VALUE, 1)),
                                 new FileFieldInfoData(
                                         "Maximum Value",
                                         JsonFieldNames.MAX,

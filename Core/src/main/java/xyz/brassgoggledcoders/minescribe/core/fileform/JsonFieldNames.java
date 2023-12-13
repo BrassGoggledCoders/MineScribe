@@ -16,5 +16,6 @@ public class JsonFieldNames {
     public static final String MIN = "min";
     public static final String START = "start";
     public static final String MAX = "max";
+    public static final String INCREMENT = "increment";
     public static final String HELP_TEXT = "helpText";
 }

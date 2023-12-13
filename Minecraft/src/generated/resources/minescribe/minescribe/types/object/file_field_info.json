@@ -26,7 +26,7 @@
         "definition": {
           "type": "integer",
           "range": {
-            "max": 2147483647,
+            "max": 10000,
             "min": 0,
             "start": 0
           }
