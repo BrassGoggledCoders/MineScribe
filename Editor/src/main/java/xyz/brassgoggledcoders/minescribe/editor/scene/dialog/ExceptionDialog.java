@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.dialog;
 
+import javafx.application.Platform;
 import javafx.scene.control.*;
 
 import java.io.ByteArrayOutputStream;
@@ -20,13 +21,19 @@ public class ExceptionDialog extends Dialog<ButtonType> {
     public static void showDialog(String header, Throwable e) {
         try (ByteArrayOutputStream bs = new ByteArrayOutputStream(); PrintStream ps = new PrintStream(bs, true, StandardCharsets.UTF_8)) {
             e.printStackTrace(ps);
-            new ExceptionDialog(header, bs.toString(StandardCharsets.UTF_8))
-                    .showAndWait();
+            Platform.runLater(() -> {
+                new ExceptionDialog(header, bs.toString(StandardCharsets.UTF_8))
+                        .showAndWait();
+            });
+
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
 
-        new Alert(Alert.AlertType.ERROR, "Failed to show dialog for Error: %s".formatted(header))
-                .showAndWait();
+        Platform.runLater(() -> {
+            new Alert(Alert.AlertType.ERROR, "Failed to show dialog for Error: %s".formatted(header))
+                    .showAndWait();
+        });
+
     }
 }
