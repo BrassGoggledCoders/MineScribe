@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.RegistryCodec;
+import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
 import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
@@ -15,8 +16,8 @@ public record RegistryFormList<V>(
         boolean fullNameId
 ) implements IFormList<V> {
     public static final Codec<RegistryFormList<?>> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            new RegistryCodec().fieldOf("registry").forGetter(RegistryFormList::registry),
-            Codec.BOOL.optionalFieldOf("fullNameId", false).forGetter(RegistryFormList::fullNameId)
+            new RegistryCodec().fieldOf(JsonFieldNames.REGISTRY).forGetter(RegistryFormList::registry),
+            Codec.BOOL.optionalFieldOf(JsonFieldNames.FULL_NAME_ID, false).forGetter(RegistryFormList::fullNameId)
     ).apply(instance, RegistryFormList::new));
 
     public RegistryFormList(Registry<?, V> registry) {

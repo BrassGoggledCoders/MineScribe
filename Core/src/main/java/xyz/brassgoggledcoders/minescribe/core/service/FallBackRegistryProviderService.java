@@ -1,5 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.core.service;
 
+import xyz.brassgoggledcoders.minescribe.core.MineScribeRuntime;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.registry.BasicStaticRegistry;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
@@ -42,6 +44,14 @@ public class FallBackRegistryProviderService implements IRegistryProviderService
             }
     );
 
+    public static Registry<ResourceId, FormList> FORM_LISTS = new BasicStaticRegistry<>(
+            RegistryNames.FORM_LIST_VALUES,
+            ResourceId.CODEC,
+            register -> {
+
+            }
+    );
+
     private final List<Registry<?, ?>> registries;
 
     public FallBackRegistryProviderService() {
@@ -49,7 +59,8 @@ public class FallBackRegistryProviderService implements IRegistryProviderService
                 PACK_TYPES,
                 PARENT_TYPES,
                 CHILD_TYPES,
-                OBJECT_TYPES
+                OBJECT_TYPES,
+                FORM_LISTS
         );
     }
 
@@ -61,11 +72,15 @@ public class FallBackRegistryProviderService implements IRegistryProviderService
     @Override
     @SuppressWarnings("unchecked")
     public <K, V> Optional<Registry<K, V>> getRegistry(String name) {
-        return this.getRegistries()
-                .stream()
-                .filter(registry -> registry.getName().equals(name))
-                .map(registry -> (Registry<K, V>) registry)
-                .findAny();
+        if (MineScribeRuntime.getRuntime() == MineScribeRuntime.MINECRAFT) {
+            return this.getRegistries()
+                    .stream()
+                    .filter(registry -> registry.getName().equals(name))
+                    .map(registry -> (Registry<K, V>) registry)
+                    .findAny();
+        }
+
+        return Optional.empty();
     }
 
     @Override

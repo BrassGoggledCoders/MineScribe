@@ -18,6 +18,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFi
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.RegistryFormList;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.RegistryListFormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.ValueFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
@@ -25,6 +26,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -396,6 +398,15 @@ public class MineScribeCommonEventHandler {
                         )
                 )
         ));
+        consumer.accept(new ObjectTypeData(
+                new ResourceLocation(MineScribe.ID, "form_list"),
+                FileFormData.of(
+                        SerializerInfo.of(
+                                "type",
+                                "Type"
+                        )
+                )
+        ));
 
         consumer.accept(new ObjectTypeData(
                 new ResourceLocation(MineScribe.ID, "serializer_info"),
@@ -700,6 +711,120 @@ public class MineScribeCommonEventHandler {
                                         JsonFieldNames.MAX,
                                         0,
                                         false
+                                )
+                        )
+                )
+        ));
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "file_field_definitions/single_selection"),
+                new ResourceLocation(MineScribe.ID, "single_selection"),
+                new ResourceLocation(MineScribe.ID, "types/object/file_field_definition"),
+                Component.literal("Single Selection ComboBox Field"),
+                FileFormData.of(
+                        new FileFieldData<>(
+                                new ListOfFileFieldDefinition(
+                                        1,
+                                        Integer.MAX_VALUE,
+                                        new ReferencedObjectFileFieldDefinition(
+                                                new ResourceId(MineScribe.ID, "form_lists")
+                                        )
+                                ),
+                                new FileFieldInfoData(
+                                        "Form Lists",
+                                        JsonFieldNames.LISTS,
+                                        0,
+                                        true
+                                )
+                        )
+                )
+        ));
+
+
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "form_lists/list"),
+                new ResourceLocation(MineScribe.ID, "list"),
+                new ResourceLocation(MineScribe.ID, "types/object/form_list"),
+                Component.literal("List"),
+                FileFormData.of(
+                        new FileFieldData<>(
+                                new SingleSelectionFileFieldDefinition(
+                                        new RegistryFormList<>(Registries.getFormListValues())
+                                ),
+                                new FileFieldInfoData(
+                                        "List Id",
+                                        JsonFieldNames.ID,
+                                        0,
+                                        true
+                                )
+                        )
+                )
+        ));
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "form_lists/registry_names"),
+                new ResourceLocation(MineScribe.ID, "registry_names"),
+                new ResourceLocation(MineScribe.ID, "types/object/form_list"),
+                Component.literal("Registry Names"),
+                FileFormData.of(
+                )
+        ));
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "form_lists/file_name"),
+                new ResourceLocation(MineScribe.ID, "file_name"),
+                new ResourceLocation(MineScribe.ID, "types/object/form_list"),
+                Component.literal("Files"),
+                FileFormData.of(
+                        new FileFieldData<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "Folder Matcher",
+                                        JsonFieldNames.FOLDER_MATCHER,
+                                        0,
+                                        true,
+                                        Collections.emptyList(),
+                                        Optional.of("Folder Matcher is based on Java's glob, with more info found here: " +
+                                                "https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob"
+                                        )
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "Leading Character",
+                                        JsonFieldNames.LEADING_CHARACTER,
+                                        1,
+                                        false,
+                                        Collections.emptyList(),
+                                        Optional.of("Adds a character like # (for tags) prior to the id created from " +
+                                                "the folder name")
+                                )
+                        )
+                )
+        ));
+        consumer.accept(new SerializerTypeData(
+                new ResourceLocation(MineScribe.ID, "form_lists/registry"),
+                new ResourceLocation(MineScribe.ID, "registry"),
+                new ResourceLocation(MineScribe.ID, "types/object/form_list"),
+                Component.literal("Registry Values"),
+                FileFormData.of(
+                        new FileFieldData<>(
+                                new SingleSelectionFileFieldDefinition(new RegistryListFormList()),
+                                new FileFieldInfoData(
+                                        "Registry",
+                                        JsonFieldNames.REGISTRY,
+                                        0,
+                                        true,
+                                        Collections.emptyList()
+                                )
+                        ),
+                        new FileFieldData<>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "Use Full ID",
+                                        JsonFieldNames.FULL_NAME_ID,
+                                        1,
+                                        false,
+                                        Collections.emptyList(),
+                                        Optional.of("Determines if the registry id should include the registry path")
                                 )
                         )
                 )

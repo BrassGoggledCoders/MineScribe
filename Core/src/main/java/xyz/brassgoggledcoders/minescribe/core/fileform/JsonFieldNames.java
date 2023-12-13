@@ -2,7 +2,7 @@ package xyz.brassgoggledcoders.minescribe.core.fileform;
 
 public class JsonFieldNames {
     public static final String LISTS = "lists";
-    public static final String LIST = "list";
+    public static final String ID = "id";
     public static final String LABEL = "label";
     public static final String FIELD = "field";
     public static final String SORT_ORDER = "sortOrder";
@@ -18,4 +18,8 @@ public class JsonFieldNames {
     public static final String MAX = "max";
     public static final String INCREMENT = "increment";
     public static final String HELP_TEXT = "helpText";
+    public static final String FOLDER_MATCHER = "folderMatcher";
+    public static final String LEADING_CHARACTER = "leadingCharacter";
+    public static final String REGISTRY = "registry";
+    public static final String FULL_NAME_ID = "fullNameId";
 }

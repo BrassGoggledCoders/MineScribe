@@ -91,7 +91,7 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
     public static SingleSelectionFieldControl<FormListValue> of(SingleSelectionFileFieldDefinition definition) throws FormException {
         try {
             List<FormListValue> values = new ArrayList<>();
-            for (IFormList<?> formList : definition.formList()) {
+            for (IFormList<?> formList : definition.formLists()) {
                 values.addAll(formList.getFormListValues());
             }
             values.add(0, null);

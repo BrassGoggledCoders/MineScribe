@@ -1,0 +1,34 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "string"
+        },
+        "info": {
+          "field": "folderMatcher",
+          "helpText": "Folder Matcher is based on Java's glob, with more info found here: https://docs.oracle.com/javase/tutorial/essential/io/fileOps.html#glob",
+          "label": "Folder Matcher",
+          "required": true
+        }
+      },
+      {
+        "definition": {
+          "type": "string"
+        },
+        "info": {
+          "field": "leadingCharacter",
+          "helpText": "Adds a character like # (for tags) prior to the id created from the folder name",
+          "label": "Leading Character",
+          "sortOrder": 1
+        }
+      }
+    ]
+  },
+  "id": "minescribe:form_lists/file_name",
+  "label": {
+    "text": "Files"
+  },
+  "parentId": "minescribe:types/object/form_list",
+  "serializerId": "minescribe:file_name"
+}

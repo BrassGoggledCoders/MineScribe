@@ -5,10 +5,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FileIdFormList;
-import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
-import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.RegistryFormList;
-import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.ValueFormList;
+import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.*;
 import xyz.brassgoggledcoders.minescribe.core.registry.BasicStaticRegistry;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
@@ -42,6 +39,7 @@ public class CoreRegistryProviderService implements IRegistryProviderService {
                 register.accept("registry", RegistryFormList.CODEC);
                 register.accept("file_name", FileIdFormList.CODEC);
                 register.accept("list", ValueFormList.CODEC);
+                register.accept("registry_names", RegistryListFormList.CODEC);
             }
     );
 

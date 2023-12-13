@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.util.FolderCollection;
@@ -16,8 +17,8 @@ import java.util.function.Supplier;
 public class FileIdFormList implements IFormList<ResourceId> {
 
     public static final Codec<FileIdFormList> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("folderMatcher").forGetter(FileIdFormList::getFolderMatcher),
-            Codec.STRING.fieldOf("leadingCharacter").forGetter(FileIdFormList::getLeadingCharacter)
+            Codec.STRING.fieldOf(JsonFieldNames.FOLDER_MATCHER).forGetter(FileIdFormList::getFolderMatcher),
+            Codec.STRING.fieldOf(JsonFieldNames.LEADING_CHARACTER).forGetter(FileIdFormList::getLeadingCharacter)
     ).apply(instance, FileIdFormList::new));
 
     private final String folderMatcher;

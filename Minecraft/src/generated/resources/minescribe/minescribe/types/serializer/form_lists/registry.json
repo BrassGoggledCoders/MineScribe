@@ -1,0 +1,36 @@
+{
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "single_selection",
+          "lists": {
+            "type": "registry_names"
+          }
+        },
+        "info": {
+          "field": "registry",
+          "label": "Registry",
+          "required": true
+        }
+      },
+      {
+        "definition": {
+          "type": "string"
+        },
+        "info": {
+          "field": "fullNameId",
+          "helpText": "Determines if the registry id should include the registry path",
+          "label": "Use Full ID",
+          "sortOrder": 1
+        }
+      }
+    ]
+  },
+  "id": "minescribe:form_lists/registry",
+  "label": {
+    "text": "Registry Values"
+  },
+  "parentId": "minescribe:types/object/form_list",
+  "serializerId": "minescribe:registry"
+}

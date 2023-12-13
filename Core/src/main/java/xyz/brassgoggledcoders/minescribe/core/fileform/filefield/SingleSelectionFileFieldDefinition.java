@@ -11,10 +11,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public record SingleSelectionFileFieldDefinition(List<IFormList<?>> formList) implements IFileFieldDefinition {
+public record SingleSelectionFileFieldDefinition(List<IFormList<?>> formLists) implements IFileFieldDefinition {
     public static final Codec<SingleSelectionFileFieldDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.either(IFormList.CODEC, IFormList.CODEC.listOf())
-                    .fieldOf(JsonFieldNames.LIST)
+                    .fieldOf(JsonFieldNames.LISTS)
                     .<List<IFormList<?>>>xmap(
                             either -> either.map(List::of, Function.identity()),
                             list -> {
@@ -25,7 +25,7 @@ public record SingleSelectionFileFieldDefinition(List<IFormList<?>> formList) im
                                 }
                             }
                     )
-                    .forGetter(SingleSelectionFileFieldDefinition::formList)
+                    .forGetter(SingleSelectionFileFieldDefinition::formLists)
     ).apply(instance, SingleSelectionFileFieldDefinition::new));
 
     public SingleSelectionFileFieldDefinition(IFormList<?> formList) {

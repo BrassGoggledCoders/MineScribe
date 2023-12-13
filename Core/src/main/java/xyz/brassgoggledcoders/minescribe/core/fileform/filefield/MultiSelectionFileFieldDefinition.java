@@ -10,7 +10,7 @@ import java.util.List;
 
 public record MultiSelectionFileFieldDefinition(List<IFormList<?>> formLists) implements IFileFieldDefinition {
     public static final Codec<MultiSelectionFileFieldDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            IFormList.CODEC.listOf().fieldOf(JsonFieldNames.LIST).forGetter(MultiSelectionFileFieldDefinition::formLists)
+            IFormList.CODEC.listOf().fieldOf(JsonFieldNames.LISTS).forGetter(MultiSelectionFileFieldDefinition::formLists)
     ).apply(instance, MultiSelectionFileFieldDefinition::new));
 
     @Override

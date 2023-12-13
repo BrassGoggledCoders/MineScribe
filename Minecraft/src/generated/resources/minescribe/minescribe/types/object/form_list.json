@@ -1,0 +1,9 @@
+{
+  "form": {
+    "fields": [],
+    "serializer": {
+      "label": "Type"
+    }
+  },
+  "id": "minescribe:form_list"
+}

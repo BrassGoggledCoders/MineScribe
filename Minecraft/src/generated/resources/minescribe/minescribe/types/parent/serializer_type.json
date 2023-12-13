@@ -4,7 +4,7 @@
       {
         "definition": {
           "type": "single_selection",
-          "list": [
+          "lists": [
             {
               "type": "registry",
               "fullNameId": true,

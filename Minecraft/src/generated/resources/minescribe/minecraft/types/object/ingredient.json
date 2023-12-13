@@ -7,7 +7,7 @@
           {
             "definition": {
               "type": "single_selection",
-              "list": {
+              "lists": {
                 "type": "list",
                 "id": "minecraft:registry/item"
               }
@@ -21,7 +21,7 @@
           {
             "definition": {
               "type": "single_selection",
-              "list": {
+              "lists": {
                 "type": "list",
                 "id": "minecraft:tag/item"
               }
