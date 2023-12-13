@@ -41,7 +41,7 @@ public class FallBackRegistryProviderService implements IRegistryProviderService
 
             }
     );
-    
+
     private final List<Registry<?, ?>> registries;
 
     public FallBackRegistryProviderService() {
