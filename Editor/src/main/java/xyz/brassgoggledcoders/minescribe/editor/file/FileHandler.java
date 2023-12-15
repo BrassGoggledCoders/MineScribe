@@ -150,6 +150,7 @@ public class FileHandler {
         Project project = InfoRepository.getInstance()
                 .getValue(Project.KEY);
         if (project != null) {
+            WATCHER.watchDirectory(project.getMineScribeFolder());
             for (PackRepositoryLocation location : Registries.getPackRepositoryLocationRegistry()) {
                 PathMatcher pathMatcher = project.getRootPath()
                         .getFileSystem()
