@@ -7,7 +7,7 @@
           "objectId": "minescribe:file_field_definition"
         },
         "info": {
-          "field": "fields",
+          "field": "definition",
           "label": "Definition",
           "required": true
         }

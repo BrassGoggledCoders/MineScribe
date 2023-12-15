@@ -482,7 +482,7 @@ public class MineScribeCommonEventHandler {
                                 ),
                                 new FileFieldInfoData(
                                         "Definition",
-                                        "fields",
+                                        JsonFieldNames.DEFINITION,
                                         0,
                                         true
                                 )
@@ -493,7 +493,7 @@ public class MineScribeCommonEventHandler {
                                 ),
                                 new FileFieldInfoData(
                                         "Info",
-                                        "info",
+                                        JsonFieldNames.INFO,
                                         1,
                                         true
                                 )
