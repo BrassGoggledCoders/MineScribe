@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.kordamp.ikonli.feather.Feather;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,6 +158,8 @@ public class FieldListControl extends TitledPane {
             return fieldContent;
         } catch (FormException formException) {
             LOGGER.error("Failed to create new Field Pane for Field List Control", formException);
+            new ExceptionDialog(formException)
+                    .showAndWait();
         }
         return null;
     }
