@@ -12,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -45,6 +46,7 @@ import java.util.stream.Stream;
 public class EditorFormPane extends GridPane {
     private static final ColumnConstraints LABEL = Suppliers.memoize(() -> {
         ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setMinWidth(50);
         columnConstraints.setHgrow(Priority.SOMETIMES);
         return columnConstraints;
     }).get();
@@ -279,6 +281,9 @@ public class EditorFormPane extends GridPane {
                 Label label = editorFieldPane.labelProperty().get();
                 if (label != null) {
                     this.add(label, 0, currentRow);
+                    Tooltip tooltip = new Tooltip();
+                    tooltip.textProperty().bind(label.textProperty());
+                    Tooltip.install(label, tooltip);
                     label.setAlignment(Pos.CENTER_LEFT);
                 }
 
