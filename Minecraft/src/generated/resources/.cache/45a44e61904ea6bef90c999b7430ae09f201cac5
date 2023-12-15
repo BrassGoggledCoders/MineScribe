@@ -1,10 +1,10 @@
-// 1.19.2	2023-12-13T01:22:03.6180612	types/serializer generator for minescribe
+// 1.19.2	2023-12-14T22:22:58.5653903	types/serializer generator for minescribe
 de775f7e340b7aa5e74d9744ec5baa45a534e139 minescribe/forge/types/serializer/ingredients/compound.json
 91df73552dd8e181fcc76f9f541aad823128dae1 minescribe/minecraft/types/serializer/recipes/blasting.json
 a599777f846b09683012db313c3e10c34f769e81 minescribe/minescribe/types/serializer/file_field_definitions/checkbox.json
 8972e810ee370412d370920deb4faf4c009b6855 minescribe/minescribe/types/serializer/file_field_definitions/double.json
 165bd7a25edcba48cbebd26d19c7fe078b395fbf minescribe/minescribe/types/serializer/file_field_definitions/integer.json
-c503ce2800b73ad0858a78b604fa96e29d68d1f7 minescribe/minescribe/types/serializer/file_field_definitions/single_selection.json
+c6a76ea3be0a5e9477ef92e1cba9e622b9a24f1c minescribe/minescribe/types/serializer/file_field_definitions/single_selection.json
 6a3dccf5cbd40dde27f037fe213d2eace525fd77 minescribe/minescribe/types/serializer/file_field_definitions/string.json
 b9f2ec8d31d5b31bac1008f3d8b69a36e94e133f minescribe/minescribe/types/serializer/form_lists/file_name.json
 38e322d454d83d0a5f7bcb5e9744eb713fe180c1 minescribe/minescribe/types/serializer/form_lists/list.json

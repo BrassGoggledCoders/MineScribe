@@ -34,10 +34,21 @@
           "type": "string"
         },
         "info": {
+          "field": "serializerId",
+          "label": "ID",
+          "required": true,
+          "sortOrder": 2
+        }
+      },
+      {
+        "definition": {
+          "type": "string"
+        },
+        "info": {
           "field": "label",
           "label": "Label",
           "required": true,
-          "sortOrder": 2
+          "sortOrder": 3
         }
       },
       {
@@ -48,7 +59,7 @@
         "info": {
           "field": "form",
           "label": "File Form",
-          "sortOrder": 3
+          "sortOrder": 4
         }
       }
     ]

@@ -183,12 +183,21 @@ public class MineScribeCommonEventHandler {
                                         true
                                 )
                         ),
+                        new FileFieldData<IFileFieldDefinition>(
+                                new StringFileFieldDefinition(""),
+                                new FileFieldInfoData(
+                                        "ID",
+                                        "serializerId",
+                                        2,
+                                        true
+                                )
+                        ),
                         new FileFieldData<>(
                                 new StringFileFieldDefinition(""),
                                 new FileFieldInfoData(
                                         "Label",
                                         "label",
-                                        2,
+                                        3,
                                         true
                                 )
                         ),
@@ -199,7 +208,7 @@ public class MineScribeCommonEventHandler {
                                 new FileFieldInfoData(
                                         "File Form",
                                         "form",
-                                        3,
+                                        4,
                                         false
                                 )
                         )
@@ -726,7 +735,7 @@ public class MineScribeCommonEventHandler {
                                         1,
                                         Integer.MAX_VALUE,
                                         new ReferencedObjectFileFieldDefinition(
-                                                new ResourceId(MineScribe.ID, "form_lists")
+                                                new ResourceId(MineScribe.ID, "form_list")
                                         )
                                 ),
                                 new FileFieldInfoData(
