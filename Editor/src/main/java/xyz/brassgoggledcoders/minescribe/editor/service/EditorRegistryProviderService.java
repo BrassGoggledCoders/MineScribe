@@ -8,7 +8,8 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.DoubleFi
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.IntegerFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
-import xyz.brassgoggledcoders.minescribe.core.registry.*;
+import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
+import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
@@ -41,9 +42,9 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
             Path.of("types", "child").toString(),
             PackContentChildType.CODEC
     );
-    private static final LoadOnGetJsonRegistry<FormList> formValueLists = new LoadOnGetJsonRegistry<>(
+    private static final BasicJsonRegistry<FormList> formValueLists = new BasicJsonRegistry<>(
             RegistryNames.FORM_LIST_VALUES,
-            Path.of("form_lists"),
+            Path.of("form_lists").toString(),
             FormList.CODEC
     );
     private static final BasicJsonRegistry<ObjectType> objectTypes = new BasicJsonRegistry<>(
@@ -163,7 +164,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 fileLoadedRegistry.load(dataRoot);
             }
         }
-        formValueLists.setDataPath(dataRoot);
+        //formValueLists.setDataPath(dataRoot);
 
         this.validate();
     }
