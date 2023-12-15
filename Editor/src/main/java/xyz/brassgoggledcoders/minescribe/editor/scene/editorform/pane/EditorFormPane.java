@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldAddedEvent;
@@ -38,7 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -209,7 +208,7 @@ public class EditorFormPane extends GridPane {
         this.validate();
         this.getEditorFieldPanes()
                 .forEach(editorFieldPane -> {
-                    if (editorFieldPane.getFieldContent() instanceof IValueContent<?,?,?> valueContent) {
+                    if (editorFieldPane.getFieldContent() instanceof IValueContent<?, ?, ?> valueContent) {
                         valueContent.validateAll();
                     }
                 });
@@ -391,7 +390,7 @@ public class EditorFormPane extends GridPane {
         }
     }
 
-    public static EditorFormPane of(FileForm form, Supplier<List<SerializerType>> gatherTypes,
+    public static EditorFormPane of(FileForm form, List<IFullName> parents,
                                     @Nullable JsonObject persistedObject) throws FormException {
         List<EditorFieldPane<?>> editorFieldPanes = new LinkedList<>();
 
@@ -399,7 +398,7 @@ public class EditorFormPane extends GridPane {
             editorFieldPanes.add(EditorFileFieldPane.of(form, field));
         }
 
-        SerializerEditorFieldPane.of(form, gatherTypes)
+        SerializerEditorFieldPane.of(form, parents)
                 .ifPresent(editorFieldPanes::add);
 
         List<FormValidation> filteredValidation = form.getValidations()

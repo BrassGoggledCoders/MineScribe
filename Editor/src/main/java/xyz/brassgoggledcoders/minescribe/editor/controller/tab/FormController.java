@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
@@ -28,7 +29,6 @@ import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
-import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
@@ -39,9 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class FormController implements IFileEditorController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FormController.class);
@@ -105,10 +103,14 @@ public class FormController implements IFileEditorController {
             }
 
             try {
+                List<IFullName> parents = new ArrayList<>();
+                parents.add(parentType);
+                if (childType != null) {
+                    parents.add(childType);
+                }
                 this.editorForm = EditorFormPane.of(
                         fileForm,
-                        EditorRegistries.getSerializerTypes()
-                                .supplyList(parentType, childType),
+                        parents,
                         null
                 );
 

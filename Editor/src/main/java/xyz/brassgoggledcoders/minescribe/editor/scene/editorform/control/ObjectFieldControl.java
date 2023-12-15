@@ -163,8 +163,7 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
         if (objectType != null) {
             EditorFormPane editorFormPane = EditorFormPane.of(
                     objectType.fileForm(),
-                    EditorRegistries.getSerializerTypes()
-                            .supplyList(objectType),
+                    List.of(objectType),
                     null
             );
             return new ObjectFieldControl(editorFormPane);

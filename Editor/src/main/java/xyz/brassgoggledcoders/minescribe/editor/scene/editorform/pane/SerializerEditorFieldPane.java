@@ -7,6 +7,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.Label;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
@@ -18,17 +19,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFieldControl<SerializerType>> {
     private final SingleSelectionFieldControl<SerializerType> fieldControl;
     private final SerializerInfo serializerInfo;
+    private final List<ResourceId> parents;
 
-    private SerializerEditorFieldPane(FileForm fileForm, SerializerInfo serializerInfo,
+    private SerializerEditorFieldPane(FileForm fileForm, SerializerInfo serializerInfo, List<IFullName> parents,
                                       SingleSelectionFieldControl<SerializerType> fieldControl) {
         super(fileForm);
         this.serializerInfo = serializerInfo;
         this.fieldControl = fieldControl;
+        this.parents = parents.stream()
+                .map(IFullName::getFullName)
+                .toList();
         this.labelProperty().set(new Label(serializerInfo.label()));
 
         setup();
@@ -71,6 +75,24 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
             ResourceId.fromString(jsonElement.getAsString())
                     .result()
                     .map(EditorRegistries.getSerializerTypes()::getValue)
+                    .ifPresent(selected::set);
+        }
+
+        if (selected.get() == null && jsonElement != null && jsonElement.isJsonPrimitive()) {
+            ResourceId.fromString(jsonElement.getAsString())
+                    .result()
+                    .flatMap(resourceId -> Registries.getSerializerTypes()
+                            .getValues()
+                            .stream()
+                            .filter(serializerType -> parents.contains(serializerType.parentId()))
+                            .filter(serializerType -> serializerType.serializerId().equals(resourceId))
+                            .min((typeA, typeB) -> {
+                                int posA = parents.indexOf(typeA.parentId());
+                                int posB = parents.indexOf(typeB.parentId());
+
+                                return Integer.compare(posA, posB);
+                            })
+                    )
                     .ifPresent(selected::set);
         }
 
@@ -126,10 +148,16 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                 '}';
     }
 
-    public static Optional<SerializerEditorFieldPane> of(FileForm fileForm, Supplier<List<SerializerType>> gatherTypes) {
+    public static Optional<SerializerEditorFieldPane> of(FileForm fileForm, List<IFullName> parents) {
         return fileForm.getSerializer()
                 .map(serializerInfo -> {
-                    List<SerializerType> serializerTypes = new ArrayList<>(gatherTypes.get());
+
+                    List<SerializerType> serializerTypes = new ArrayList<>();
+                    for (IFullName fullName : parents) {
+                        serializerTypes.addAll(EditorRegistries.getSerializerTypes()
+                                .getFor(fullName.getFullName())
+                        );
+                    }
                     if (serializerInfo.defaultForm().isPresent()) {
                         SerializerType defaultFieldsType = new SerializerType(
                                 ResourceId.NULL,
@@ -152,7 +180,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                             .withLabel(serializerInfo.label())
                             .withRequired(true);
 
-                    return new SerializerEditorFieldPane(fileForm, serializerInfo, field);
+                    return new SerializerEditorFieldPane(fileForm, serializerInfo, parents, field);
                 });
     }
 }

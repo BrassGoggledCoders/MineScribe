@@ -61,7 +61,7 @@ public class EditorFormDialog<T> extends Dialog<T> {
 
     public static <U> EditorFormDialog<U> of(Codec<U> codec, FileForm fileForm) {
         try {
-            return new EditorFormDialog<>(EditorFormPane.of(fileForm, Collections::emptyList, null), codec);
+            return new EditorFormDialog<>(EditorFormPane.of(fileForm, Collections.emptyList(), null), codec);
         } catch (FormException formException) {
             new ExceptionDialog(formException)
                     .showAndWait();
