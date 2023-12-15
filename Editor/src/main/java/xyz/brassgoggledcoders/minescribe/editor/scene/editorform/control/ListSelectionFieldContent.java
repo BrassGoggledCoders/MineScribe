@@ -27,7 +27,6 @@ public class ListSelectionFieldContent<T extends Comparable<T>> extends FieldCon
     private final Function<T, String> getId;
     private final List<T> items;
 
-
     public ListSelectionFieldContent(List<T> items, Function<T, String> getId, Function<T, String> getLabel) {
         super();
         this.items = items;
@@ -93,6 +92,13 @@ public class ListSelectionFieldContent<T extends Comparable<T>> extends FieldCon
     @Override
     public ObjectProperty<ObservableList<T>> valueProperty() {
         return this.listSelection.targetItemsProperty();
+    }
+
+    @Override
+    public boolean containsUserData() {
+        return !this.valueProperty()
+                .get()
+                .isEmpty();
     }
 
     @Override

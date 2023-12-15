@@ -69,6 +69,11 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
         return this.comboBox.valueProperty();
     }
 
+    @Override
+    public boolean containsUserData() {
+        return this.valueProperty().get() != null;
+    }
+
     public ObjectProperty<ObservableList<T>> itemsProperty() {
         return this.comboBox.itemsProperty();
     }

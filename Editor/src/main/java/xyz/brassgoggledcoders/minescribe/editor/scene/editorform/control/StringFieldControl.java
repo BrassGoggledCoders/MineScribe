@@ -17,14 +17,14 @@ import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 public class StringFieldControl extends FieldControl<StringFieldControl, StringProperty, String> {
     private final CustomTextField textField;
     private final InputGroup inputGroup;
+    private final String defaultText;
 
-    public StringFieldControl(String text) {
+    public StringFieldControl(String defaultText) {
         super();
-        this.textField = new CustomTextField();
+        this.defaultText = defaultText;
+        this.textField = new CustomTextField(defaultText);
         HBox.setHgrow(this.textField, Priority.ALWAYS);
         this.inputGroup = this.createInputGroup(this.textField);
-        this.valueProperty()
-                .set(text);
     }
 
     @Override
@@ -65,6 +65,11 @@ public class StringFieldControl extends FieldControl<StringFieldControl, StringP
     @Override
     public boolean fulfillsRequired(String value) {
         return value != null && !value.isEmpty();
+    }
+
+    @Override
+    public boolean containsUserData() {
+        return !this.defaultText.equals(this.valueProperty().get());
     }
 
     public static StringFieldControl of(StringFileFieldDefinition definition) {

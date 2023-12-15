@@ -59,6 +59,11 @@ public class CheckBoxFieldControl extends FieldControl<CheckBoxFieldControl, Boo
         return value != null;
     }
 
+    @Override
+    public boolean containsUserData() {
+        return this.defaultValue != this.checkBox.isSelected();
+    }
+
     public static CheckBoxFieldControl of(CheckBoxFileFieldDefinition definition) {
         return new CheckBoxFieldControl(definition.defaultValue());
     }

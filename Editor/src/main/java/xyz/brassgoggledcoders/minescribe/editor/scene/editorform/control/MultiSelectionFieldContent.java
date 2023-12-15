@@ -99,6 +99,12 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
     }
 
     @Override
+    public boolean containsUserData() {
+        return !this.valueProperty()
+                .isEmpty();
+    }
+
+    @Override
     public boolean fulfillsRequired(ObservableList<T> value) {
         return !value.isEmpty();
     }

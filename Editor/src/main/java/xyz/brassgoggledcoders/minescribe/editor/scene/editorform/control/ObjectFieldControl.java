@@ -19,6 +19,7 @@ import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 
 import java.util.List;
@@ -114,7 +115,9 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
 
     @Override
     public void persist() {
-        this.formPane.persist();
+        if (this.containsUserData()) {
+            this.formPane.persist();
+        }
         super.persist();
     }
 
@@ -127,7 +130,21 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     @Override
     public void validateAll() {
         super.validateAll();
-        this.formPane.validateAll();
+        if (this.requiredProperty().get() || this.containsUserData()) {
+            this.formPane.validateAll();
+        }
+    }
+
+    @Override
+    public boolean containsUserData() {
+        return this.formPane.getEditorFieldPanes()
+                .anyMatch(editorFieldPane -> {
+                    if (editorFieldPane.getFieldContent() instanceof IValueContent<?,?,?> valueContent) {
+                        return valueContent.containsUserData();
+                    }
+
+                    return false;
+                });
     }
 
     @Override

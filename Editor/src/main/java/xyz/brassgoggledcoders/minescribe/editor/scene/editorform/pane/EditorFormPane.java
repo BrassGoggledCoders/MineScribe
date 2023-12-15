@@ -246,7 +246,7 @@ public class EditorFormPane extends GridPane {
 
     //Intellij complains otherwise?
     @SuppressWarnings("RedundantTypeArguments")
-    private Stream<EditorFieldPane<?>> getEditorFieldPanes() {
+    public Stream<EditorFieldPane<?>> getEditorFieldPanes() {
         return this.getChildren()
                 .stream()
                 .filter(EditorFieldPane.class::isInstance)

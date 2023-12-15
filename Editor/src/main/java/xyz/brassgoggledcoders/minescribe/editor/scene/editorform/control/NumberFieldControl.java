@@ -10,6 +10,8 @@ import javafx.scene.control.SpinnerValueFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.number.NumberFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 
+import java.util.Objects;
+
 public class NumberFieldControl<N extends Number> extends FieldControl<NumberFieldControl<N>, ReadOnlyObjectProperty<N>, N> {
     private final Spinner<N> spinner = new Spinner<>();
     private final NumberFileFieldDefinition<N> definition;
@@ -43,6 +45,17 @@ public class NumberFieldControl<N extends Number> extends FieldControl<NumberFie
     @Override
     public ReadOnlyObjectProperty<N> valueProperty() {
         return this.spinner.valueProperty();
+    }
+
+    @Override
+    public boolean containsUserData() {
+        return !Objects.equals(
+                this.definition.getRange()
+                        .start(),
+                this.definition.convertNumber(this.valueProperty()
+                        .get()
+                )
+        );
     }
 
     @Override

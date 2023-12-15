@@ -57,7 +57,10 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
         JsonArray jsonArray = new JsonArray();
         for (FieldContent<?> fieldContent : this.fieldListControl.contentsProperty()) {
             if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
-                jsonArray.add(valueContent.save());
+                JsonElement jsonElement = valueContent.save();
+                if (jsonElement != null && !jsonElement.isJsonNull()) {
+                    jsonArray.add(jsonElement);
+                }
             }
         }
         return jsonArray;
@@ -113,6 +116,19 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     }
 
     @Override
+    public void persist() {
+        this.fieldListControl.contentsProperty()
+                .forEach(fieldContent -> {
+                    if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                        if (valueContent.containsUserData()) {
+                            valueContent.persist();
+                        }
+                    }
+                });
+        super.persist();
+    }
+
+    @Override
     public boolean hasValidations() {
         return true;
     }
@@ -148,11 +164,27 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     @Override
     public void validateAll() {
         super.validateAll();
-        for (FieldContent<?> fieldContent : this.fieldListControl.contentsProperty()) {
-            if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
-                valueContent.validateAll();
+        if (this.requiredProperty().get() || this.containsUserData()) {
+            for (FieldContent<?> fieldContent : this.fieldListControl.contentsProperty()) {
+                if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                    valueContent.validateAll();
+                }
             }
         }
+
+    }
+
+    @Override
+    public boolean containsUserData() {
+        return this.fieldListControl.contentsProperty()
+                .stream()
+                .anyMatch(fieldContent -> {
+                    if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                        return valueContent.containsUserData();
+                    }
+
+                    return false;
+                });
     }
 
     public static ListOfFieldFieldControl of(ListOfFileFieldDefinition definition) {

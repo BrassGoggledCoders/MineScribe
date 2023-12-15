@@ -38,4 +38,6 @@ public interface IValueContent<C extends IValueContent<C, P, V>, P extends ReadO
     default void validateAll() {
         this.validate();
     }
+
+    boolean containsUserData();
 }
