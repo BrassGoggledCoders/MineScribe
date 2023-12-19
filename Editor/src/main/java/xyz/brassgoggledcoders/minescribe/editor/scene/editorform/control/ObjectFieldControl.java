@@ -35,6 +35,10 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
         this.titledPane = new TitledPane();
         this.titledPane.getStyleClass()
                 .add("paned-field");
+        this.titledPane.textProperty()
+                .bind(this.getFieldInfo()
+                        .name()
+                );
         this.formPane = editorFieldPane;
         this.formPane.setPadding(Insets.EMPTY);
         this.titledPane.setContent(this.formPane);
@@ -139,7 +143,7 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     public boolean containsUserData() {
         return this.formPane.getEditorFieldPanes()
                 .anyMatch(editorFieldPane -> {
-                    if (editorFieldPane.getFieldContent() instanceof IValueContent<?,?,?> valueContent) {
+                    if (editorFieldPane.getFieldContent() instanceof IValueContent<?, ?, ?> valueContent) {
                         return valueContent.containsUserData();
                     }
 

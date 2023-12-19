@@ -12,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -275,18 +276,26 @@ public class EditorFormPane extends GridPane {
 
             this.getChildren().clear();
 
+            boolean labelsOnSide = editorFieldPanes.stream()
+                    .anyMatch(editorFieldPane -> !(editorFieldPane.getFieldContent().getNode() instanceof TitledPane));
+
             int currentRow = 0;
             for (EditorFieldPane<?> editorFieldPane : editorFieldPanes) {
-                Label label = editorFieldPane.labelProperty().get();
-                if (label != null) {
-                    this.add(label, 0, currentRow);
-                    Tooltip tooltip = new Tooltip();
-                    tooltip.textProperty().bind(label.textProperty());
-                    Tooltip.install(label, tooltip);
-                    label.setAlignment(Pos.CENTER_LEFT);
+                if (labelsOnSide) {
+                    Label label = editorFieldPane.labelProperty().get();
+                    if (label != null) {
+                        this.add(label, 0, currentRow);
+                        Tooltip tooltip = new Tooltip();
+                        tooltip.textProperty().bind(label.textProperty());
+                        Tooltip.install(label, tooltip);
+                        label.setAlignment(Pos.CENTER_LEFT);
+                    }
+
+                    this.add(editorFieldPane, 1, currentRow++);
+                } else {
+                    this.add(editorFieldPane, 0, currentRow++, 2, 1);
                 }
 
-                this.add(editorFieldPane, 1, currentRow++);
             }
         }
 
