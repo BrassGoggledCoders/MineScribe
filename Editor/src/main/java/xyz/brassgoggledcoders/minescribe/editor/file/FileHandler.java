@@ -135,6 +135,14 @@ public class FileHandler {
         return this.rootItem;
     }
 
+    public void addPackRepository(String label, Path location) {
+        PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(label, location);
+        this.rootItem.getChildren()
+                .add(new TreeItem<>(editorItem));
+        WATCHER.watchDirectory(editorItem.getPath());
+        this.reloadDirectory(editorItem);
+    }
+
 
     public static void initialize() {
         INSTANCE = new FileHandler();
@@ -176,12 +184,11 @@ public class FileHandler {
                                 return "";
                             });
 
-                    PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(repositoryLabel, packRepositoryPath);
-                    INSTANCE.rootItem.getChildren()
-                            .add(new TreeItem<>(editorItem));
-                    WATCHER.watchDirectory(editorItem.getPath());
-                    INSTANCE.reloadDirectory(editorItem);
+                    INSTANCE.addPackRepository(repositoryLabel, packRepositoryPath);
                 }
+            }
+            for (Map.Entry<String, Path> entries : project.getAdditionalPackLocations().entrySet()) {
+                INSTANCE.addPackRepository(entries.getKey(), entries.getValue());
             }
         }
     }

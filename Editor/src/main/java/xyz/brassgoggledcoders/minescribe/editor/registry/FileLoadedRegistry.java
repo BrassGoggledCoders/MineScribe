@@ -47,6 +47,10 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
     }
 
     public void load(Path sourcePath) {
+        this.loadFolder(sourcePath, true);
+    }
+
+    private void loadFolder(Path sourcePath, boolean original) {
         if (!this.sourcePaths.containsKey(sourcePath)) {
             PathMatcher matcher = createPathMatcher(sourcePath);
             this.sourcePaths.put(sourcePath, matcher);
@@ -61,13 +65,15 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
             } catch (IOException e) {
                 logger.error("Failed to load Values for registry {}", this.getName(), e);
             }
-            logger.info("Loaded {} values for registry {} from {}", loaded, this.getName(), sourcePath);
+            if (original || loaded > 0) {
+                logger.info("Loaded {} values for registry {} from {}", loaded, this.getName(), sourcePath);
+            }
         }
     }
 
     @Override
     public void addSourceRoot(Path sourceRoot) {
-        this.load(sourceRoot);
+        this.loadFolder(sourceRoot, false);
     }
 
     private int readFolder(Path parent, PathMatcher matcher) {

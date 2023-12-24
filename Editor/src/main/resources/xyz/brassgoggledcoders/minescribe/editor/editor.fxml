@@ -9,7 +9,20 @@
         <SplitPane dividerPositions="0.2" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                    minWidth="-Infinity" fx:id="editor" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
                    AnchorPane.bottomAnchor="0" AnchorPane.topAnchor="0">
-            <ScrollPane fx:id="files" prefWidth="105.0" fitToHeight="true" fitToWidth="true"/>
+            <ScrollPane prefWidth="105.0" fitToHeight="true" fitToWidth="true">
+                <!-- dense is from AtlantaFX -->
+                <!--suppress JavaFxUnresolvedStyleClassReference -->
+                <TreeView fx:id="files" showRoot="false" styleClass="dense">
+                    <contextMenu>
+                        <ContextMenu>
+                            <items>
+                                <MenuItem onAction="#addPack" text="Add Pack"/>
+                                <MenuItem onAction="#addPackRepository" text="Add Pack Repository"/>
+                            </items>
+                        </ContextMenu>
+                    </contextMenu>
+                </TreeView>
+            </ScrollPane>
             <TabPane fx:id="editorTabPane" prefHeight="398.0" prefWidth="288.0" tabClosingPolicy="ALL_TABS">
 
             </TabPane>

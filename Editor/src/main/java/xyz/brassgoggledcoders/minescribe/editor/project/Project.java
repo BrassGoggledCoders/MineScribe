@@ -1,15 +1,19 @@
 package xyz.brassgoggledcoders.minescribe.editor.project;
 
+import com.mojang.datafixers.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.info.InfoKey;
 
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Project {
     private static final Logger LOGGER = LoggerFactory.getLogger(Project.class);
@@ -17,12 +21,14 @@ public class Project {
     };
     private final Path rootPath;
     private final Path mineScribeFolder;
+    private final Map<String, Path> additionalPackLocations;
     private final Map<UUID, Path> openTabs;
 
     public Project(Path rootPath) {
         this.rootPath = rootPath;
         this.mineScribeFolder = this.rootPath.resolve(".minescribe");
         this.openTabs = new HashMap<>();
+        this.additionalPackLocations = new HashMap<>();
     }
 
     @SuppressWarnings("unused")
@@ -32,6 +38,10 @@ public class Project {
 
     public Path getMineScribeFolder() {
         return mineScribeFolder;
+    }
+
+    public Map<String, Path> getAdditionalPackLocations() {
+        return additionalPackLocations;
     }
 
     public void addOpenTab(UUID id, Path path) {
@@ -49,11 +59,19 @@ public class Project {
             Preferences openTabsNode = projectNode.node("open_tabs");
             openTabsNode.clear();
             if (!this.openTabs.isEmpty()) {
-                for (Map.Entry<UUID, Path> entry: this.openTabs.entrySet()) {
+                for (Map.Entry<UUID, Path> entry : this.openTabs.entrySet()) {
                     openTabsNode.put(entry.getKey().toString(), entry.getValue().toString());
                 }
                 openTabsNode.flush();
             }
+            projectNode.put(
+                    "additional_pack_locations",
+                    this.additionalPackLocations.entrySet()
+                            .stream()
+                            .map(entry -> entry.getKey() + "=" + entry.getValue())
+                            .collect(Collectors.joining(","))
+            );
+
             projectNode.flush();
         } catch (BackingStoreException e) {
             LOGGER.error("Failed to save project info", e);
@@ -87,6 +105,22 @@ public class Project {
                                 }
                             }
                         }
+
+                        project.getAdditionalPackLocations()
+                                .putAll(Arrays.stream(projectNode.get("additional_pack_locations", "").split(","))
+                                        .flatMap(fileName -> {
+                                            try {
+                                                String[] split = fileName.split("=");
+                                                if (split.length == 2) {
+                                                    return Stream.of(Pair.of(split[0], Path.of(split[1])));
+                                                }
+                                            } catch (InvalidPathException e) {
+                                                LOGGER.warn("Failed to create additional pack location from {}", fileName, e);
+                                            }
+                                            return Stream.empty();
+                                        })
+                                        .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond))
+                                );
                         return project;
                     }
                 }
