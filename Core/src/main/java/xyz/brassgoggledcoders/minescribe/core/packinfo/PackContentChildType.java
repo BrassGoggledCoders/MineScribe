@@ -6,12 +6,13 @@ import xyz.brassgoggledcoders.minescribe.core.codec.ErroringOptionalFieldCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.nio.file.Path;
 
 public class PackContentChildType extends PackContentType implements IFullName {
     public static final Codec<PackContentChildType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("label").forGetter(PackContentType::getLabel),
+            FancyText.CODEC.fieldOf("label").forGetter(PackContentType::getLabel),
             MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentType::getPath),
             ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentType::getForm),
             ResourceId.CODEC.fieldOf("parentId").forGetter(PackContentChildType::getParentId)
@@ -19,7 +20,7 @@ public class PackContentChildType extends PackContentType implements IFullName {
 
     private final ResourceId parentId;
 
-    public PackContentChildType(String label, Path path, FileForm form, ResourceId parentId) {
+    public PackContentChildType(FancyText label, Path path, FileForm form, ResourceId parentId) {
         super(label, path, form);
         this.parentId = parentId;
     }

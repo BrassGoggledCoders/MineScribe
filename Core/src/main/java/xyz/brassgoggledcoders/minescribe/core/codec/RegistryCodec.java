@@ -20,6 +20,6 @@ public class RegistryCodec implements Codec<Registry<?, ?>> {
 
     @Override
     public <T> DataResult<T> encode(Registry<?, ?> input, DynamicOps<T> ops, T prefix) {
-        return DataResult.success(ops.createString(input.getName()));
+        return DataResult.success(ops.createString(input.getId()));
     }
 }

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,13 @@ public class RegistryListFormList implements IFormList<Registry<?, ?>>  {
     }
 
     @Override
-    public @NotNull String getLabel(Registry<?, ?> value) {
+    public @NotNull FancyText getLabel(Registry<?, ?> value) {
         return value.getName();
     }
 
     @Override
     public @NotNull String getKey(Registry<?, ?> value) {
-        return value.getName();
+        return value.getId();
     }
 
     @Override

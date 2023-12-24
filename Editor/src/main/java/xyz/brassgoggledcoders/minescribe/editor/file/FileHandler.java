@@ -166,7 +166,8 @@ public class FileHandler {
                 List<Path> packRepositoryPaths = findPackRepositories(project.getRootPath(), pathMatcher, 1);
 
                 for (Path packRepositoryPath : packRepositoryPaths) {
-                    String repositoryLabel = location.label();
+                    String repositoryLabel = location.label()
+                            .getText();
 
                     repositoryLabel = PATH_NAME_PATTERN.matcher(repositoryLabel)
                             .replaceAll(matchResult -> {

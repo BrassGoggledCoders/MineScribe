@@ -75,7 +75,7 @@ public class FallBackRegistryProviderService implements IRegistryProviderService
         if (MineScribeRuntime.getRuntime() == MineScribeRuntime.MINECRAFT) {
             return this.getRegistries()
                     .stream()
-                    .filter(registry -> registry.getName().equals(name))
+                    .filter(registry -> registry.getId().equals(name))
                     .map(registry -> (Registry<K, V>) registry)
                     .findAny();
         }

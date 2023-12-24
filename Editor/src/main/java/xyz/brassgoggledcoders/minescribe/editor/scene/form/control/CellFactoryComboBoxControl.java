@@ -2,13 +2,14 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.form.control;
 
 import com.dlsc.formsfx.view.controls.SimpleComboBoxControl;
 import javafx.util.StringConverter;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.function.Function;
 
 public class CellFactoryComboBoxControl<T> extends SimpleComboBoxControl<T> {
-    private final Function<T, String> labelCreator;
+    private final Function<T, FancyText> labelCreator;
 
-    public CellFactoryComboBoxControl(Function<T, String> labelCreator) {
+    public CellFactoryComboBoxControl(Function<T, FancyText> labelCreator) {
         this.labelCreator = labelCreator;
     }
 

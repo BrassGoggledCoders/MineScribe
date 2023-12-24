@@ -23,4 +23,7 @@ public class JsonFieldNames {
     public static final String REGISTRY = "registry";
     public static final String FULL_NAME_ID = "fullNameId";
     public static final String RANGE = "range";
+    public static final String FORM = "form";
+    public static final String PATH = "path";
+    public static final String PACK_TYPE = "packType";
 }

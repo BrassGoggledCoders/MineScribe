@@ -148,7 +148,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
     @SuppressWarnings("unchecked")
     public <K, V> Optional<Registry<K, V>> getRegistry(String name) {
         for (Registry<?, ?> registry : registries) {
-            if (registry.getName().equals(name)) {
+            if (registry.getId().equals(name)) {
                 return Optional.of((Registry<K, V>) registry);
             }
         }

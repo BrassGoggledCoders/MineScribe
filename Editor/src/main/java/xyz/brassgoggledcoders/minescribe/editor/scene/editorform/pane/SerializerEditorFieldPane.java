@@ -11,6 +11,7 @@ import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.SingleSelectionFieldControl;
@@ -162,7 +163,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                         SerializerType defaultFieldsType = new SerializerType(
                                 ResourceId.NULL,
                                 ResourceId.NULL,
-                                "Default",
+                                FancyText.literal("Default"),
                                 serializerInfo.defaultForm()
                                         .get()
                         );

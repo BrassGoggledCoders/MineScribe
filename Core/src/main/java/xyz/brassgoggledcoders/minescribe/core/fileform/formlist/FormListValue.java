@@ -1,10 +1,11 @@
 package xyz.brassgoggledcoders.minescribe.core.fileform.formlist;
 
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 public record FormListValue(
         String id,
-        String label
+        FancyText label
 ) implements Comparable<FormListValue> {
     @Override
     public int compareTo(@NotNull FormListValue o) {

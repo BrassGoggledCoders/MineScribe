@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.util.FolderCollection;
 
 import java.io.IOException;
@@ -48,8 +49,8 @@ public class FileIdFormList implements IFormList<ResourceId> {
     }
 
     @Override
-    public @NotNull String getLabel(ResourceId value) {
-        return this.leadingCharacter + value.toString();
+    public @NotNull FancyText getLabel(ResourceId value) {
+        return FancyText.literal(this.leadingCharacter + value.toString());
     }
 
     @Override

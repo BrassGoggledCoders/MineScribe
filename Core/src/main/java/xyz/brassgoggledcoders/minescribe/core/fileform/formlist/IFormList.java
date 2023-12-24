@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.LazyCodec;
 import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.List;
 import java.util.function.Function;
@@ -19,11 +20,11 @@ public interface IFormList<T> {
     );
 
     @NotNull
-    default String getLabel(T value) {
+    default FancyText getLabel(T value) {
         if (value instanceof ILabeledValue labeledValue) {
             return labeledValue.getLabel();
         } else {
-            return value.toString();
+            return FancyText.literal(value.toString());
         }
     }
 

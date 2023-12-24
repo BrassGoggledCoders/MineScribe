@@ -13,6 +13,7 @@ import org.controlsfx.control.ListSelectionView;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
@@ -27,7 +28,7 @@ public class ListSelectionFieldContent<T extends Comparable<T>> extends FieldCon
     private final Function<T, String> getId;
     private final List<T> items;
 
-    public ListSelectionFieldContent(List<T> items, Function<T, String> getId, Function<T, String> getLabel) {
+    public ListSelectionFieldContent(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel) {
         super();
         this.items = items;
         this.listSelection.setSourceItems(FXCollections.observableArrayList(items));

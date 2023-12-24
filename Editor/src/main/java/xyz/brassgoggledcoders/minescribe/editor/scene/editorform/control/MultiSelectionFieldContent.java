@@ -16,6 +16,7 @@ import javafx.scene.control.SelectionMode;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.MultiSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
@@ -31,7 +32,7 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
     private final Function<T, String> getId;
     private final ListProperty<T> selectedValues;
 
-    public MultiSelectionFieldContent(List<T> items, Function<T, String> getId, Function<T, String> getLabel) {
+    public MultiSelectionFieldContent(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel) {
         super();
         this.listView = new ListView<>();
         this.listView.getStyleClass()

@@ -34,4 +34,14 @@ public class NoFormFileEditorItem extends FileEditorItem {
         contextMenu.getItems().add(0, menuItem);
         return contextMenu;
     }
+
+    @Override
+    public void onDoubleClick(TreeCell<EditorItem> treeCell) {
+        treeCell.fireEvent(
+                new OpenTabEvent<NoFormController>(
+                        treeCell.getItem().getName(),
+                        "tab/no_form",
+                        (controller, tabId) -> controller.setPathToFile(treeCell.getItem().getPath()))
+        );
+    }
 }

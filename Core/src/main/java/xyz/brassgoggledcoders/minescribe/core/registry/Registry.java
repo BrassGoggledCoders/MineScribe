@@ -5,19 +5,20 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.codec.BiMapDispatchCodec;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.*;
 
 public class Registry<K, V> implements Iterable<V> {
-    private final String name;
+    private final String id;
     private final BiMap<K, V> values;
     private final Codec<V> dispatchCodec;
 
-    public Registry(String name, Codec<K> kCodec) {
-        this.name = name;
+    public Registry(String id, Codec<K> kCodec) {
+        this.id = id;
         this.values = HashBiMap.create();
         this.dispatchCodec = new BiMapDispatchCodec<>(
-                this.name,
+                this.id,
                 kCodec,
                 this::containsKey,
                 this::getKey,
@@ -59,8 +60,12 @@ public class Registry<K, V> implements Iterable<V> {
         return dispatchCodec;
     }
 
-    public String getName() {
-        return this.name;
+    public String getId() {
+        return this.id;
+    }
+
+    public FancyText getName() {
+        return FancyText.literal(this.getId());
     }
 
     public boolean isEmpty() {

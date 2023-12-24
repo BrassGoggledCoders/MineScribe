@@ -75,7 +75,6 @@ public class FileWatcher extends Thread implements AutoCloseable {
             for (WatchEvent<?> event : key.pollEvents()) {
                 WatchEvent.Kind<?> kind = event.kind();
 
-                // TBD - provide example of how OVERFLOW event is handled
                 if (kind != StandardWatchEventKinds.OVERFLOW) {
                     @SuppressWarnings("unchecked")
                     WatchEvent<Path> ev = ((WatchEvent<Path>) event);

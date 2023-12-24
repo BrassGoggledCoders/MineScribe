@@ -51,9 +51,9 @@ public class CoreRegistryProviderService implements IRegistryProviderService {
     @Override
     @SuppressWarnings("unchecked")
     public <K, V> Optional<Registry<K, V>> getRegistry(String name) {
-        if (name.equals(FILE_FIELD_CODECS.getName())) {
+        if (name.equals(FILE_FIELD_CODECS.getId())) {
             return Optional.of((Registry<K, V>) FILE_FIELD_CODECS);
-        } else if (name.equals(FORM_LIST_CODECS.getName())) {
+        } else if (name.equals(FORM_LIST_CODECS.getId())) {
             return Optional.of((Registry<K, V>) FORM_LIST_CODECS);
         }
         return Optional.empty();

@@ -8,6 +8,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
 import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public record RegistryFormList<V>(
     }
 
     @Override
-    public @NotNull String getLabel(V value) {
+    public @NotNull FancyText getLabel(V value) {
         String label = "";
         if (value instanceof ILabeledValue labeledValue) {
             label += labeledValue.getLabel();
@@ -58,7 +59,7 @@ public record RegistryFormList<V>(
             label = value.toString();
         }
 
-        return label;
+        return FancyText.literal(label);
     }
 
     @Override

@@ -3,13 +3,14 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.form.control;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.function.Function;
 
 public class LabeledCellFactory<T> implements Callback<ListView<T>, ListCell<T>> {
-    private final Function<T, String> labelMaker;
+    private final Function<T, FancyText> labelMaker;
 
-    public LabeledCellFactory(Function<T, String> labelMaker) {
+    public LabeledCellFactory(Function<T, FancyText> labelMaker) {
         this.labelMaker = labelMaker;
     }
 
@@ -22,7 +23,7 @@ public class LabeledCellFactory<T> implements Callback<ListView<T>, ListCell<T>>
                 if (item == null) {
                     this.setText("");
                 } else {
-                    this.setText(LabeledCellFactory.this.labelMaker.apply(item));
+                    this.setText(LabeledCellFactory.this.labelMaker.apply(item).getText());
                 }
             }
         };

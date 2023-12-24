@@ -5,18 +5,16 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
 import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
 
 import java.io.File;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class FormFileEditorItem extends EditorItem {
+public class FormFileEditorItem extends FileEditorItem {
     private final List<NodeTracker> nodes;
 
     public FormFileEditorItem(String name, Path path, List<NodeTracker> nodes) {
@@ -28,16 +26,6 @@ public class FormFileEditorItem extends EditorItem {
     public boolean isValid() {
         File file = this.getFile();
         return file.isFile();
-    }
-
-    @Override
-    public @NotNull List<EditorItem> createChildren(DirectoryStream<Path> childPaths) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public boolean isDirectory() {
-        return false;
     }
 
     @Override

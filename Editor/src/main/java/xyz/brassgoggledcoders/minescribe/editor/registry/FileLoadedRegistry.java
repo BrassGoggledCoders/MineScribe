@@ -63,10 +63,10 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
                     }
                 }
             } catch (IOException e) {
-                logger.error("Failed to load Values for registry {}", this.getName(), e);
+                logger.error("Failed to load Values for registry {}", this.getId(), e);
             }
             if (original || loaded > 0) {
-                logger.info("Loaded {} values for registry {} from {}", loaded, this.getName(), sourcePath);
+                logger.info("Loaded {} values for registry {} from {}", loaded, this.getId(), sourcePath);
             }
         }
     }
@@ -87,7 +87,7 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
                 }
             }
         } catch (IOException e) {
-            logger.error("Failed to load Values for registry {}", this.getName(), e);
+            logger.error("Failed to load Values for registry {}", this.getId(), e);
         }
         return loaded;
     }

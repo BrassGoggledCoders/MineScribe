@@ -12,6 +12,7 @@ import javafx.scene.control.ComboBox;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
@@ -26,7 +27,7 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
     private final Function<T, String> getId;
     private final Class<T> tClass;
 
-    public SingleSelectionFieldControl(List<T> items, Function<T, String> getId, Function<T, String> getLabel, Class<T> tClass) {
+    public SingleSelectionFieldControl(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel, Class<T> tClass) {
         super();
         this.tClass = tClass;
         this.comboBox.setItems(FXCollections.observableArrayList(items));
@@ -88,7 +89,7 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
         return value != null;
     }
 
-    public void setLabelMaker(Function<T, String> labelMaker) {
+    public void setLabelMaker(Function<T, FancyText> labelMaker) {
         this.comboBox.setConverter(new LabeledCellConverter<>(labelMaker));
         this.comboBox.setCellFactory(new LabeledCellFactory<>(labelMaker));
     }
@@ -111,7 +112,7 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
         }
     }
 
-    public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId, Function<T, String> getLabel, Class<T> tClass) {
+    public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel, Class<T> tClass) {
         return new SingleSelectionFieldControl<>(
                 items,
                 getId,
