@@ -157,7 +157,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
 
     @Override
     public void load(Path mineScribeRoot) {
-        Path dataRoot = mineScribeRoot.resolve("data");
+        Path dataRoot = mineScribeRoot.resolve("minescribe");
 
         for (Registry<?, ?> registry : registries) {
             if (registry instanceof FileLoadedRegistry<?, ?> fileLoadedRegistry) {

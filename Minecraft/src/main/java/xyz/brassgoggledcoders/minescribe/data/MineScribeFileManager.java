@@ -21,7 +21,7 @@ public class MineScribeFileManager {
 
     public MineScribeFileManager(Path minecraftRoot) {
         this.mineScribeRoot = minecraftRoot.resolve(".minescribe");
-        this.mineScribeData = this.mineScribeRoot.resolve("data");
+        this.mineScribeData = this.mineScribeRoot.resolve("minescribe");
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();

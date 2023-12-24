@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.minescribe.util;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.packs.PackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ public class PackTypeHelper {
     public static Stream<MineScribePackType> gatherPackTypes() {
         return Arrays.stream(PackType.values())
                 .map(packType -> new MineScribePackType(
-                        packType.name().toLowerCase(Locale.ROOT).replace("_", " "),
+                        FancyText.literal(packType.name().toLowerCase(Locale.ROOT).replace("_", " ")),
                         packType.name(),
                         Path.of(packType.getDirectory()),
                         packType.getVersion(SharedConstants.getCurrentVersion()),

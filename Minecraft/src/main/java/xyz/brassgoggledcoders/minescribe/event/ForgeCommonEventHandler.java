@@ -29,6 +29,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFi
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FileIdFormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.ValueFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
 import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.data.FileCopyMineScribeReloadListener;
@@ -122,10 +123,10 @@ public class ForgeCommonEventHandler {
                         ResourceId id = new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath());
                         return new FormList(
                                 id,
-                                MineScribeStringHelper.toTitleCase(registryId.getPath()
+                                FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
                                         .replace("_", " ")
                                         .replace("/", " ")
-                                ),
+                                )),
                                 registry.keySet()
                                         .stream()
                                         .map(ResourceLocation::toString)
@@ -141,10 +142,10 @@ public class ForgeCommonEventHandler {
                         ResourceId id = new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath());
                         return new FormList(
                                 id,
-                                MineScribeStringHelper.toTitleCase(registryId.getPath()
+                                FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
                                         .replace("_", " ")
                                         .replace("/", " ")
-                                ),
+                                )),
                                 registry.getTagNames()
                                         .map(tagKey -> "#" + tagKey.location())
                                         .toList()
@@ -161,10 +162,10 @@ public class ForgeCommonEventHandler {
                 if (forgeRegistry != null) {
                     formListsEvent.register(new FormList(
                             id,
-                            MineScribeStringHelper.toTitleCase(registryId.getPath()
+                            FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
                                     .replace("_", " ")
                                     .replace("/", " ")
-                            ),
+                            )),
                             forgeRegistry.getKeys()
                                     .stream()
                                     .map(ResourceLocation::toString)
@@ -176,10 +177,10 @@ public class ForgeCommonEventHandler {
                         ResourceId tagId = new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath());
                         formListsEvent.register(new FormList(
                                 tagId,
-                                MineScribeStringHelper.toTitleCase(registryId.getPath()
+                                FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
                                         .replace("_", " ")
                                         .replace("/", " ")
-                                ),
+                                )),
                                 tagManager.getTagNames()
                                         .map(tagKey -> "#" + tagKey.location())
                                         .toList()

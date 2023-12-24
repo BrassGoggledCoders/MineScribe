@@ -26,4 +26,6 @@ public class JsonFieldNames {
     public static final String FORM = "form";
     public static final String PATH = "path";
     public static final String PACK_TYPE = "packType";
+    public static final String VALUES = "values";
+    public static final String PARENT_ID = "parentId";
 }

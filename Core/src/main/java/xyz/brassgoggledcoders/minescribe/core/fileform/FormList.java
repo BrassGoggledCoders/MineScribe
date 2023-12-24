@@ -15,9 +15,9 @@ public record FormList(
         List<String> values
 ) implements ILabeledValue {
     public static final Codec<FormList> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceId.CODEC.fieldOf("id").forGetter(FormList::id),
-            FancyText.CODEC.fieldOf("label").forGetter(FormList::label),
-            Codec.STRING.listOf().fieldOf("values").forGetter(FormList::values)
+            ResourceId.CODEC.fieldOf(JsonFieldNames.ID).forGetter(FormList::id),
+            FancyText.CODEC.fieldOf(JsonFieldNames.LABEL).forGetter(FormList::label),
+            Codec.STRING.listOf().fieldOf(JsonFieldNames.VALUES).forGetter(FormList::values)
     ).apply(instance, (id, label, values) -> {
         List<String> sorted = new ArrayList<>(values);
         sorted.sort(String.CASE_INSENSITIVE_ORDER);

@@ -38,7 +38,7 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
     protected abstract int handleFileInFolder(Path path, ResourceId id, String fileContents);
 
     private PathMatcher createPathMatcher(Path path) {
-        String stringMatcher = "**" + File.separator +
+        String stringMatcher = "**" + File.separator + "minescribe" + File.separator + "*" + File.separator +
                 this.directory + File.separator + "**." + this.fileType;
         stringMatcher = stringMatcher.replace("\\", "\\\\");
 

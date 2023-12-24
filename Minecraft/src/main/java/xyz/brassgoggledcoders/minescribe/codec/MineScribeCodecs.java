@@ -5,12 +5,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import xyz.brassgoggledcoders.minescribe.api.util.ConvertingUtil;
 import xyz.brassgoggledcoders.minescribe.core.codec.ErroringOptionalFieldCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.JsonCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 public class MineScribeCodecs {
 
@@ -19,9 +21,9 @@ public class MineScribeCodecs {
             Component.Serializer::toJsonTree
     );
 
-    public static final Codec<String> LABEL_STRING = COMPONENT.xmap(
-            Component::getString,
-            Component::literal
+    public static final Codec<FancyText> LABEL_STRING = COMPONENT.xmap(
+            ConvertingUtil::convert,
+            ConvertingUtil::convert
     );
 
     public static final Codec<PackType> PACK_TYPE = new EnumCodec<>(PackType.class);
