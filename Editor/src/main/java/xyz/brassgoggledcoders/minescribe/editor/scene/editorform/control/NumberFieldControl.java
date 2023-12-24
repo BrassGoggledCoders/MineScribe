@@ -13,12 +13,14 @@ import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import java.util.Objects;
 
 public class NumberFieldControl<N extends Number> extends FieldControl<NumberFieldControl<N>, ReadOnlyObjectProperty<N>, N> {
-    private final Spinner<N> spinner = new Spinner<>();
+    private final Spinner<N> spinner;
     private final NumberFileFieldDefinition<N> definition;
     private final Class<N> numberClass;
 
     public NumberFieldControl(NumberFileFieldDefinition<N> definition, Class<N> numberClass, SpinnerValueFactory<N> valueFactory) {
         super();
+        this.spinner = new Spinner<>();
+        this.spinner.setEditable(true);
         this.definition = definition;
         this.numberClass = numberClass;
         this.spinner.setValueFactory(valueFactory);
