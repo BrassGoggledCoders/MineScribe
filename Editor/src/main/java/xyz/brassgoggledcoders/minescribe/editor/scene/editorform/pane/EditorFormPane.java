@@ -234,7 +234,31 @@ public class EditorFormPane extends GridPane {
                 editorFieldPane.persist();
                 JsonElement jsonElement = editorFieldPane.getValue();
                 if (jsonElement != null && !jsonElement.isJsonNull()) {
-                    newPersisted.add(editorFieldPane.getFieldName(), jsonElement);
+                    String[] fieldPath = editorFieldPane.getFieldName().split("\\.");
+                    if (fieldPath.length == 1) {
+                        newPersisted.add(editorFieldPane.getFieldName(), jsonElement);
+                    } else if (fieldPath.length > 1) {
+                        JsonElement parentElement = newPersisted.get(fieldPath[0]);
+                        JsonObject parentObject;
+                        if (parentElement == null) {
+                            parentElement = new JsonObject();
+                            newPersisted.add(fieldPath[0], parentElement);
+                        }
+                        if (parentElement.isJsonObject()) {
+                            parentObject = parentElement.getAsJsonObject();
+                            for (int i = 1; i < fieldPath.length - 1; i++) {
+                                parentElement = parentObject.get(fieldPath[i]);
+                                if (parentElement == null || !parentElement.isJsonObject()) {
+                                    JsonObject newParentObject = new JsonObject();
+                                    parentObject.add(fieldPath[i], newParentObject);
+                                    parentObject = newParentObject;
+                                } else {
+                                    parentObject = parentElement.getAsJsonObject();
+                                }
+                            }
+                            parentObject.add(fieldPath[fieldPath.length - 1], jsonElement);
+                        }
+                    }
                 }
             });
 
@@ -394,9 +418,23 @@ public class EditorFormPane extends GridPane {
     }
 
     private void setField(EditorFieldPane<?> editorFieldPane, JsonObject jsonObject) {
-        if (jsonObject.has(editorFieldPane.getFieldName())) {
-            editorFieldPane.setValue(jsonObject.get(editorFieldPane.getFieldName()));
+
+        if (!editorFieldPane.getFieldName().contains(".")) {
+            if (jsonObject.has(editorFieldPane.getFieldName())) {
+                editorFieldPane.setValue(jsonObject.get(editorFieldPane.getFieldName()));
+            }
+        } else {
+            String[] fieldPath = editorFieldPane.getFieldName().split("\\.");
+            JsonElement fieldElement = jsonObject.get(fieldPath[0]);
+            for (int i = 1; i < fieldPath.length; i++) {
+                if (fieldElement != null && fieldElement.isJsonObject()) {
+                    fieldElement = fieldElement.getAsJsonObject()
+                            .get(fieldPath[i]);
+                }
+            }
+            editorFieldPane.setValue(fieldElement);
         }
+
     }
 
     public static EditorFormPane of(FileForm form, List<IFullName> parents,

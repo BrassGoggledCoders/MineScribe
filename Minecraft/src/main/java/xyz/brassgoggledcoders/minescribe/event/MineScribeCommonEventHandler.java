@@ -663,8 +663,8 @@ public class MineScribeCommonEventHandler {
                         new FileFieldData<>(
                                 new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 0D, Double.MAX_VALUE, 0.1)),
                                 new FileFieldInfoData(
-                                        "Minimum Value",
-                                        JsonFieldNames.MIN,
+                                        "Minimum",
+                                        JsonFieldNames.RANGE + "." + JsonFieldNames.MIN,
                                         0,
                                         false
                                 )
@@ -672,18 +672,18 @@ public class MineScribeCommonEventHandler {
                         new FileFieldData<>(
                                 new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 0D, Double.MAX_VALUE, 0.1)),
                                 new FileFieldInfoData(
-                                        "Start Value",
-                                        JsonFieldNames.START,
-                                        0,
+                                        "Default",
+                                        JsonFieldNames.RANGE + "." + JsonFieldNames.START,
+                                        1,
                                         false
                                 )
                         ),
                         new FileFieldData<>(
                                 new DoubleFileFieldDefinition(new Range<>(Double.MIN_VALUE, 1000D, Double.MAX_VALUE, 0.1)),
                                 new FileFieldInfoData(
-                                        "Maximum Value",
-                                        JsonFieldNames.MAX,
-                                        0,
+                                        "Maximum",
+                                        JsonFieldNames.RANGE + "." + JsonFieldNames.MAX,
+                                        2,
                                         false
                                 )
                         )
@@ -698,8 +698,8 @@ public class MineScribeCommonEventHandler {
                         new FileFieldData<>(
                                 new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 0, Integer.MAX_VALUE, 1)),
                                 new FileFieldInfoData(
-                                        "Minimum Value",
-                                        JsonFieldNames.MIN,
+                                        "Minimum",
+                                        JsonFieldNames.RANGE + "." + JsonFieldNames.MIN,
                                         0,
                                         false
                                 )
@@ -707,18 +707,18 @@ public class MineScribeCommonEventHandler {
                         new FileFieldData<>(
                                 new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 0, Integer.MAX_VALUE, 1)),
                                 new FileFieldInfoData(
-                                        "Start Value",
-                                        JsonFieldNames.START,
-                                        0,
+                                        "Default",
+                                        JsonFieldNames.RANGE + "." + JsonFieldNames.START,
+                                        1,
                                         false
                                 )
                         ),
                         new FileFieldData<>(
                                 new IntegerFileFieldDefinition(new Range<>(Integer.MIN_VALUE, 10000, Integer.MAX_VALUE, 1)),
                                 new FileFieldInfoData(
-                                        "Maximum Value",
-                                        JsonFieldNames.MAX,
-                                        0,
+                                        "Maximum",
+                                        JsonFieldNames.RANGE + "." +  JsonFieldNames.MAX,
+                                        2,
                                         false
                                 )
                         )

@@ -7,40 +7,42 @@
           "range": {
             "max": 2147483647,
             "min": -2147483648,
+            "start": 0
+          }
+        },
+        "info": {
+          "field": "range.min",
+          "label": "Minimum"
+        }
+      },
+      {
+        "definition": {
+          "type": "integer",
+          "range": {
+            "max": 2147483647,
+            "min": -2147483648,
+            "start": 0
+          }
+        },
+        "info": {
+          "field": "range.start",
+          "label": "Default",
+          "sortOrder": 1
+        }
+      },
+      {
+        "definition": {
+          "type": "integer",
+          "range": {
+            "max": 2147483647,
+            "min": -2147483648,
             "start": 10000
           }
         },
         "info": {
-          "field": "max",
-          "label": "Maximum Value"
-        }
-      },
-      {
-        "definition": {
-          "type": "integer",
-          "range": {
-            "max": 2147483647,
-            "min": -2147483648,
-            "start": 0
-          }
-        },
-        "info": {
-          "field": "min",
-          "label": "Minimum Value"
-        }
-      },
-      {
-        "definition": {
-          "type": "integer",
-          "range": {
-            "max": 2147483647,
-            "min": -2147483648,
-            "start": 0
-          }
-        },
-        "info": {
-          "field": "start",
-          "label": "Start Value"
+          "field": "range.max",
+          "label": "Maximum",
+          "sortOrder": 2
         }
       }
     ]

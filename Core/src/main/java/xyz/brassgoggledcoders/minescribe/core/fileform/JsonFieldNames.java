@@ -22,4 +22,5 @@ public class JsonFieldNames {
     public static final String LEADING_CHARACTER = "leadingCharacter";
     public static final String REGISTRY = "registry";
     public static final String FULL_NAME_ID = "fullNameId";
+    public static final String RANGE = "range";
 }
