@@ -1,8 +1,0 @@
-// 1.19.2	2023-12-14T22:22:58.5633877	types/parent generator for minescribe
-473e91324e90a2759e5ec3a0fb66bd581411c8fe minescribe/minecraft/types/parent/recipe.json
-b264857a1006d9e7041837699acaea2fdb0b3bd2 minescribe/minecraft/types/parent/tag.json
-c035f0c0cdd6731390a657d01918fe74af85852e minescribe/minecraft/types/parent/test_lists.json
-b9822d8f0b0cf150a13069a1fe85110ebe6cc1ff minescribe/minescribe/types/parent/child_type.json
-bb16827cd7e15c04c3486430e291b75fb4f9d1b1 minescribe/minescribe/types/parent/object_type.json
-96c4e6c490c23c0c0f9a5dc618276e3d4aa7f8d8 minescribe/minescribe/types/parent/parent_type.json
-3471c11771436bdd510f4d69b75ea3faddd9218e minescribe/minescribe/types/parent/serializer_type.json
