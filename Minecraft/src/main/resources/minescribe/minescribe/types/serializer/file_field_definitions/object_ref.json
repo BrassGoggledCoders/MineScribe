@@ -1,0 +1,28 @@
+{
+  "parentId": "minescribe:types/object/file_field_definition",
+  "serializerId": "minescribe:object_ref",
+  "label": "Object Reference",
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "type": "minescribe:single_selection",
+          "lists": [
+            {
+              "type": "minescribe:registry",
+              "registry": "objectTypes",
+              "fullNameId": "true"
+            }
+          ]
+        },
+        "info": {
+          "label": "Form",
+          "field": "form",
+          "sortOrder": 0,
+          "required": true,
+          "helpText": "The Id for the Form Object to use for this Field"
+        }
+      }
+    ]
+  }
+}
