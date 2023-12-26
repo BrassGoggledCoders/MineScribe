@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import org.controlsfx.control.SearchableComboBox;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelectionFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelectionFieldControl<T>, ObjectProperty<T>, T> {
-    private final ComboBox<T> comboBox = new ComboBox<>();
+    private final ComboBox<T> comboBox = new SearchableComboBox<>();
     private final Function<T, String> getId;
     private final Class<T> tClass;
 
