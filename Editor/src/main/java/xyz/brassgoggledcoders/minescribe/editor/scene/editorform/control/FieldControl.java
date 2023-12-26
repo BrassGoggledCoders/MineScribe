@@ -272,7 +272,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     }
 
     private ValidationResult checkRequires(Object value) {
-        Either<V, ValidationResult> either = this.castObject(value);
+        Either<V, ValidationResult> either = value != null ? this.castObject(value) : Either.left(null);
 
         return either.mapLeft(castValue -> {
                     if (fulfillsRequired(castValue)) {

@@ -69,13 +69,16 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     @Override
     protected void loadControl(JsonElement jsonElement) {
         List<JsonElement> jsonElementList = new ArrayList<>();
-        if (jsonElement.isJsonArray()) {
-            for (JsonElement arrayElement : jsonElement.getAsJsonArray()) {
-                jsonElementList.add(arrayElement);
+        if (jsonElement != null) {
+            if (jsonElement.isJsonArray()) {
+                for (JsonElement arrayElement : jsonElement.getAsJsonArray()) {
+                    jsonElementList.add(arrayElement);
+                }
+            } else {
+                jsonElementList.add(jsonElement);
             }
-        } else {
-            jsonElementList.add(jsonElement);
         }
+
 
         for (int x = 0; x < jsonElementList.size(); x++) {
             FieldContent<?> fieldContent;
