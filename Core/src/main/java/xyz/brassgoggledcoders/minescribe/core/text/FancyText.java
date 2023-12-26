@@ -16,6 +16,11 @@ public abstract class FancyText implements Comparable<FancyText> {
     public abstract JsonElement toJson();
 
     @Override
+    public String toString() {
+        return this.getText();
+    }
+
+    @Override
     public int compareTo(@NotNull FancyText o) {
         return this.getText().compareTo(o.getText());
     }
