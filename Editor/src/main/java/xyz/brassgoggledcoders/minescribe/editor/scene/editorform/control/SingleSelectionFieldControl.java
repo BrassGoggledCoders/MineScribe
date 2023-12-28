@@ -3,7 +3,6 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
-import com.mojang.datafixers.util.Either;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,7 +13,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.SingleSelection
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
-import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellConverter;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
@@ -34,11 +32,6 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
         this.comboBox.setItems(FXCollections.observableArrayList(items));
         this.setLabelMaker(getLabel);
         this.getId = getId;
-    }
-
-    @Override
-    protected Either<T, ValidationResult> castObject(Object value) {
-        return castObjectWithClass(value, tClass);
     }
 
     @Override

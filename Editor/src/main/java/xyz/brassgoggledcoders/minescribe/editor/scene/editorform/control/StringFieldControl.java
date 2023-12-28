@@ -5,14 +5,12 @@ import atlantafx.base.layout.InputGroup;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
-import com.mojang.datafixers.util.Either;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.jetbrains.annotations.Nullable;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileFieldDefinition;
-import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 
 public class StringFieldControl extends FieldControl<StringFieldControl, StringProperty, String> {
     private final CustomTextField textField;
@@ -25,11 +23,6 @@ public class StringFieldControl extends FieldControl<StringFieldControl, StringP
         this.textField = new CustomTextField(defaultText);
         HBox.setHgrow(this.textField, Priority.ALWAYS);
         this.inputGroup = this.createInputGroup(this.textField);
-    }
-
-    @Override
-    protected Either<String, ValidationResult> castObject(Object value) {
-        return castObjectWithClass(value, String.class);
     }
 
     @Override

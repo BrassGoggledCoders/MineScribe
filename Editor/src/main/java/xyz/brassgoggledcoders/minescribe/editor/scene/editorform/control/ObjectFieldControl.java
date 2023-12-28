@@ -2,7 +2,6 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyListProperty;
@@ -15,7 +14,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.StringOb
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ObjectType;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
-import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
@@ -175,15 +173,6 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
 
                     return false;
                 });
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected Either<ObservableList<Pair<String, Property<?>>>, ValidationResult> castObject(Object value) {
-        if (value instanceof ObservableList<?> list) {
-            return Either.left((ObservableList<Pair<String, Property<?>>>) list);
-        }
-        return Either.right(ValidationResult.error("Value not a list"));
     }
 
     public static ObjectFieldControl of(ReferencedObjectFileFieldDefinition definition) throws FormException {

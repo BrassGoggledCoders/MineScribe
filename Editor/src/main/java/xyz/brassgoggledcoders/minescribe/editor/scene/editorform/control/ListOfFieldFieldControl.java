@@ -2,7 +2,6 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.mojang.datafixers.util.Either;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
@@ -12,7 +11,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefin
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListOfFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.validation.FieldValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
-import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
 import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
@@ -41,15 +39,6 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     @Override
     public Node getNode() {
         return fieldListControl;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected Either<ObservableList<Property<?>>, ValidationResult> castObject(Object value) {
-        if (value instanceof ObservableList<?> list) {
-            return Either.left((ObservableList<Property<?>>) list);
-        }
-        return Either.right(ValidationResult.error("Value not a list"));
     }
 
     @Override

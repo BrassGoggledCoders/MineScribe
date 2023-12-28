@@ -4,7 +4,6 @@ import atlantafx.base.layout.InputGroup;
 import atlantafx.base.theme.Styles;
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
-import com.mojang.datafixers.util.Either;
 import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -147,6 +146,13 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     }
 
     protected Set<FieldMessage> additionalChecks(V newValue) {
+        if (this.required.get() && !fulfillsRequired(newValue)) {
+            return Collections.singleton(new FieldMessage(
+                    this.getFieldInfo(),
+                    MessageType.ERROR,
+                    "Value is required"
+            ));
+        }
         return Collections.emptySet();
     }
 
@@ -160,7 +166,6 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
     @SuppressWarnings("unchecked")
     public C withRequired(boolean required) {
         this.required.set(required);
-        this.validations.add(this::checkRequires);
         return (C) this;
     }
 
@@ -242,48 +247,7 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
                 this.validations.add(fieldValidation);
             }
         }
-        if (this.required.get()) {
-            this.validations.add(this::checkRequires);
-        }
-        for (Function<V, ValidationResult> defaultValidation : getDefaultValidations()) {
-            Function<Object, Either<V, ValidationResult>> casted = this::castObject;
-            this.validations.add(casted.andThen(either -> either.mapLeft(defaultValidation))
-                    .andThen(either -> either.left()
-                            .or(either::right)
-                            .orElseGet(ValidationResult::valid)
-                    )
-            );
-        }
         return (C) this;
-    }
-
-    protected abstract Either<V, ValidationResult> castObject(Object value);
-
-    public Either<V, ValidationResult> castObjectWithClass(Object o, Class<V> vClass) {
-        if (vClass.isInstance(o)) {
-            return Either.left(vClass.cast(o));
-        } else {
-            return Either.right(ValidationResult.error("Invalid Value Type"));
-        }
-    }
-
-    protected Set<Function<V, ValidationResult>> getDefaultValidations() {
-        return Collections.emptySet();
-    }
-
-    private ValidationResult checkRequires(Object value) {
-        Either<V, ValidationResult> either = value != null ? this.castObject(value) : Either.left(null);
-
-        return either.mapLeft(castValue -> {
-                    if (fulfillsRequired(castValue)) {
-                        return ValidationResult.valid();
-                    } else {
-                        return ValidationResult.error("Field is Required");
-                    }
-                })
-                .left()
-                .or(either::right)
-                .orElseGet(ValidationResult::valid);
     }
 
     @Override

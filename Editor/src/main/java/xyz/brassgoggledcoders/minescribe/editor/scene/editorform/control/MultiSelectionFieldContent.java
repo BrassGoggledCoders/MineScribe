@@ -4,7 +4,6 @@ import atlantafx.base.theme.Styles;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.mojang.datafixers.util.Either;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -18,7 +17,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FormListValue;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeJsonHelper;
-import xyz.brassgoggledcoders.minescribe.core.validation.ValidationResult;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFactory;
 
@@ -57,15 +55,6 @@ public class MultiSelectionFieldContent<T> extends FieldControl<MultiSelectionFi
     @Override
     public Node getNode() {
         return this.listView;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected Either<ObservableList<T>, ValidationResult> castObject(Object value) {
-        if (value instanceof ObservableList<?> list) {
-            return Either.left((ObservableList<T>) list);
-        }
-        return Either.right(ValidationResult.error("Value not a list"));
     }
 
     @Override
