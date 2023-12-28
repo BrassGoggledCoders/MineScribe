@@ -123,6 +123,14 @@ public class FieldListControl extends TitledPane {
         this.fieldPane.getChildren().add(newElementBox);
     }
 
+    public ReadOnlyIntegerProperty minimumFieldsProperty() {
+        return this.minimumFields;
+    }
+
+    public ReadOnlyIntegerProperty maxFieldsProperty() {
+        return this.maximumFields;
+    }
+
     public FieldContent<?> addNewContent() {
         try {
             FieldContent<?> fieldContent = EditorRegistries.getEditorFormFieldRegistry()

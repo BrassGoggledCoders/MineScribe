@@ -85,16 +85,37 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
 
     @Override
     protected Set<FieldMessage> additionalChecks(ObservableList<Property<?>> newValue) {
+        Set<FieldMessage> fieldMessages = new HashSet<>();
+        if (this.requiredProperty().get() || !this.fieldListControl.contentsProperty().isEmpty()) {
+            if (newValue.size() < this.fieldListControl.minimumFieldsProperty().get()) {
+                fieldMessages.add(new FieldMessage(
+                        this.getFieldInfo(),
+                        MessageType.ERROR,
+                        "Not enough values"
+                ));
+            }
+        }
+
+
+        if (newValue.size() > this.fieldListControl.maxFieldsProperty().get()) {
+            fieldMessages.add(new FieldMessage(
+                    this.getFieldInfo(),
+                    MessageType.ERROR,
+                    "Too many values"
+            ));
+        }
         long numberInvalid = this.fieldListControl.invalidChildren().get();
         if (numberInvalid > 0) {
-            return Collections.singleton(new FieldMessage(
+            fieldMessages.add(new FieldMessage(
                     this.getFieldInfo(),
                     MessageType.ERROR,
                     "Field contains %s invalid fields".formatted(numberInvalid)
             ));
         }
 
-        return super.additionalChecks(newValue);
+        fieldMessages.addAll(super.additionalChecks(newValue));
+
+        return fieldMessages;
     }
 
     @Override
@@ -111,7 +132,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
     public void persist() {
         this.fieldListControl.contentsProperty()
                 .forEach(fieldContent -> {
-                    if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                    if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                         if (valueContent.containsUserData()) {
                             valueContent.persist();
                         }
@@ -140,7 +161,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
 
     @Override
     public boolean fulfillsRequired(ObservableList<Property<?>> value) {
-        return !value.isEmpty();
+        return value != null;
     }
 
     @Override
@@ -158,7 +179,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
         super.validateAll();
         if (this.requiredProperty().get() || this.containsUserData()) {
             for (FieldContent<?> fieldContent : this.fieldListControl.contentsProperty()) {
-                if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                     valueContent.validateAll();
                 }
             }
@@ -171,7 +192,7 @@ public class ListOfFieldFieldControl extends FieldControl<ListOfFieldFieldContro
         return this.fieldListControl.contentsProperty()
                 .stream()
                 .anyMatch(fieldContent -> {
-                    if (fieldContent instanceof IValueContent<?,?,?> valueContent) {
+                    if (fieldContent instanceof IValueContent<?, ?, ?> valueContent) {
                         return valueContent.containsUserData();
                     }
 
