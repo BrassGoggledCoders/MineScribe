@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.ReferencedObjectFileFieldDefinition;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object.StringObjectTransform;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ObjectType;
 import xyz.brassgoggledcoders.minescribe.core.validation.FormValidation;
 import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
@@ -21,6 +22,7 @@ import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content.IValueContent;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
+import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.SerializerEditorFieldPane;
 
 import java.util.List;
 import java.util.Set;
@@ -29,9 +31,11 @@ import java.util.stream.Collectors;
 public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnlyListProperty<Pair<String, Property<?>>>, ObservableList<Pair<String, Property<?>>>> {
     private final TitledPane titledPane;
     private final EditorFormPane formPane;
+    private final StringObjectTransform transform;
 
-    public ObjectFieldControl(EditorFormPane editorFieldPane) {
+    public ObjectFieldControl(EditorFormPane editorFieldPane, StringObjectTransform transform) {
         super();
+        this.transform = transform;
         this.titledPane = new TitledPane();
         this.titledPane.getStyleClass()
                 .add("paned-field");
@@ -70,6 +74,28 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
     protected void loadControl(JsonElement jsonElement) {
         if (jsonElement != null && jsonElement.isJsonObject()) {
             this.formPane.setPersistedObject(jsonElement.getAsJsonObject());
+            this.titledPane.setExpanded(true);
+        } else if (jsonElement != null && jsonElement.isJsonPrimitive() && transform != null) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty(transform.field(), jsonElement.getAsString());
+            if (transform.type().isPresent()) {
+                this.formPane.getEditorFieldPanes()
+                        .filter(editorFieldPane -> {
+                            if (editorFieldPane instanceof SerializerEditorFieldPane serializerEditorFieldPane) {
+                                return serializerEditorFieldPane.getFileForm() == this.formPane.primaryFormProperty().get();
+                            }
+
+                            return false;
+                        })
+                        .findFirst()
+                        .ifPresent(editorFieldPane -> jsonObject.addProperty(
+                                editorFieldPane.getFieldName(),
+                                transform.type()
+                                        .get()
+                                        .toString()
+                        ));
+            }
+            this.formPane.setPersistedObject(jsonObject);
             this.titledPane.setExpanded(true);
         } else {
             this.formPane.setPersistedObject(new JsonObject());
@@ -170,7 +196,7 @@ public class ObjectFieldControl extends FieldControl<ObjectFieldControl, ReadOnl
                     List.of(objectType),
                     null
             );
-            return new ObjectFieldControl(editorFormPane);
+            return new ObjectFieldControl(editorFormPane, definition.transform().orElse(null));
         } else {
             throw new FormException("No Object with Id: %s".formatted(definition.objectId()));
         }

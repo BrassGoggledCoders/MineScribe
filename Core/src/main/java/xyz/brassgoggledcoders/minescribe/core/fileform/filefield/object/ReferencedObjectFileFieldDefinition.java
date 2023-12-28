@@ -6,9 +6,15 @@ import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
-public record ReferencedObjectFileFieldDefinition(ResourceId objectId) implements IFileFieldDefinition {
+import java.util.Optional;
+
+public record ReferencedObjectFileFieldDefinition(
+        ResourceId objectId,
+        Optional<StringObjectTransform> transform
+) implements IFileFieldDefinition {
     public static final Codec<ReferencedObjectFileFieldDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceId.CODEC.fieldOf("objectId").forGetter(ReferencedObjectFileFieldDefinition::objectId)
+            ResourceId.CODEC.fieldOf("objectId").forGetter(ReferencedObjectFileFieldDefinition::objectId),
+            StringObjectTransform.CODEC.optionalFieldOf("transform").forGetter(ReferencedObjectFileFieldDefinition::transform)
     ).apply(instance, ReferencedObjectFileFieldDefinition::new));
 
     @Override
