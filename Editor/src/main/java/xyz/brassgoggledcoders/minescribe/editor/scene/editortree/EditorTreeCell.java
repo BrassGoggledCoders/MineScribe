@@ -4,16 +4,26 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeCell;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.TreeItem;
+import javafx.scene.input.*;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
+import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 
 public class EditorTreeCell extends TreeCell<EditorItem> {
     private final ObjectProperty<EventHandler<MouseEvent>> clickHandlerProperty;
 
     public EditorTreeCell() {
         this.clickHandlerProperty = new SimpleObjectProperty<>();
+        this.createDragHandlers();
     }
 
     @Override
@@ -49,8 +59,80 @@ public class EditorTreeCell extends TreeCell<EditorItem> {
                 this.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.clickHandlerProperty.get());
                 this.clickHandlerProperty.set(null);
             }
-
         }
+    }
+
+    private void createDragHandlers() {
+        this.setOnDragDetected(this::dragDetected);
+        this.setOnDragEntered(this::dragEntered);
+        this.setOnDragExited(this::dragExited);
+        this.setOnDragOver(this::dragOver);
+        this.setOnDragDropped(this::dragDropped);
+    }
+
+    private void dragDetected(MouseEvent mouseEvent) {
+        Dragboard dragboard = this.startDragAndDrop(TransferMode.MOVE);
+
+        if (this.getItem() != null) {
+            ClipboardContent content = new ClipboardContent();
+            content.putFiles(Collections.singletonList(this.getItem().getFile()));
+            dragboard.setContent(content);
+        }
+
+        mouseEvent.consume();
+    }
+
+    private void dragEntered(DragEvent dragEvent) {
+        this.setStyle("-fx-background-color: -color-accent-subtle");
+    }
+
+    private void dragExited(DragEvent dragEvent) {
+        this.setStyle("");
+    }
+
+    private void dragOver(DragEvent dragEvent) {
+        if (dragEvent.getDragboard().hasFiles()) {
+            dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+        }
+        dragEvent.consume();
+    }
+
+    private void dragDropped(DragEvent dragEvent) {
+        Dragboard dragboard = dragEvent.getDragboard();
+        if (dragboard.hasFiles()) {
+            List<Path> paths = dragboard.getFiles()
+                    .stream()
+                    .map(File::toPath)
+                    .toList();
+
+            EditorItem editorItem = this.getItem();
+            if (editorItem != null) {
+                Path parentPath = null;
+                if (editorItem.isDirectory()) {
+                    parentPath = editorItem.getPath();
+                } else {
+                    TreeItem<EditorItem> parentItem = FileHandler.getInstance()
+                            .getClosestNode(editorItem.getPath().getParent(), false);
+
+                    if (parentItem != null && parentItem.getValue() != null) {
+                        parentPath = parentItem.getValue()
+                                .getPath();
+                    }
+                }
+                if (parentPath != null) {
+                    for (Path path : paths) {
+                        try {
+                            Files.move(path, parentPath.resolve(path.getFileName()));
+                        } catch (IOException e) {
+                            ExceptionDialog exceptionDialog = new ExceptionDialog(e);
+                            exceptionDialog.showAndWait();
+                        }
+                    }
+                }
+            }
+        }
+        dragEvent.setDropCompleted(true);
+        dragEvent.consume();
     }
 
     private record ClickHandler(TreeCell<EditorItem> treeCell) implements EventHandler<MouseEvent> {
