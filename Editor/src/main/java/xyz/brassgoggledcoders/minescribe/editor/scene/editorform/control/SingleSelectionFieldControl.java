@@ -24,11 +24,9 @@ import java.util.function.Function;
 public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelectionFieldControl<T>, ObjectProperty<T>, T> {
     private final ComboBox<T> comboBox = new SearchableComboBox<>();
     private final Function<T, String> getId;
-    private final Class<T> tClass;
 
-    public SingleSelectionFieldControl(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel, Class<T> tClass) {
+    public SingleSelectionFieldControl(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel) {
         super();
-        this.tClass = tClass;
         this.comboBox.setItems(FXCollections.observableArrayList(items));
         this.setLabelMaker(getLabel);
         this.getId = getId;
@@ -98,20 +96,18 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
             return new SingleSelectionFieldControl<>(
                     values,
                     FormListValue::id,
-                    FormListValue::label,
-                    FormListValue.class
+                    FormListValue::label
             );
         } catch (Exception e) {
             throw new FormException("Found error while gathering list values", e);
         }
     }
 
-    public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel, Class<T> tClass) {
+    public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel) {
         return new SingleSelectionFieldControl<>(
                 items,
                 getId,
-                getLabel,
-                tClass
+                getLabel
         );
     }
 }

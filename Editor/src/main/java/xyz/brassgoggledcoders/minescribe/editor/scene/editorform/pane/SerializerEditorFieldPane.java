@@ -174,8 +174,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                                     serializerTypes,
                                     serializerType -> serializerType.serializerId()
                                             .toString(),
-                                    SerializerType::label,
-                                    SerializerType.class
+                                    SerializerType::label
                             )
                             .withId(serializerInfo.fieldName())
                             .withLabel(serializerInfo.label())
