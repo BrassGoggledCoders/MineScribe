@@ -1,4 +1,5 @@
 {
+  "label": "File Field Definition",
   "form": {
     "fields": [],
     "serializer": {
