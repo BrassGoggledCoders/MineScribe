@@ -111,16 +111,19 @@ public abstract class FieldControl<C extends FieldControl<C, P, V>, P extends Re
 
     private void checkValid(V newValue) {
         List<FieldMessage> newErrors = new ArrayList<>();
-        for (Function<Object, ValidationResult> fieldValidation : this.validations) {
-            ValidationResult result = fieldValidation.apply(newValue);
-            if (!result.isValid()) {
-                newErrors.add(new FieldMessage(
-                        this.fieldInfo,
-                        MessageType.ERROR,
-                        result.getMessage()
-                ));
+        if (this.required.get() || this.fulfillsRequired(newValue)) {
+            for (Function<Object, ValidationResult> fieldValidation : this.validations) {
+                ValidationResult result = fieldValidation.apply(newValue);
+                if (!result.isValid()) {
+                    newErrors.add(new FieldMessage(
+                            this.fieldInfo,
+                            MessageType.ERROR,
+                            result.getMessage()
+                    ));
+                }
             }
         }
+
         newErrors.addAll(this.additionalChecks(newValue));
 
         Set<FieldMessage> removed = new HashSet<>();
