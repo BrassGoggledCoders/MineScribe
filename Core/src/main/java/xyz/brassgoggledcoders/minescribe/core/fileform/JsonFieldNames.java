@@ -29,4 +29,5 @@ public class JsonFieldNames {
     public static final String VALUES = "values";
     public static final String PARENT_ID = "parentId";
     public static final String TYPE = "type";
+    public static final String NAME = "name";
 }

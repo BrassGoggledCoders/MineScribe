@@ -2,6 +2,8 @@ package xyz.brassgoggledcoders.minescribe.core.packinfo;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
+import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.registry.ILabeledValue;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
@@ -17,9 +19,9 @@ public record MineScribePackType(
         Optional<String> versionKey
 ) implements ILabeledValue {
     public static final Codec<MineScribePackType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            FancyText.CODEC.fieldOf("label").forGetter(MineScribePackType::label),
-            Codec.STRING.fieldOf("name").forGetter(MineScribePackType::name),
-            Codec.STRING.fieldOf("path").xmap(Path::of, Path::toString).forGetter(MineScribePackType::folder),
+            FancyText.CODEC.fieldOf(JsonFieldNames.LABEL).forGetter(MineScribePackType::label),
+            Codec.STRING.fieldOf(JsonFieldNames.NAME).forGetter(MineScribePackType::name),
+            MineScribeCoreCodecs.PATH.fieldOf(JsonFieldNames.PATH).forGetter(MineScribePackType::folder),
             Codec.INT.fieldOf("version").forGetter(MineScribePackType::version),
             Codec.STRING.optionalFieldOf("versionKey").forGetter(MineScribePackType::versionKey)
     ).apply(instance, MineScribePackType::new));
