@@ -16,6 +16,6 @@ public record FormListValue(
     }
 
     public boolean matches(String id) {
-        return this.id().equals(id) || this.alias().map(id::equals).orElse(true);
+        return this.id().equals(id) || this.alias().map(id::equals).orElse(false);
     }
 }
