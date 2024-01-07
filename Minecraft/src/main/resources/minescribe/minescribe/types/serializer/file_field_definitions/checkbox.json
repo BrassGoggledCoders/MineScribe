@@ -17,5 +17,5 @@
     "text": "Check Box"
   },
   "parentId": "minescribe:types/object/file_field_definition",
-  "serializerId": "minescribe:checkbox"
+  "serializerId": "checkbox"
 }

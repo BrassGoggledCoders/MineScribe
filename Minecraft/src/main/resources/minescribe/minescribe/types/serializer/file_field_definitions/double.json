@@ -52,5 +52,5 @@
     "text": "Number Field (Double)"
   },
   "parentId": "minescribe:types/object/file_field_definition",
-  "serializerId": "minescribe:double"
+  "serializerId": "double"
 }

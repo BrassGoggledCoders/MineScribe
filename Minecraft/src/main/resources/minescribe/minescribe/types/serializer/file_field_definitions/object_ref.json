@@ -1,6 +1,6 @@
 {
   "parentId": "minescribe:types/object/file_field_definition",
-  "serializerId": "minescribe:object_ref",
+  "serializerId": "object_ref",
   "label": "Object Reference",
   "form": {
     "fields": [

@@ -17,5 +17,5 @@
     "text": "Text Field"
   },
   "parentId": "minescribe:types/object/file_field_definition",
-  "serializerId": "minescribe:string"
+  "serializerId": "string"
 }

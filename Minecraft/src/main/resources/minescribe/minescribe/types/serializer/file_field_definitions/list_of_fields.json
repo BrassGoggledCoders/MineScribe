@@ -1,6 +1,6 @@
 {
   "parentId": "minescribe:types/parent/serializer_type",
-  "serializerId": "minescribe:list_of_fields",
+  "serializerId": "list_of_fields",
   "label": "List of Fields",
   "form": {
     "fields": [

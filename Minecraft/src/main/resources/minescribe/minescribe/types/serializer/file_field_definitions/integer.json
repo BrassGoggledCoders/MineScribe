@@ -52,5 +52,5 @@
     "text": "Number Field (Integer)"
   },
   "parentId": "minescribe:types/object/file_field_definition",
-  "serializerId": "minescribe:integer"
+  "serializerId": "integer"
 }
