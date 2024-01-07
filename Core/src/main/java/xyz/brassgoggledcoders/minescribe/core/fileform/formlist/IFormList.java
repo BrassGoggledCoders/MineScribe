@@ -8,6 +8,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public interface IFormList<T> {
@@ -40,9 +41,18 @@ public interface IFormList<T> {
                 .stream()
                 .map(value -> new FormListValue(
                         this.getKey(value),
-                        this.getLabel(value)
+                        this.getLabel(value),
+                        this.getAlias(value)
                 ))
                 .toList();
+    }
+
+    /**
+     * Actually sorta id? Because Registries with Aliases are actually considered their ids
+     * Merely a second name to check, but id should be the written one.
+     */
+    default Optional<String> getAlias(T value) {
+        return Optional.empty();
     }
 
     @NotNull

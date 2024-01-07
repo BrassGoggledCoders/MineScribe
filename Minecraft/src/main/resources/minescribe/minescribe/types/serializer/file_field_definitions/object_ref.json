@@ -6,18 +6,18 @@
     "fields": [
       {
         "definition": {
-          "type": "minescribe:single_selection",
+          "type": "single_selection",
           "lists": [
             {
-              "type": "minescribe:registry",
+              "type": "registry",
               "registry": "objectTypes",
               "fullNameId": "true"
             }
           ]
         },
         "info": {
-          "label": "Form",
-          "field": "form",
+          "label": "Object Id",
+          "field": "objectId",
           "sortOrder": 0,
           "required": true,
           "helpText": "The Id for the Form Object to use for this Field"

@@ -19,6 +19,7 @@ import java.nio.file.PathMatcher;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements IFileUpdateListener, ISourceRootListener {
     private final Logger logger;
@@ -26,8 +27,8 @@ public abstract class FileLoadedRegistry<K, V> extends Registry<K, V> implements
     private final String directory;
     private final String fileType;
 
-    public FileLoadedRegistry(String name, Codec<K> kCodec, String directory, String fileType) {
-        super(name, kCodec);
+    public FileLoadedRegistry(String name, Codec<K> kCodec, String directory, String fileType, Function<V, String> aliasFunction) {
+        super(name, kCodec, aliasFunction);
         this.logger = LoggerFactory.getLogger(name + " registry");
         this.sourcePaths = new HashMap<>();
         this.directory = directory.replace("/", File.separator)

@@ -1,4 +1,5 @@
 {
+  "label": "Ingredient (Item)",
   "form": {
     "fields": [],
     "serializer": {

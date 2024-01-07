@@ -25,7 +25,7 @@ public class FolderContentsRegistry extends Registry<String, FolderCollection> i
     private final Set<Path> sourceRoots;
 
     public FolderContentsRegistry() {
-        super(RegistryNames.FOLDER_COLLECTIONS, Codec.STRING);
+        super(RegistryNames.FOLDER_COLLECTIONS, Codec.STRING, null);
         this.watchedPaths = Multimaps.newMultimap(new HashMap<>(), HashSet::new);
         this.sourceRoots = new HashSet<>();
     }

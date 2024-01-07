@@ -16,7 +16,7 @@ public class ScriptLoadedRegistry<K, V> extends FileLoadedRegistry<K, V> {
     private final Multimap<Path, K> registeredPaths;
 
     public ScriptLoadedRegistry(String name, Codec<K> kCodec, Path directory) {
-        super(name, kCodec, Path.of("scripts").resolve(directory).toString(), "js");
+        super(name, kCodec, Path.of("scripts").resolve(directory).toString(), "js", null);
         this.registeredPaths = Multimaps.newMultimap(new HashMap<>(), HashSet::new);
         ScriptHandler.getInstance()
                 .putBinding(name, this);

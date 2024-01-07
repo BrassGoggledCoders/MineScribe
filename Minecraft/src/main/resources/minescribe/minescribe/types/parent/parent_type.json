@@ -1,4 +1,7 @@
 {
+  "label": "Parent Type",
+  "path": "types\\parent",
+  "packType": "minescribe",
   "form": {
     "fields": [
       {
@@ -6,10 +9,10 @@
           "type": "string"
         },
         "info": {
-          "field": "label",
           "label": "Label",
-          "required": true,
-          "sortOrder": 1
+          "field": "label",
+          "sortOrder": 1,
+          "required": true
         }
       },
       {
@@ -17,25 +20,27 @@
           "type": "string"
         },
         "info": {
-          "field": "path",
           "label": "Path",
-          "required": true,
-          "sortOrder": 2
+          "field": "path",
+          "sortOrder": 2,
+          "required": true
         }
       },
       {
         "definition": {
           "type": "single_selection",
-          "lists": {
-            "type": "registry",
-            "registry": "packTypes"
-          }
+          "lists": [
+            {
+              "type": "registry",
+              "registry": "packTypes"
+            }
+          ]
         },
         "info": {
-          "field": "packType",
           "label": "Pack Type",
-          "required": true,
-          "sortOrder": 3
+          "field": "packType",
+          "sortOrder": 3,
+          "required": true
         }
       },
       {
@@ -44,17 +49,12 @@
           "objectId": "minescribe:file_form"
         },
         "info": {
-          "field": "form",
           "label": "File Form",
-          "sortOrder": 4
+          "field": "form",
+          "sortOrder": 4,
+          "required": false
         }
       }
     ]
-  },
-  "id": "minescribe:parent_type",
-  "label": {
-    "text": "Parent Type"
-  },
-  "packType": "MINESCRIBE",
-  "path": "types\\parent"
+  }
 }

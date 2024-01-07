@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 
 import java.nio.file.Path;
+import java.util.function.Function;
 
 public class BasicJsonRegistry<V> extends FileLoadedRegistry<ResourceId, V> {
 
@@ -17,7 +18,11 @@ public class BasicJsonRegistry<V> extends FileLoadedRegistry<ResourceId, V> {
     private final Codec<V> vCodec;
 
     public BasicJsonRegistry(String name, String directory, Codec<V> vCodec) {
-        super(name, ResourceId.CODEC, directory, "json");
+        this(name, directory, vCodec, null);
+    }
+
+    public BasicJsonRegistry(String name, String directory, Codec<V> vCodec, Function<V, String> aliasFunction) {
+        super(name, ResourceId.CODEC, directory, "json", aliasFunction);
         this.logger = LoggerFactory.getLogger(name + " registry");
         this.vCodec = vCodec;
     }

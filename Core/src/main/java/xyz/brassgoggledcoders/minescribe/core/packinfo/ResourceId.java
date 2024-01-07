@@ -2,8 +2,10 @@ package xyz.brassgoggledcoders.minescribe.core.packinfo;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import xyz.brassgoggledcoders.minescribe.core.MineScribeInfo;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public record ResourceId(
         String namespace,
@@ -27,6 +29,16 @@ public record ResourceId(
     @Override
     public String toString() {
         return this.namespace() + ":" + this.path();
+    }
+
+    public boolean matches(String value) {
+        if (this.toString().equals(value)) {
+            return true;
+        } else if (value.indexOf(':') == -1){
+            return this.path()
+                    .equals(value);
+        }
+        return false;
     }
 
     public static DataResult<ResourceId> fromString(String s) {

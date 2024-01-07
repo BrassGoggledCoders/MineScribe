@@ -4,18 +4,22 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.brassgoggledcoders.minescribe.core.codec.BiMapDispatchCodec;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class Registry<K, V> implements Iterable<V> {
     private final String id;
     private final BiMap<K, V> values;
     private final Codec<V> dispatchCodec;
+    private final Function<V, String> aliasFunction;
 
-    public Registry(String id, Codec<K> kCodec) {
+    public Registry(String id, Codec<K> kCodec, Function<V, String> aliasFunction) {
         this.id = id;
+        this.aliasFunction = Objects.requireNonNullElseGet(aliasFunction, () -> value -> null);
         this.values = HashBiMap.create();
         this.dispatchCodec = new BiMapDispatchCodec<>(
                 this.id,
@@ -78,6 +82,11 @@ public class Registry<K, V> implements Iterable<V> {
         return this.getMap()
                 .values()
                 .iterator();
+    }
+
+    @Nullable
+    public String getAlias(V value) {
+        return this.aliasFunction.apply(value);
     }
 
     public Collection<K> getKeys() {

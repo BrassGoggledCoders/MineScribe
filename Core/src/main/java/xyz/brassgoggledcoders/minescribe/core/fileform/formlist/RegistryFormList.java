@@ -11,6 +11,7 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.List;
+import java.util.Optional;
 
 public record RegistryFormList<V>(
         Registry<?, V> registry,
@@ -31,8 +32,25 @@ public record RegistryFormList<V>(
             return fullName.getFullName()
                     .toString();
         } else {
-            return registry.getKey(value)
-                    .toString();
+            String alias = registry.getAlias(value);
+            if (alias != null) {
+                return alias;
+            } else {
+                return registry.getKey(value)
+                        .toString();
+            }
+        }
+    }
+
+    @Override
+    public Optional<String> getAlias(V value) {
+        if (this.registry.getAlias(value) != null) {
+            return Optional.ofNullable(this.registry()
+                    .getKey(value)
+                    .toString()
+            );
+        } else {
+            return Optional.empty();
         }
     }
 

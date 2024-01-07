@@ -19,14 +19,17 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.LabeledCellFa
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelectionFieldControl<T>, ObjectProperty<T>, T> {
     private final ComboBox<T> comboBox = new SearchableComboBox<>();
     private final Function<T, String> getId;
+    private final BiPredicate<T, String> matches;
 
-    public SingleSelectionFieldControl(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel) {
+    public SingleSelectionFieldControl(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel, BiPredicate<T, String> matches) {
         super();
+        this.matches = matches;
         this.comboBox.setItems(FXCollections.observableArrayList(items));
         this.setLabelMaker(getLabel);
         this.getId = getId;
@@ -46,7 +49,7 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
             String id = jsonElement.getAsString();
             for (T value : this.comboBox.getItems()) {
                 if (value != null) {
-                    if (getId.apply(value).equals(id)) {
+                    if (this.matches.test(value, id)) {
                         this.comboBox.selectionModelProperty()
                                 .get()
                                 .select(value);
@@ -96,18 +99,20 @@ public class SingleSelectionFieldControl<T> extends FieldControl<SingleSelection
             return new SingleSelectionFieldControl<>(
                     values,
                     FormListValue::id,
-                    FormListValue::label
+                    FormListValue::label,
+                    FormListValue::matches
             );
         } catch (Exception e) {
             throw new FormException("Found error while gathering list values", e);
         }
     }
 
-    public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel) {
+    public static <T> SingleSelectionFieldControl<T> of(List<T> items, Function<T, String> getId, Function<T, FancyText> getLabel, BiPredicate<T, String> matches) {
         return new SingleSelectionFieldControl<>(
                 items,
                 getId,
-                getLabel
+                getLabel,
+                matches
         );
     }
 }

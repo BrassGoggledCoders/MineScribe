@@ -25,7 +25,8 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
     private static final BasicJsonRegistry<MineScribePackType> packTypes = new BasicJsonRegistry<>(
             RegistryNames.PACK_TYPES,
             "pack_types",
-            MineScribePackType.CODEC
+            MineScribePackType.CODEC,
+            MineScribePackType::name
     );
     private static final BasicJsonRegistry<PackRepositoryLocation> packRepositoryLocations = new BasicJsonRegistry<>(
             RegistryNames.PACK_REPOSITORY_LOCATIONS,

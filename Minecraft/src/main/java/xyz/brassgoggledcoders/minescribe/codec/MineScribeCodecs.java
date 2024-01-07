@@ -10,6 +10,7 @@ import xyz.brassgoggledcoders.minescribe.core.codec.ErroringOptionalFieldCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.JsonCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
@@ -53,7 +54,8 @@ public class MineScribeCodecs {
     ).apply(instance, (label, path, form, packType) -> new PackContentChildType(label, path, form.orElse(null), packType)));
 
     public static final Codec<ObjectType> OBJECT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            FileForm.CODEC.fieldOf("form").forGetter(ObjectType::fileForm)
+            FancyText.CODEC.fieldOf(JsonFieldNames.LABEL).forGetter(ObjectType::getLabel),
+            FileForm.CODEC.fieldOf(JsonFieldNames.FORM).forGetter(ObjectType::fileForm)
     ).apply(instance, ObjectType::new));
 
     public static final Codec<SerializerType> SERIALIZER_TYPE = RecordCodecBuilder.create(instance -> instance.group(

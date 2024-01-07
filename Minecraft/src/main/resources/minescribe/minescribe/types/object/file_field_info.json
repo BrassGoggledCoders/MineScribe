@@ -4,7 +4,7 @@
     "fields": [
       {
         "definition": {
-          "type": "minescribe:string"
+          "type": "string"
         },
         "info": {
           "label": "Label",
@@ -15,7 +15,7 @@
       },
       {
         "definition": {
-          "type": "minescribe:string"
+          "type": "string"
         },
         "info": {
           "label": "Field",
@@ -26,7 +26,7 @@
       },
       {
         "definition": {
-          "type": "minescribe:integer",
+          "type": "integer",
           "range": {
             "min": 0,
             "start": 0,
@@ -42,7 +42,7 @@
       },
       {
         "definition": {
-          "type": "minescribe:checkbox",
+          "type": "checkbox",
           "defaultValue": false
         },
         "info": {
@@ -54,7 +54,7 @@
       },
       {
         "definition": {
-          "type": "minescribe:string"
+          "type": "string"
         },
         "info": {
           "label": "Help Text",
