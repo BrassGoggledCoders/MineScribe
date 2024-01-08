@@ -1,0 +1,11 @@
+{
+  "label": "Fancy Text",
+  "form": {
+    "fields": [],
+    "serializer": {
+      "field": "type",
+      "label": "Type",
+      "defaultField": []
+    }
+  }
+}

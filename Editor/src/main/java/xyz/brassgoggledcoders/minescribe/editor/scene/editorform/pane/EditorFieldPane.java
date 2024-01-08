@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -41,7 +42,7 @@ public abstract class EditorFieldPane<F extends FieldContent<F>> extends AnchorP
 
     public abstract F getContent();
 
-    public void setValue(JsonElement jsonElement) {
+    public void setValue(JsonElement jsonElement, JsonObject parentElement) {
         if (this.getContent() instanceof IValueContent<?, ?, ?> valueControl) {
             valueControl.load(jsonElement);
         }

@@ -1,12 +1,16 @@
 {
   "label": "Parent Type",
   "path": "types\\parent",
-  "packType": "minescribe",
+  "packType": "MINESCRIBE",
   "form": {
     "fields": [
       {
         "definition": {
-          "type": "string"
+          "type": "object_ref",
+          "objectId": "minescribe:fancy_text",
+          "transform": {
+            "field": "text"
+          }
         },
         "info": {
           "label": "Label",

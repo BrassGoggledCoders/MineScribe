@@ -142,7 +142,7 @@ public class EditorFormPane extends GridPane {
 
         //These can alter the list
         for (SerializerEditorFieldPane serializerEditorFieldPane : serializerEditorFieldPanes) {
-            serializerEditorFieldPane.setValue(jsonObject.get(serializerEditorFieldPane.getFieldName()));
+            serializerEditorFieldPane.setValue(jsonObject.get(serializerEditorFieldPane.getFieldName()), jsonObject);
         }
 
         for (EditorFieldPane<?> editorFieldPane : this.getEditorFieldPanes().toList()) {
@@ -421,18 +421,19 @@ public class EditorFormPane extends GridPane {
 
         if (!editorFieldPane.getFieldName().contains(".")) {
             if (jsonObject.has(editorFieldPane.getFieldName())) {
-                editorFieldPane.setValue(jsonObject.get(editorFieldPane.getFieldName()));
+                editorFieldPane.setValue(jsonObject.get(editorFieldPane.getFieldName()), jsonObject);
             }
         } else {
             String[] fieldPath = editorFieldPane.getFieldName().split("\\.");
-            JsonElement fieldElement = jsonObject.get(fieldPath[0]);
+            JsonObject parentObject = jsonObject;
+            JsonElement fieldElement = parentObject.get(fieldPath[0]);
             for (int i = 1; i < fieldPath.length; i++) {
                 if (fieldElement != null && fieldElement.isJsonObject()) {
-                    fieldElement = fieldElement.getAsJsonObject()
-                            .get(fieldPath[i]);
+                    parentObject = fieldElement.getAsJsonObject();
+                    fieldElement = parentObject.get(fieldPath[i]);
                 }
             }
-            editorFieldPane.setValue(fieldElement);
+            editorFieldPane.setValue(fieldElement, jsonObject);
         }
 
     }

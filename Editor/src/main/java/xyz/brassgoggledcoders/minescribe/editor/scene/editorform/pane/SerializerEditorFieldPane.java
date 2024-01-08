@@ -2,11 +2,15 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.Label;
+import javafx.util.Pair;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.SerializerInfo;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
+import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
@@ -16,10 +20,10 @@ import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.SceneUtils;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.SingleSelectionFieldControl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFieldControl<SerializerType>> {
     private final SingleSelectionFieldControl<SerializerType> fieldControl;
@@ -69,9 +73,20 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
     }
 
     @Override
-    public void setValue(JsonElement jsonElement) {
+    public void setValue(JsonElement jsonElement, JsonObject parentElement) {
         ObjectProperty<SerializerType> selected = this.getContent()
                 .valueProperty();
+
+        if (jsonElement == null && this.serializerInfo.fieldLess()) {
+            this.findType(
+                    parentElement,
+                    Registries.getSerializerTypes()
+                            .getValues()
+                            .stream()
+                            .filter(serializerType -> parents.contains(serializerType.parentId()))
+            ).ifPresent(selected::set);
+        }
+
         if (jsonElement != null && jsonElement.isJsonPrimitive()) {
             ResourceId.fromString(jsonElement.getAsString())
                     .result()
@@ -80,20 +95,18 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         }
 
         if (selected.get() == null && jsonElement != null && jsonElement.isJsonPrimitive()) {
-            ResourceId.fromString(jsonElement.getAsString())
-                    .result()
-                    .flatMap(resourceId -> Registries.getSerializerTypes()
-                            .getValues()
-                            .stream()
-                            .filter(serializerType -> parents.contains(serializerType.parentId()))
-                            .filter(serializerType -> serializerType.serializerId().equals(resourceId))
-                            .min((typeA, typeB) -> {
-                                int posA = parents.indexOf(typeA.parentId());
-                                int posB = parents.indexOf(typeB.parentId());
+            String serializerId = jsonElement.getAsString();
+            Registries.getSerializerTypes()
+                    .getValues()
+                    .stream()
+                    .filter(serializerType -> parents.contains(serializerType.parentId()))
+                    .filter(serializerType -> serializerType.serializerId().equals(serializerId))
+                    .min((typeA, typeB) -> {
+                        int posA = parents.indexOf(typeA.parentId());
+                        int posB = parents.indexOf(typeB.parentId());
 
-                                return Integer.compare(posA, posB);
-                            })
-                    )
+                        return Integer.compare(posA, posB);
+                    })
                     .ifPresent(selected::set);
         }
 
@@ -120,13 +133,69 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
         }
     }
 
+    private Optional<SerializerType> findType(JsonObject parentObject, Stream<SerializerType> potentials) {
+        Set<String> jsonKeys = parentObject.keySet();
+        return potentials.map(potential -> {
+                    Map<String, Boolean> fieldKeys = potential.fileForm()
+                            .getFields()
+                            .stream()
+                            .map(FileField::info)
+                            .collect(Collectors.toMap(FileFieldInfo::field, FileFieldInfo::required));
+
+                    boolean matchesRequiredFields = true;
+                    for (Entry<String, Boolean> field : fieldKeys.entrySet()) {
+                        if (field.getValue() && !jsonKeys.contains(field.getKey())) {
+                            matchesRequiredFields = false;
+                            break;
+                        }
+                    }
+
+                    float percentMatched = getPercentMatched(jsonKeys, fieldKeys);
+
+                    return new Pair<>(
+                            potential,
+                            new Pair<>(
+                                    matchesRequiredFields,
+                                    percentMatched
+                            )
+                    );
+                })
+                .min((pair1, pair2) -> {
+                    Pair<Boolean, Float> value1 = pair1.getValue();
+                    Pair<Boolean, Float> value2 = pair2.getValue();
+
+                    int compare = Boolean.compare(value1.getKey(), value2.getKey());
+                    if (compare == 0) {
+                        return Float.compare(value1.getValue(), value2.getValue());
+                    } else {
+                        return compare;
+                    }
+                })
+                .map(Pair::getKey);
+    }
+
+    private static float getPercentMatched(Set<String> jsonKeys, Map<String, Boolean> fieldKeys) {
+        float percentMatched = 0;
+
+        if (!jsonKeys.isEmpty()) {
+            Set<String> matchingKeys = new HashSet<>();
+            for (String key : jsonKeys) {
+                if (fieldKeys.containsKey(key)) {
+                    matchingKeys.add(key);
+                }
+            }
+            percentMatched = (float) matchingKeys.size() / (float) jsonKeys.size();
+        }
+        return percentMatched;
+    }
+
     @Override
     public JsonElement getValue() {
         SerializerType serializerType = this.getContent()
                 .valueProperty()
                 .get();
-        if (serializerType != null && Registries.getSerializerTypes().getKey(serializerType) != null) {
-            return new JsonPrimitive(serializerType.serializerId().toString());
+        if (!this.serializerInfo.fieldLess() && serializerType != null && Registries.getSerializerTypes().getKey(serializerType) != null) {
+            return new JsonPrimitive(serializerType.serializerId());
         } else {
             return JsonNull.INSTANCE;
         }
@@ -162,7 +231,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
                     if (serializerInfo.defaultForm().isPresent()) {
                         SerializerType defaultFieldsType = new SerializerType(
                                 ResourceId.NULL,
-                                ResourceId.NULL,
+                                ResourceId.NULL.toString(),
                                 FancyText.literal("Default"),
                                 serializerInfo.defaultForm()
                                         .get()
@@ -172,8 +241,7 @@ public class SerializerEditorFieldPane extends EditorFieldPane<SingleSelectionFi
 
                     SingleSelectionFieldControl<SerializerType> field = SingleSelectionFieldControl.of(
                                     serializerTypes,
-                                    serializerType -> serializerType.serializerId()
-                                            .toString(),
+                                    SerializerType::serializerId,
                                     SerializerType::label,
                                     (serializerType, string) -> serializerType.serializerId()
                                             .matches(string)
