@@ -60,7 +60,7 @@ public class MineScribeCodecs {
 
     public static final Codec<SerializerType> SERIALIZER_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             RESOURCE_ID.fieldOf("parentId").forGetter(SerializerType::parentId),
-            RESOURCE_ID.fieldOf("serializerId").forGetter(SerializerType::serializerId),
+            Codec.STRING.fieldOf("serializerId").forGetter(SerializerType::serializerId),
             LABEL_STRING.fieldOf("label").forGetter(SerializerType::label),
             FileForm.CODEC.fieldOf("form").forGetter(SerializerType::fileForm)
     ).apply(instance, SerializerType::new));

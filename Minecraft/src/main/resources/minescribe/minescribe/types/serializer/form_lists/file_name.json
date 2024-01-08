@@ -30,5 +30,5 @@
     "text": "Files"
   },
   "parentId": "minescribe:types/object/form_list",
-  "serializerId": "minescribe:file_name"
+  "serializerId": "file_name"
 }

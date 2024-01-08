@@ -32,5 +32,5 @@
     "text": "Registry Values"
   },
   "parentId": "minescribe:types/object/form_list",
-  "serializerId": "minescribe:registry"
+  "serializerId": "registry"
 }

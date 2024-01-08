@@ -7,5 +7,5 @@
     "text": "Registry Names"
   },
   "parentId": "minescribe:types/object/form_list",
-  "serializerId": "minescribe:registry_names"
+  "serializerId": "registry_names"
 }
