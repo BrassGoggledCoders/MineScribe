@@ -21,21 +21,15 @@ public class FXMLService implements IFXMLService {
     }
 
     @Override
-    public <NODE, CONTROLLER> LoadResult<NODE, CONTROLLER> load(URL url) {
+    public <NODE> NODE load(URL url) {
         try {
             FXMLLoader loader = new FXMLLoader(url);
             loader.setControllerFactory(injector::getInstance);
-            NODE node = loader.load();
-            CONTROLLER controller = loader.getController();
-            return new LoadResult<>(
-                    node,
-                    controller
-            );
+            return loader.load();
         } catch (IOException e) {
             LOGGER.error("Failed to load node {}", url, e);
-            Platform.runLater(() -> new ExceptionDialog(e)
-                    .showAndWait()
-            );
+            new ExceptionDialog(e)
+                    .showAndWait();
             return null;
         }
     }

@@ -5,13 +5,9 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -22,12 +18,12 @@ public class Project {
     private final Path rootPath;
     private final Path mineScribeFolder;
     private final Map<String, Path> additionalPackLocations;
-    private final Map<UUID, Path> openTabs;
+    private final Set<Path> openTabs;
 
     public Project(Path rootPath) {
         this.rootPath = rootPath;
         this.mineScribeFolder = this.rootPath.resolve(".minescribe");
-        this.openTabs = new HashMap<>();
+        this.openTabs = new HashSet<>();
         this.additionalPackLocations = new HashMap<>();
     }
 
@@ -44,25 +40,23 @@ public class Project {
         return additionalPackLocations;
     }
 
-    public void addOpenTab(UUID id, Path path) {
-        this.openTabs.put(id, path);
+    public void addOpenTab(Path path) {
+        this.openTabs.add(path);
     }
 
-    public void removeOpenTab(UUID id) {
-        this.openTabs.remove(id);
+    public void removeOpenTab(Path path) {
+        this.openTabs.remove(path);
     }
 
     public void trySave(Preferences preferences) {
         try {
             Preferences projectNode = preferences.node("last_project");
             projectNode.put("path", this.getRootPath().toString());
-            Preferences openTabsNode = projectNode.node("open_tabs");
-            openTabsNode.clear();
             if (!this.openTabs.isEmpty()) {
-                for (Map.Entry<UUID, Path> entry : this.openTabs.entrySet()) {
-                    openTabsNode.put(entry.getKey().toString(), entry.getValue().toString());
-                }
-                openTabsNode.flush();
+                projectNode.put("tabs", this.openTabs.stream()
+                        .map(Path::toString)
+                        .collect(Collectors.joining(","))
+                );
             }
             projectNode.put(
                     "additional_pack_locations",
@@ -78,7 +72,7 @@ public class Project {
         }
     }
 
-    public Map<UUID, Path> getOpenTabs() {
+    public Set<Path> getOpenTabs() {
         return this.openTabs;
     }
 
@@ -96,14 +90,11 @@ public class Project {
                         }
                         Project project = new Project(path);
 
-                        if (projectNode.nodeExists("open_tabs")) {
-                            Preferences openTabs = projectNode.node("open_tabs");
-                            for (String key : openTabs.keys()) {
-                                Path tabPath = Path.of(openTabs.get(key, ""));
-                                if (Files.isRegularFile(tabPath)) {
-                                    project.addOpenTab(UUID.fromString(key), tabPath);
-                                }
-                            }
+                        String tabs = projectNode.get("tabs", "");
+                        if (!tabs.isEmpty()) {
+                            Arrays.stream(tabs.split(","))
+                                    .map(Path::of)
+                                    .forEach(project::addOpenTab);
                         }
 
                         project.getAdditionalPackLocations()

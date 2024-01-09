@@ -9,6 +9,8 @@ import xyz.brassgoggledcoders.minescribe.editor.service.page.PageService;
 import xyz.brassgoggledcoders.minescribe.editor.service.page.IPageService;
 import xyz.brassgoggledcoders.minescribe.editor.service.project.IProjectService;
 import xyz.brassgoggledcoders.minescribe.editor.service.project.ProjectService;
+import xyz.brassgoggledcoders.minescribe.editor.service.tab.EditorTabService;
+import xyz.brassgoggledcoders.minescribe.editor.service.tab.IEditorTabService;
 
 public class GuiceModule implements Module {
     @Override
@@ -19,5 +21,7 @@ public class GuiceModule implements Module {
         binder.bind(Project.class).toProvider(ProjectService.class);
 
         binder.bind(IPageService.class).to(PageService.class);
+
+        binder.bind(IEditorTabService.class).to(EditorTabService.class);
     }
 }

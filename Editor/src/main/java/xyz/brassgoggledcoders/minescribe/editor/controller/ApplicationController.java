@@ -20,7 +20,6 @@ public class ApplicationController {
     private final IPageService pageService;
     private final IProjectService projectService;
 
-
     @FXML
     public AnchorPane content;
     public Menu themeMenu;
@@ -51,6 +50,7 @@ public class ApplicationController {
         }
     }
 
+    //TODO Make this smarter to make sure the folder is a valid MineCraft install
     public void openProject(ActionEvent ignoredActionEvent) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Open Project");

@@ -1,15 +1,16 @@
 package xyz.brassgoggledcoders.minescribe.editor.service.page;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.service.fxml.IFXMLService;
-import xyz.brassgoggledcoders.minescribe.editor.service.fxml.IFXMLService.LoadResult;
 
 import java.lang.ref.WeakReference;
 
+@Singleton
 public class PageService implements IPageService {
     private final IFXMLService fxmlService;
 
@@ -31,9 +32,8 @@ public class PageService implements IPageService {
                         .noneMatch(node -> node.getId().equals(pageName));
 
                 if (notCurrentPage) {
-                    LoadResult<Node, Object> loadResult = fxmlService.load(Application.class.getResource(pageName + ".fxml"));
-                    if (loadResult != null) {
-                        Node node = loadResult.node();
+                    Node node = fxmlService.load(Application.class.getResource(pageName + ".fxml"));
+                    if (node != null) {
                         pagePane.getChildren().clear();
                         AnchorPane.setTopAnchor(node, 0D);
                         AnchorPane.setBottomAnchor(node, 0D);

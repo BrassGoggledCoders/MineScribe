@@ -14,16 +14,15 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.AnchorPane;
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
-import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
 import xyz.brassgoggledcoders.minescribe.editor.validation.StringRegexValidator;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -148,6 +147,16 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
             Optional<PackContentChildType> childTypeOpt,
             String fileName
     ) {
+        public Optional<FileForm> getFileForm() {
+            return this.parentType()
+                    .getForm()
+                    .or(() -> this.childTypeOpt.flatMap(PackContentType::getForm));
+        }
 
+        public List<IFullName> getFullNames() {
+            return this.childTypeOpt()
+                    .<List<IFullName>>map(childType -> List.of(this.parentType(), childType))
+                    .orElseGet(() -> Collections.singletonList(this.parentType()));
+        }
     }
 }

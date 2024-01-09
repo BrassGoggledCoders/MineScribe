@@ -11,6 +11,7 @@ import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.PackRepositoryEditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.service.tab.IEditorTabService;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -28,9 +29,11 @@ public class FileHandler {
     private static FileWatcher WATCHER;
 
     private final TreeItem<EditorItem> rootItem;
+    private final IEditorTabService editorTabService;
 
-    private FileHandler() {
+    private FileHandler(IEditorTabService editorTabService) {
         this.rootItem = new TreeItem<>();
+        this.editorTabService = editorTabService;
     }
 
     public void reloadClosestNode(@NotNull Path path) {
@@ -116,6 +119,7 @@ public class FileHandler {
 
             try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(currentPath, path -> !childrenPaths.contains(path))) {
                 List<EditorItem> children = treeItem.getValue().createChildren(childPaths);
+                children.forEach(child -> child.setEditorTabService(this.editorTabService));
                 children.removeIf(Predicate.not(EditorItem::isValid));
                 children.sort(EditorItem::compareTo);
                 for (EditorItem child : children) {
@@ -144,8 +148,8 @@ public class FileHandler {
     }
 
 
-    public static void initialize(Supplier<Project> projectSupplier) {
-        INSTANCE = new FileHandler();
+    public static void initialize(Supplier<Project> projectSupplier, IEditorTabService editorTabService) {
+        INSTANCE = new FileHandler(editorTabService);
         try {
             WATCHER = FileWatcher.of(
                     INSTANCE::handleUpdates,

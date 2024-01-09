@@ -2,10 +2,7 @@ package xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
 
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.nio.file.Path;
@@ -86,5 +83,10 @@ public record NodeTracker(
                 .or(() -> this.childTypeOpt()
                         .flatMap(PackContentType::getForm)
                 );
+    }
+
+    public List<IFullName> getFullNames() {
+        return this.childTypeOpt.<List<IFullName>>map(childType -> List.of(this.parentType(), childType))
+                .orElseGet(() -> Collections.singletonList(this.parentType()));
     }
 }

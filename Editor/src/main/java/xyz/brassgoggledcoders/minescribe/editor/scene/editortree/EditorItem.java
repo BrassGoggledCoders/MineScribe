@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
+import xyz.brassgoggledcoders.minescribe.editor.service.tab.IEditorTabService;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,8 @@ public abstract class EditorItem implements Comparable<EditorItem> {
 
     private final String name;
     private final Path path;
+
+    private IEditorTabService editorTabService;
 
     public EditorItem(String name, Path path) {
         this.name = name;
@@ -109,5 +112,13 @@ public abstract class EditorItem implements Comparable<EditorItem> {
 
     public String getCssClass() {
         return null;
+    }
+
+    public void setEditorTabService(IEditorTabService editorTabService) {
+        this.editorTabService = editorTabService;
+    }
+
+    protected IEditorTabService getEditorTabService() {
+        return this.editorTabService;
     }
 }

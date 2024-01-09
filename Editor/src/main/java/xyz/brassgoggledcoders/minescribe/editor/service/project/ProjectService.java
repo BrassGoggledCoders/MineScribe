@@ -1,11 +1,12 @@
 package xyz.brassgoggledcoders.minescribe.editor.service.project;
 
+import com.google.inject.Singleton;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
-import java.util.Optional;
 import java.util.prefs.Preferences;
 
+@Singleton
 public class ProjectService implements IProjectService {
     private Project project = null;
 
