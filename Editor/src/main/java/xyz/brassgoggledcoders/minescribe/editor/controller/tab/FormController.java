@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -29,6 +31,7 @@ import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
+import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
@@ -46,6 +49,8 @@ public class FormController implements IFileEditorController {
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .create();
+
+    private final Provider<Project> projectProvider;
     @FXML
     public VBox formPane;
 
@@ -64,7 +69,9 @@ public class FormController implements IFileEditorController {
     private Path filePath;
     private final BooleanProperty fileSaved;
 
-    public FormController() {
+    @Inject
+    public FormController(Provider<Project> projectProvider) {
+        this.projectProvider = projectProvider;
         this.fileSaved = new SimpleBooleanProperty(false);
     }
 
@@ -190,7 +197,8 @@ public class FormController implements IFileEditorController {
                                                 this.filePath.getFileName()
                                                         .toString(),
                                                 this.filePath,
-                                                UUID.fromString(this.tab.getId())
+                                                UUID.fromString(this.tab.getId()),
+                                                this.projectProvider::get
                                         )));
                             }
                         }

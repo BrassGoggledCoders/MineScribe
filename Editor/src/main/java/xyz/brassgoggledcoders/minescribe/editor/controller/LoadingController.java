@@ -1,5 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.controller;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
@@ -14,6 +16,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LoadingController {
+    private final Provider<Project> projectProvider;
+
     @FXML
     public StackPane loading;
 
@@ -22,9 +26,14 @@ public class LoadingController {
 
     private Project project;
 
+    @Inject
+    public LoadingController(Provider<Project> projectProvider) {
+        this.projectProvider = projectProvider;
+    }
+
     @FXML
     public void initialize() {
-        this.project = InfoRepository.getInstance().getValue(Project.KEY);
+        this.project = this.projectProvider.get();
         if (project != null) {
             Path mineScribePath = project.getMineScribeFolder();
             Path loadComplete = mineScribePath.resolve(".load_complete");

@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.controller;
 
 import atlantafx.base.theme.Theme;
+import com.google.inject.Inject;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +18,7 @@ import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.Application;
 import xyz.brassgoggledcoders.minescribe.editor.event.page.RequestPageEvent;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
+import xyz.brassgoggledcoders.minescribe.editor.service.project.IProjectService;
 import xyz.brassgoggledcoders.minescribe.editor.theme.ThemeManager;
 
 import java.io.File;
@@ -31,9 +33,17 @@ public class ApplicationController {
     public static final InfoKey<Consumer<String>> PAGE_REQUEST_KEY = new InfoKey<>() {
     };
 
+    private final IProjectService projectService;
+
+
     @FXML
     public AnchorPane content;
     public Menu themeMenu;
+
+    @Inject
+    public ApplicationController(IProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @FXML
     public void initialize() {
@@ -44,15 +54,10 @@ public class ApplicationController {
                 event -> trySetView(event.getPageName())
         );
 
-        Preferences preferences = Preferences.userNodeForPackage(Application.class);
-
-        Project project = Project.tryLoad(preferences);
-        if (project != null) {
-            InfoRepository.getInstance().setValue(Project.KEY, project);
+        this.projectService.loadLastProject();
+        if (this.projectService.get() != null) {
             this.content.fireEvent(new RequestPageEvent("loading"));
-        }
-
-        if (InfoRepository.getInstance().getValue(Project.KEY) == null) {
+        } else {
             this.content.fireEvent(new RequestPageEvent("select_project"));
         }
 
@@ -99,8 +104,7 @@ public class ApplicationController {
                 projectPath = projectPath.getParent();
             }
             Project project = new Project(projectPath);
-            InfoRepository.getInstance().setValue(Project.KEY, project);
-            project.trySave(Preferences.userNodeForPackage(Application.class));
+            this.projectService.setCurrentProject(project);
             this.content.fireEvent(new RequestPageEvent("loading"));
         }
 

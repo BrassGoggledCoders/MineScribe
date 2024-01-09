@@ -18,6 +18,8 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires xyz.brassgoggledcoders.minescribe.core;
     requires org.jetbrains.annotations;
     requires com.google.gson;
+    requires com.google.guice;
+    requires jakarta.inject;
     requires datafixerupper;
     requires com.google.common;
     requires org.graalvm.polyglot;
@@ -48,5 +50,8 @@ module xyz.brassgoggledcoders.minescribe.editor {
     opens xyz.brassgoggledcoders.minescribe.editor.scene to javafx.fxml;
 
     exports xyz.brassgoggledcoders.minescribe.editor.file;
+    exports xyz.brassgoggledcoders.minescribe.editor.project;
     exports xyz.brassgoggledcoders.minescribe.editor.service;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.fxml;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.project;
 }

@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
@@ -20,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class FileHandler {
@@ -144,7 +144,7 @@ public class FileHandler {
     }
 
 
-    public static void initialize() {
+    public static void initialize(Supplier<Project> projectSupplier) {
         INSTANCE = new FileHandler();
         try {
             WATCHER = FileWatcher.of(
@@ -155,8 +155,7 @@ public class FileHandler {
             ExceptionDialog.showDialog("Failed to initialize FileWatcher", e);
             Platform.exit();
         }
-        Project project = InfoRepository.getInstance()
-                .getValue(Project.KEY);
+        Project project = projectSupplier.get();
         if (project != null) {
             WATCHER.watchDirectory(project.getMineScribeFolder());
             for (PackRepositoryLocation location : Registries.getPackRepositoryLocationRegistry()) {

@@ -3,6 +3,8 @@ package xyz.brassgoggledcoders.minescribe.editor.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.mojang.datafixers.util.Pair;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -39,6 +41,9 @@ public class EditorController {
     private final Gson GSON = new GsonBuilder()
             .create();
 
+
+    private final Provider<Project> projectProvider;
+
     @FXML
     public SplitPane editor;
     @FXML
@@ -54,9 +59,14 @@ public class EditorController {
     @SuppressWarnings("unused")
     private InfoPaneController infoPaneController;
 
+    @Inject
+    public EditorController(Provider<Project> projectProvider) {
+        this.projectProvider = projectProvider;
+    }
+
     @FXML
     public void initialize() {
-        FileHandler.initialize();
+        FileHandler.initialize(this.projectProvider::get);
         files.setRoot(FileHandler.getInstance()
                 .getRootModel()
         );
@@ -67,7 +77,7 @@ public class EditorController {
         editor.addEventHandler(OpenTabEvent.OPEN_TAB_EVENT_TYPE, this::handleTabOpen);
         editor.addEventHandler(CloseTabEvent.EVENT_TYPE, this::handleTabClose);
 
-        Project project = InfoRepository.getInstance().getValue(Project.KEY);
+        Project project = projectProvider.get();
         if (project != null) {
             List<Path> tabPaths = new ArrayList<>(project.getOpenTabs().values());
             project.getOpenTabs().clear();
@@ -81,7 +91,7 @@ public class EditorController {
         }
         this.editorTabPane.getTabs()
                 .addListener((ListChangeListener<Tab>) c -> {
-                    Project currentProject = InfoRepository.getInstance().getValue(Project.KEY);
+                    Project currentProject = this.projectProvider.get();
                     if (currentProject != null) {
                         while (c.next()) {
                             if (c.wasRemoved()) {
@@ -100,6 +110,7 @@ public class EditorController {
         UUID tabId = UUID.randomUUID();
         Pair<Object, Object> tabContent = event.createTabContent(tabId);
         Tab newTab = null;
+
         if (tabContent.getFirst() instanceof Tab tab) {
             newTab = tab;
             newTab.setText(event.getTabName());
@@ -112,7 +123,7 @@ public class EditorController {
             this.editorTabPane.getTabs().add(newTab);
 
             if (tabContent.getSecond() instanceof IFileEditorController fileEditorController) {
-                Project project = InfoRepository.getInstance().getValue(Project.KEY);
+                Project project = this.projectProvider.get();
                 if (project != null && fileEditorController.getPath() != null) {
                     project.addOpenTab(tabId, fileEditorController.getPath());
                 }
@@ -129,8 +140,7 @@ public class EditorController {
 
     @FXML
     private void addPack(ActionEvent ignored) {
-        Project project = InfoRepository.getInstance()
-                .getValue(Project.KEY);
+        Project project = this.projectProvider.get();
         if (project != null) {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setInitialDirectory(project.getRootPath()

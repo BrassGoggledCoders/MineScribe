@@ -4,12 +4,14 @@ import com.mojang.datafixers.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoKey;
 
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -17,8 +19,6 @@ import java.util.stream.Stream;
 
 public class Project {
     private static final Logger LOGGER = LoggerFactory.getLogger(Project.class);
-    public static final InfoKey<Project> KEY = new InfoKey<>() {
-    };
     private final Path rootPath;
     private final Path mineScribeFolder;
     private final Map<String, Path> additionalPackLocations;

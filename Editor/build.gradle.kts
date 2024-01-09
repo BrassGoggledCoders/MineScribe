@@ -55,6 +55,10 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.10.1")
 
+    @Suppress("VulnerableLibrariesLocal", "RedundantSuppression")
+    implementation("com.google.inject:guice:7.0.0")
+    implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+
     implementation("org.slf4j:slf4j-simple:2.0.9")
     implementation("org.slf4j:jul-to-slf4j:2.0.9")
 
@@ -63,6 +67,7 @@ dependencies {
 
     implementation("org.jetbrains:annotations:24.0.0")
 
+    @Suppress("VulnerableLibrariesLocal", "RedundantSuppression")
     implementation("com.mojang:datafixerupper:5.0.28")
 
     implementation(project(":Core")) {
