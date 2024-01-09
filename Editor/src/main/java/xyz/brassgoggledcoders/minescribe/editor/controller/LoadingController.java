@@ -6,9 +6,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
+import xyz.brassgoggledcoders.minescribe.editor.service.page.IPageService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LoadingController {
+    private final IPageService pageService;
     private final Provider<Project> projectProvider;
 
     @FXML
@@ -27,7 +28,8 @@ public class LoadingController {
     private Project project;
 
     @Inject
-    public LoadingController(Provider<Project> projectProvider) {
+    public LoadingController(IPageService pageService, Provider<Project> projectProvider) {
+        this.pageService = pageService;
         this.projectProvider = projectProvider;
     }
 
@@ -53,9 +55,7 @@ public class LoadingController {
         EditorRegistries.load(this.project.getMineScribeFolder());
         this.loadingStatus.setText("Project Loaded. Opening Editor");
 
-        InfoRepository.getInstance()
-                .getValue(ApplicationController.PAGE_REQUEST_KEY)
-                .accept("editor");
+        this.pageService.setPage("editor");
     }
 
     private class CheckLoadComplete extends TimerTask {
