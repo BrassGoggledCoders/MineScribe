@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
+import com.google.inject.Singleton;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
@@ -11,6 +12,7 @@ import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.PackRepositoryEditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.service.editoritem.IEditorItemService;
 import xyz.brassgoggledcoders.minescribe.editor.service.tab.IEditorTabService;
 
 import java.io.IOException;
@@ -20,10 +22,10 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-public class FileHandler {
+@Singleton
+public class FileHandler implements IEditorItemService {
     private static final Pattern PATH_NAME_PATTERN = Pattern.compile("\\$\\{PATH:(?<number>-?\\d)}");
     private static FileHandler INSTANCE;
     private static FileWatcher WATCHER;
@@ -36,6 +38,7 @@ public class FileHandler {
         this.editorTabService = editorTabService;
     }
 
+    @Override
     public void reloadClosestNode(@NotNull Path path) {
         this.reloadClosestNode(path, this.rootItem);
     }
@@ -55,6 +58,7 @@ public class FileHandler {
         }
     }
 
+    @Override
     public TreeItem<EditorItem> getClosestNode(@NotNull Path path, boolean expand) {
         Queue<TreeItem<EditorItem>> queue = this.getNodePath(path, this.rootItem);
         TreeItem<EditorItem> closestNode = null;
@@ -68,6 +72,7 @@ public class FileHandler {
         return closestNode;
     }
 
+    @Override
     public Queue<TreeItem<EditorItem>> getNodePath(Path path) {
         return this.getNodePath(path, this.rootItem);
     }
@@ -88,6 +93,7 @@ public class FileHandler {
         return new LinkedList<>();
     }
 
+    @Override
     public void reloadDirectory(@NotNull EditorItem editorItem) {
         this.reloadDirectory(editorItem, this.rootItem);
     }
@@ -135,11 +141,13 @@ public class FileHandler {
 
     }
 
-    public TreeItem<EditorItem> getRootModel() {
+    @Override
+    public TreeItem<EditorItem> getRootItem() {
         return this.rootItem;
     }
 
-    public void addPackRepository(String label, Path location) {
+    @Override
+    public void addPackRepositoryItem(String label, Path location) {
         PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(label, location);
         this.rootItem.getChildren()
                 .add(new TreeItem<>(editorItem));
@@ -148,53 +156,55 @@ public class FileHandler {
     }
 
 
-    public static void initialize(Supplier<Project> projectSupplier, IEditorTabService editorTabService) {
-        INSTANCE = new FileHandler(editorTabService);
-        try {
-            WATCHER = FileWatcher.of(
-                    INSTANCE::handleUpdates,
-                    throwable -> ExceptionDialog.showDialog("File Watcher Exception", throwable)
-            );
-        } catch (IOException e) {
-            ExceptionDialog.showDialog("Failed to initialize FileWatcher", e);
-            Platform.exit();
-        }
-        Project project = projectSupplier.get();
-        if (project != null) {
-            WATCHER.watchDirectory(project.getMineScribeFolder());
-            for (PackRepositoryLocation location : Registries.getPackRepositoryLocationRegistry()) {
-                PathMatcher pathMatcher = project.getRootPath()
-                        .getFileSystem()
-                        .getPathMatcher("glob:" + location.pathMatcher());
-                List<Path> packRepositoryPaths = findPackRepositories(project.getRootPath(), pathMatcher, 1);
+    public static void initialize(Project project, IEditorTabService editorTabService) {
+        if (INSTANCE == null) {
+            INSTANCE = new FileHandler(editorTabService);
+            try {
+                WATCHER = FileWatcher.of(
+                        INSTANCE::handleUpdates,
+                        throwable -> ExceptionDialog.showDialog("File Watcher Exception", throwable)
+                );
+            } catch (IOException e) {
+                ExceptionDialog.showDialog("Failed to initialize FileWatcher", e);
+                Platform.exit();
+            }
+            if (project != null) {
+                WATCHER.watchDirectory(project.getMineScribeFolder());
+                for (PackRepositoryLocation location : Registries.getPackRepositoryLocationRegistry()) {
+                    PathMatcher pathMatcher = project.getRootPath()
+                            .getFileSystem()
+                            .getPathMatcher("glob:" + location.pathMatcher());
+                    List<Path> packRepositoryPaths = findPackRepositories(project.getRootPath(), pathMatcher, 1);
 
-                for (Path packRepositoryPath : packRepositoryPaths) {
-                    String repositoryLabel = location.label()
-                            .getText();
+                    for (Path packRepositoryPath : packRepositoryPaths) {
+                        String repositoryLabel = location.label()
+                                .getText();
 
-                    repositoryLabel = PATH_NAME_PATTERN.matcher(repositoryLabel)
-                            .replaceAll(matchResult -> {
-                                int pathPosition = Integer.parseInt(matchResult.group(1));
-                                if (Math.abs(pathPosition) < packRepositoryPath.getNameCount()) {
-                                    if (pathPosition >= 0) {
-                                        return packRepositoryPath.getName(pathPosition)
-                                                .toString();
-                                    } else {
-                                        return packRepositoryPath.getName(packRepositoryPath.getNameCount() - Math.abs(pathPosition))
-                                                .toString();
+                        repositoryLabel = PATH_NAME_PATTERN.matcher(repositoryLabel)
+                                .replaceAll(matchResult -> {
+                                    int pathPosition = Integer.parseInt(matchResult.group(1));
+                                    if (Math.abs(pathPosition) < packRepositoryPath.getNameCount()) {
+                                        if (pathPosition >= 0) {
+                                            return packRepositoryPath.getName(pathPosition)
+                                                    .toString();
+                                        } else {
+                                            return packRepositoryPath.getName(packRepositoryPath.getNameCount() - Math.abs(pathPosition))
+                                                    .toString();
+                                        }
                                     }
-                                }
 
-                                return "";
-                            });
+                                    return "";
+                                });
 
-                    INSTANCE.addPackRepository(repositoryLabel, packRepositoryPath);
+                        INSTANCE.addPackRepositoryItem(repositoryLabel, packRepositoryPath);
+                    }
+                }
+                for (Map.Entry<String, Path> entries : project.getAdditionalPackLocations().entrySet()) {
+                    INSTANCE.addPackRepositoryItem(entries.getKey(), entries.getValue());
                 }
             }
-            for (Map.Entry<String, Path> entries : project.getAdditionalPackLocations().entrySet()) {
-                INSTANCE.addPackRepository(entries.getKey(), entries.getValue());
-            }
         }
+
     }
 
     @NotNull

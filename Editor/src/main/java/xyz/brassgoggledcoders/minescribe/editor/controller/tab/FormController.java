@@ -24,7 +24,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
 import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
@@ -35,6 +34,7 @@ import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorForm
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.UnsavedFileEditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.tab.EditorFormTab;
+import xyz.brassgoggledcoders.minescribe.editor.service.editoritem.IEditorItemService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -50,6 +50,7 @@ public class FormController {
             .setPrettyPrinting()
             .create();
 
+    private final IEditorItemService editorItemService;
     private final Provider<Project> projectProvider;
     @FXML
     public VBox formPane;
@@ -68,7 +69,8 @@ public class FormController {
     private final BooleanProperty fileSaved;
 
     @Inject
-    public FormController(Provider<Project> projectProvider) {
+    public FormController(IEditorItemService editorItemService, Provider<Project> projectProvider) {
+        this.editorItemService = editorItemService;
         this.projectProvider = projectProvider;
         this.fileSaved = new SimpleBooleanProperty(false);
     }
@@ -175,7 +177,7 @@ public class FormController {
                                             StandardOpenOption.TRUNCATE_EXISTING
                                     );
                                     this.fileSaved.set(true);
-                                    FileHandler.getInstance().reloadClosestNode(filePath);
+                                    this.editorItemService.reloadClosestNode(filePath);
                                 } catch (IOException e) {
                                     LOGGER.error("Failed to write file {}", filePath, e);
                                     ExceptionDialog.showDialog(
@@ -190,10 +192,8 @@ public class FormController {
                     try {
                         Path parentDirectory = filePath.getParent();
                         Files.createDirectories(parentDirectory);
-                        FileHandler.getInstance()
-                                .reloadClosestNode(parentDirectory);
-                        TreeItem<EditorItem> closestNode = FileHandler.getInstance()
-                                .getClosestNode(parentDirectory, true);
+                        this.editorItemService.reloadClosestNode(parentDirectory);
+                        TreeItem<EditorItem> closestNode = this.editorItemService.getClosestNode(parentDirectory, true);
                         if (closestNode != null) {
                             EditorItem parentEditorItem = closestNode.getValue();
                             if (parentEditorItem != null && parentEditorItem.getPath().equals(parentDirectory)) {
@@ -298,8 +298,7 @@ public class FormController {
             MessageHandler.getInstance()
                     .removeByPath(this.getPath());
             if (!this.fileSaved.get()) {
-                TreeItem<EditorItem> parentTreeItem = FileHandler.getInstance()
-                        .getClosestNode(this.getPath().getParent(), false);
+                TreeItem<EditorItem> parentTreeItem = this.editorItemService.getClosestNode(this.getPath().getParent(), false);
 
                 if (parentTreeItem != null) {
                     parentTreeItem.getChildren()

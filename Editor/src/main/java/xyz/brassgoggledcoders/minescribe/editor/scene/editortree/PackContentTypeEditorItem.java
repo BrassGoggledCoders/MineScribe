@@ -59,7 +59,7 @@ public class PackContentTypeEditorItem extends EditorItem {
                 .showAndWait()
                 .ifPresent(newFileResult -> {
 
-                    Optional<NamespaceEditorItem> namespaceEditorItem = FileHandler.getInstance()
+                    Optional<NamespaceEditorItem> namespaceEditorItem = this.getEditorItemService()
                             .getNodePath(this.getPath())
                             .stream()
                             .map(TreeItem::getValue)

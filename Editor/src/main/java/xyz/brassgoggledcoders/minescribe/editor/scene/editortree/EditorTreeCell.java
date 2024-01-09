@@ -111,12 +111,10 @@ public class EditorTreeCell extends TreeCell<EditorItem> {
                 if (editorItem.isDirectory()) {
                     parentPath = editorItem.getPath();
                 } else {
-                    TreeItem<EditorItem> parentItem = FileHandler.getInstance()
-                            .getClosestNode(editorItem.getPath().getParent(), false);
+                    EditorItem parentItem = editorItem.getParent();
 
-                    if (parentItem != null && parentItem.getValue() != null) {
-                        parentPath = parentItem.getValue()
-                                .getPath();
+                    if (parentItem != null) {
+                        parentPath = parentItem.getPath();
                     }
                 }
                 if (parentPath != null) {

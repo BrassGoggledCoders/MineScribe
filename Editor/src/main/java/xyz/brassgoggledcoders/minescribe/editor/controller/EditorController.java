@@ -16,12 +16,12 @@ import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.controller.element.InfoPaneController;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorTreeCell;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.FormFileEditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.tab.IFileTab;
+import xyz.brassgoggledcoders.minescribe.editor.service.editoritem.IEditorItemService;
 import xyz.brassgoggledcoders.minescribe.editor.service.tab.IEditorTabService;
 
 import java.io.File;
@@ -35,6 +35,7 @@ public class EditorController {
             .create();
 
 
+    private final IEditorItemService editorItemService;
     private final IEditorTabService editorTabService;
     private final Provider<Project> projectProvider;
 
@@ -54,17 +55,15 @@ public class EditorController {
     private InfoPaneController infoPaneController;
 
     @Inject
-    public EditorController(IEditorTabService editorTabService, Provider<Project> projectProvider) {
+    public EditorController(IEditorItemService editorItemService, IEditorTabService editorTabService, Provider<Project> projectProvider) {
+        this.editorItemService = editorItemService;
         this.editorTabService = editorTabService;
         this.projectProvider = projectProvider;
     }
 
     @FXML
     public void initialize() {
-        FileHandler.initialize(this.projectProvider::get, this.editorTabService);
-        files.setRoot(FileHandler.getInstance()
-                .getRootModel()
-        );
+        files.setRoot(this.editorItemService.getRootItem());
         files.setCellFactory(param -> new EditorTreeCell());
 
         this.infoPaneController.setParentPane(this.parentPane);
@@ -73,8 +72,7 @@ public class EditorController {
         Project project = projectProvider.get();
         if (project != null) {
             for (Path openTab : project.getOpenTabs()) {
-                TreeItem<EditorItem> treeItem = FileHandler.getInstance()
-                        .getClosestNode(openTab, true);
+                TreeItem<EditorItem> treeItem = this.editorItemService.getClosestNode(openTab, true);
                 if (treeItem != null && treeItem.getValue() instanceof FormFileEditorItem fileEditorItem) {
                     fileEditorItem.openTab();
                 }
@@ -131,8 +129,7 @@ public class EditorController {
                                     .toPath();
                             project.getAdditionalPackLocations()
                                     .put(packDescription, repositoryPath);
-                            FileHandler.getInstance()
-                                    .addPackRepository(packDescription, repositoryPath);
+                            this.editorItemService.addPackRepositoryItem(packDescription, repositoryPath);
                         }
                     } catch (IOException ioException) {
                         LOGGER.error("Failed to read pack.mcmeta", ioException);

@@ -40,7 +40,7 @@ public class FolderContentsRegistry extends Registry<String, FolderCollection> i
 
     private void load(String pathMatcherString) {
         List<TreeItem<EditorItem>> repositoryRoots = FileHandler.getInstance()
-                .getRootModel()
+                .getRootItem()
                 .getChildren();
         List<IdPath> matchingPaths = new ArrayList<>();
         for (TreeItem<EditorItem> repositoryRoot : repositoryRoots) {
