@@ -51,6 +51,7 @@ module xyz.brassgoggledcoders.minescribe.editor {
     exports xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content;
     exports xyz.brassgoggledcoders.minescribe.editor.scene.tab;
     exports xyz.brassgoggledcoders.minescribe.editor.service;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.editoritem;
     exports xyz.brassgoggledcoders.minescribe.editor.service.fxml;
     exports xyz.brassgoggledcoders.minescribe.editor.service.page;
     exports xyz.brassgoggledcoders.minescribe.editor.service.project;
