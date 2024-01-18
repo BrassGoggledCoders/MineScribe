@@ -6,7 +6,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackRepositoryLocation;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
@@ -155,8 +156,7 @@ public class FileHandler implements IEditorItemService {
         this.reloadDirectory(editorItem);
     }
 
-
-    public static void initialize(Project project, IEditorTabService editorTabService) {
+    public static void initialize(Project project, IEditorTabService editorTabService, Registry<ResourceId, PackRepositoryLocation> registry) {
         if (INSTANCE == null) {
             INSTANCE = new FileHandler(editorTabService);
             try {
@@ -170,7 +170,7 @@ public class FileHandler implements IEditorItemService {
             }
             if (project != null) {
                 WATCHER.watchDirectory(project.getMineScribeFolder());
-                for (PackRepositoryLocation location : Registries.getPackRepositoryLocationRegistry()) {
+                for (PackRepositoryLocation location : registry) {
                     PathMatcher pathMatcher = project.getRootPath()
                             .getFileSystem()
                             .getPathMatcher("glob:" + location.pathMatcher());

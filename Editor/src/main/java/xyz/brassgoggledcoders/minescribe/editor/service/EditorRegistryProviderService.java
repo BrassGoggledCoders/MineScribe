@@ -1,6 +1,5 @@
 package xyz.brassgoggledcoders.minescribe.editor.service;
 
-import com.mojang.serialization.Codec;
 import javafx.scene.control.SpinnerValueFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.*;
@@ -12,7 +11,6 @@ import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.core.registry.RegistryNames;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 import xyz.brassgoggledcoders.minescribe.core.util.Range;
-import xyz.brassgoggledcoders.minescribe.core.validation.Validation;
 import xyz.brassgoggledcoders.minescribe.editor.registry.*;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.control.*;
 
@@ -54,11 +52,6 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
             ObjectType.CODEC
     );
     private static final SerializerTypeRegistry serializerTypes = new SerializerTypeRegistry();
-    private static final ScriptLoadedRegistry<ResourceId, Codec<? extends Validation<?>>> validations = new ScriptLoadedRegistry<>(
-            RegistryNames.VALIDATIONS,
-            ResourceId.CODEC,
-            Path.of("validation")
-    );
 
     private static final FolderContentsRegistry FOLDER_COLLECTION_REGISTRY = new FolderContentsRegistry();
 
@@ -130,7 +123,6 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 packTypes,
                 packRepositoryLocations,
                 formValueLists,
-                validations,
                 contentParentTypes,
                 contentChildTypes,
                 objectTypes,

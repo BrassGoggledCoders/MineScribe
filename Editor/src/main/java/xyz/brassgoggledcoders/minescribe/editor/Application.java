@@ -10,6 +10,7 @@ import xyz.brassgoggledcoders.minescribe.core.MineScribeRuntime;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.javascript.ScriptHandler;
 import xyz.brassgoggledcoders.minescribe.editor.service.GuiceModule;
+import xyz.brassgoggledcoders.minescribe.editor.service.RegistryModule;
 import xyz.brassgoggledcoders.minescribe.editor.service.project.IProjectService;
 import xyz.brassgoggledcoders.minescribe.editor.theme.ThemeManager;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Application extends javafx.application.Application {
-    private final Injector injector = Guice.createInjector(new GuiceModule());
+    private final Injector injector = Guice.createInjector(new GuiceModule(), new RegistryModule());
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -47,7 +48,7 @@ public class Application extends javafx.application.Application {
         this.injector.getInstance(IProjectService.class)
                         .saveProject();
         FileHandler.dispose();
-        ScriptHandler.getInstance()
+        this.injector.getInstance(ScriptHandler.class)
                 .close();
     }
 

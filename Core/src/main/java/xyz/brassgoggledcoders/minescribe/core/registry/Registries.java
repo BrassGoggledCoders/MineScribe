@@ -1,9 +1,11 @@
 package xyz.brassgoggledcoders.minescribe.core.registry;
 
 import com.mojang.serialization.Codec;
+import jakarta.inject.Inject;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.IFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.IFormList;
+import xyz.brassgoggledcoders.minescribe.core.inject.MineScribeInject;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
 import xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 import xyz.brassgoggledcoders.minescribe.core.util.FolderCollection;
@@ -17,12 +19,12 @@ public class Registries {
     public static final ServiceLoader<IRegistryProviderService> REGISTRY_PROVIDER_SERVICE_LOADER =
             ServiceLoader.load(IRegistryProviderService.class);
 
-    public static Registry<String, PackRepositoryLocation> getPackRepositoryLocationRegistry() {
-        return getRegistry(RegistryNames.PACK_REPOSITORY_LOCATIONS);
-    }
+    @Inject
+    @MineScribeInject
+    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations;
 
     public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidationCodecRegistry() {
-        return getRegistry(RegistryNames.VALIDATIONS);
+        return validations;
     }
 
     public static Registry<String, MineScribePackType> getPackTypeRegistry() {

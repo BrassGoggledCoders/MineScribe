@@ -15,24 +15,31 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
-    requires xyz.brassgoggledcoders.minescribe.core;
+
     requires org.jetbrains.annotations;
-    requires com.google.gson;
-    requires com.google.guice;
-    requires jakarta.inject;
+
     requires datafixerupper;
-    requires com.google.common;
     requires org.graalvm.polyglot;
+
+    requires com.google.common;
+    requires com.google.gson;
+
+    requires jakarta.inject;
+    requires com.google.guice;
 
     requires atlantafx.base;
     requires org.kordamp.ikonli.feather;
     requires org.kordamp.ikonli.javafx;
+
+    requires xyz.brassgoggledcoders.minescribe.core;
 
     opens xyz.brassgoggledcoders.minescribe.editor to javafx.fxml;
     opens xyz.brassgoggledcoders.minescribe.editor.controller to javafx.fxml;
     opens xyz.brassgoggledcoders.minescribe.editor.controller.element to javafx.fxml;
     opens xyz.brassgoggledcoders.minescribe.editor.controller.tab to javafx.fxml;
     opens xyz.brassgoggledcoders.minescribe.editor.scene to javafx.fxml;
+
+    opens xyz.brassgoggledcoders.minescribe.editor.service to com.google.guice;
 
     exports xyz.brassgoggledcoders.minescribe.editor;
     exports xyz.brassgoggledcoders.minescribe.editor.controller;
@@ -55,5 +62,6 @@ module xyz.brassgoggledcoders.minescribe.editor {
     exports xyz.brassgoggledcoders.minescribe.editor.service.fxml;
     exports xyz.brassgoggledcoders.minescribe.editor.service.page;
     exports xyz.brassgoggledcoders.minescribe.editor.service.project;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.registry;
     exports xyz.brassgoggledcoders.minescribe.editor.service.tab;
 }
