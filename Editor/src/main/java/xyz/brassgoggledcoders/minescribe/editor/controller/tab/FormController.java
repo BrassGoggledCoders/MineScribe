@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -19,33 +22,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.IFullName;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
 import xyz.brassgoggledcoders.minescribe.editor.event.field.FieldMessagesEvent;
 import xyz.brassgoggledcoders.minescribe.editor.exception.FormException;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.FieldMessage;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
+import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editorform.pane.EditorFormPane;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.UnsavedFileEditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.scene.tab.EditorFormTab;
+import xyz.brassgoggledcoders.minescribe.editor.service.editoritem.IEditorItemService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
-public class FormController implements IFileEditorController {
+public class FormController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FormController.class);
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .create();
+
+    private final IEditorItemService editorItemService;
+    private final Provider<Project> projectProvider;
     @FXML
     public VBox formPane;
 
@@ -57,57 +63,65 @@ public class FormController implements IFileEditorController {
     public Button resetButton;
 
     public Tooltip validationToolTip;
-    public Tab tab;
+    public EditorFormTab tab;
 
     private EditorFormPane editorForm;
-
-    private Path filePath;
     private final BooleanProperty fileSaved;
 
-    public FormController() {
+    @Inject
+    public FormController(IEditorItemService editorItemService, Provider<Project> projectProvider) {
+        this.editorItemService = editorItemService;
+        this.projectProvider = projectProvider;
         this.fileSaved = new SimpleBooleanProperty(false);
     }
 
     @FXML
     public void initialize() {
         this.formPane.addEventHandler(FieldMessagesEvent.EVENT_TYPE, this::handleMessages);
+        this.tab.pathProperty()
+                .addListener(this::handleInvalidate);
+        this.tab.fileFormProperty()
+                .addListener(this::handleInvalidate);
+        this.tab.parentsProperty()
+                .addListener(this::handleInvalidate);
     }
 
-    public void setFormInfo(Path filePath, PackContentParentType parentType, @Nullable PackContentChildType childType) {
-        Optional<FileForm> fileFormOpt = parentType.getForm()
-                .or(() -> Optional.ofNullable(childType)
-                        .flatMap(PackContentType::getForm)
-                );
+    public void handleInvalidate(Observable ignored) {
+        this.reloadForm();
+    }
 
-        if (fileFormOpt.isPresent()) {
-            FileForm fileForm = fileFormOpt.get();
+    public void reloadForm() {
+        FileForm fileForm = this.tab.fileFormProperty()
+                .getValue();
 
+        Path filePath = this.tab.pathProperty()
+                .getValue();
+
+        List<IFullName> parents = this.tab.parentsProperty();
+
+        this.formPane.getChildren()
+                .clear();
+        if (fileForm != null && filePath != null && !parents.isEmpty()) {
             JsonObject persistableObject = null;
 
-            this.filePath = filePath;
-            if (Files.exists(this.filePath)) {
+            if (Files.exists(filePath)) {
                 try {
-                    String jsonString = Files.readString(this.filePath);
+                    String jsonString = Files.readString(filePath);
                     JsonElement jsonElement = GSON.fromJson(jsonString, JsonElement.class);
                     if (jsonElement.isJsonObject()) {
                         persistableObject = jsonElement.getAsJsonObject();
                     }
                     this.fileSaved.set(true);
                 } catch (IOException e) {
-                    LOGGER.error("Failed to load File for {}", this.filePath, e);
+                    LOGGER.error("Failed to load File for {}", filePath, e);
                     ExceptionDialog.showDialog(
-                            "Failed to load File for %s".formatted(this.filePath),
+                            "Failed to load File for %s".formatted(filePath),
                             e
                     );
                 }
             }
 
             try {
-                List<IFullName> parents = new ArrayList<>();
-                parents.add(parentType);
-                if (childType != null) {
-                    parents.add(childType);
-                }
                 this.editorForm = EditorFormPane.of(
                         fileForm,
                         parents,
@@ -163,11 +177,11 @@ public class FormController implements IFileEditorController {
                                             StandardOpenOption.TRUNCATE_EXISTING
                                     );
                                     this.fileSaved.set(true);
-                                    FileHandler.getInstance().reloadClosestNode(filePath);
+                                    this.editorItemService.reloadClosestNode(filePath);
                                 } catch (IOException e) {
-                                    LOGGER.error("Failed to write file {}", this.filePath, e);
+                                    LOGGER.error("Failed to write file {}", filePath, e);
                                     ExceptionDialog.showDialog(
-                                            "Failed to write file %s".formatted(this.filePath),
+                                            "Failed to write file %s".formatted(filePath),
                                             e
                                     );
                                 }
@@ -176,21 +190,19 @@ public class FormController implements IFileEditorController {
 
                 if (!this.fileSaved.get()) {
                     try {
-                        Path parentDirectory = this.filePath.getParent();
+                        Path parentDirectory = filePath.getParent();
                         Files.createDirectories(parentDirectory);
-                        FileHandler.getInstance()
-                                .reloadClosestNode(parentDirectory);
-                        TreeItem<EditorItem> closestNode = FileHandler.getInstance()
-                                .getClosestNode(parentDirectory, true);
+                        this.editorItemService.reloadClosestNode(parentDirectory);
+                        TreeItem<EditorItem> closestNode = this.editorItemService.getClosestNode(parentDirectory, true);
                         if (closestNode != null) {
                             EditorItem parentEditorItem = closestNode.getValue();
                             if (parentEditorItem != null && parentEditorItem.getPath().equals(parentDirectory)) {
                                 closestNode.getChildren()
                                         .add(new TreeItem<>(new UnsavedFileEditorItem(
-                                                this.filePath.getFileName()
+                                                filePath.getFileName()
                                                         .toString(),
-                                                this.filePath,
-                                                UUID.fromString(this.tab.getId())
+                                                filePath,
+                                                this.projectProvider::get
                                         )));
                             }
                         }
@@ -202,7 +214,7 @@ public class FormController implements IFileEditorController {
 
                     MineScribeMessage notSavedMessage = new MineScribeMessage(
                             MessageType.WARNING,
-                            this.filePath,
+                            filePath,
                             null,
                             "File is not saved",
                             this.getPath()
@@ -217,9 +229,6 @@ public class FormController implements IFileEditorController {
             } catch (FormException e) {
                 e.showErrorDialog();
             }
-        } else {
-            new Alert(Alert.AlertType.ERROR, "Failed to Find Form")
-                    .showAndWait();
         }
     }
 
@@ -264,9 +273,9 @@ public class FormController implements IFileEditorController {
         }
     }
 
-    @Override
     public @Nullable Path getPath() {
-        return this.filePath;
+        return this.tab.pathProperty()
+                .getValue();
     }
 
     @FXML
@@ -289,8 +298,7 @@ public class FormController implements IFileEditorController {
             MessageHandler.getInstance()
                     .removeByPath(this.getPath());
             if (!this.fileSaved.get()) {
-                TreeItem<EditorItem> parentTreeItem = FileHandler.getInstance()
-                        .getClosestNode(this.getPath().getParent(), false);
+                TreeItem<EditorItem> parentTreeItem = this.editorItemService.getClosestNode(this.getPath().getParent(), false);
 
                 if (parentTreeItem != null) {
                     parentTreeItem.getChildren()

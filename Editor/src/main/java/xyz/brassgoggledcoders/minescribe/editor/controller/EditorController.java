@@ -3,11 +3,11 @@ package xyz.brassgoggledcoders.minescribe.editor.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.mojang.datafixers.util.Pair;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
@@ -15,29 +15,29 @@ import javafx.stage.DirectoryChooser;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.controller.element.InfoPaneController;
-import xyz.brassgoggledcoders.minescribe.editor.controller.tab.IFileEditorController;
-import xyz.brassgoggledcoders.minescribe.editor.event.tab.CloseTabEvent;
-import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorItem;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.EditorTreeCell;
 import xyz.brassgoggledcoders.minescribe.editor.scene.editortree.FormFileEditorItem;
+import xyz.brassgoggledcoders.minescribe.editor.scene.tab.IFileTab;
+import xyz.brassgoggledcoders.minescribe.editor.service.editoritem.IEditorItemService;
+import xyz.brassgoggledcoders.minescribe.editor.service.tab.IEditorTabService;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class EditorController {
     private final Logger LOGGER = LoggerFactory.getLogger(EditorController.class);
     private final Gson GSON = new GsonBuilder()
             .create();
+
+
+    private final IEditorItemService editorItemService;
+    private final IEditorTabService editorTabService;
+    private final Provider<Project> projectProvider;
 
     @FXML
     public SplitPane editor;
@@ -54,40 +54,39 @@ public class EditorController {
     @SuppressWarnings("unused")
     private InfoPaneController infoPaneController;
 
+    @Inject
+    public EditorController(IEditorItemService editorItemService, IEditorTabService editorTabService, Provider<Project> projectProvider) {
+        this.editorItemService = editorItemService;
+        this.editorTabService = editorTabService;
+        this.projectProvider = projectProvider;
+    }
+
     @FXML
     public void initialize() {
-        FileHandler.initialize();
-        files.setRoot(FileHandler.getInstance()
-                .getRootModel()
-        );
+        files.setRoot(this.editorItemService.getRootItem());
         files.setCellFactory(param -> new EditorTreeCell());
 
         this.infoPaneController.setParentPane(this.parentPane);
+        this.editorTabService.setEditorTabPane(this.editorTabPane);
 
-        editor.addEventHandler(OpenTabEvent.OPEN_TAB_EVENT_TYPE, this::handleTabOpen);
-        editor.addEventHandler(CloseTabEvent.EVENT_TYPE, this::handleTabClose);
-
-        Project project = InfoRepository.getInstance().getValue(Project.KEY);
+        Project project = projectProvider.get();
         if (project != null) {
-            List<Path> tabPaths = new ArrayList<>(project.getOpenTabs().values());
-            project.getOpenTabs().clear();
-            for (Path openTab : tabPaths) {
-                TreeItem<EditorItem> treeItem = FileHandler.getInstance()
-                        .getClosestNode(openTab, true);
+            for (Path openTab : project.getOpenTabs()) {
+                TreeItem<EditorItem> treeItem = this.editorItemService.getClosestNode(openTab, true);
                 if (treeItem != null && treeItem.getValue() instanceof FormFileEditorItem fileEditorItem) {
-                    fileEditorItem.openTabFor(editor::fireEvent);
+                    fileEditorItem.openTab();
                 }
             }
         }
         this.editorTabPane.getTabs()
                 .addListener((ListChangeListener<Tab>) c -> {
-                    Project currentProject = InfoRepository.getInstance().getValue(Project.KEY);
+                    Project currentProject = this.projectProvider.get();
                     if (currentProject != null) {
                         while (c.next()) {
                             if (c.wasRemoved()) {
                                 for (Tab removedTab : c.getRemoved()) {
-                                    if (removedTab.getId() != null) {
-                                        currentProject.removeOpenTab(UUID.fromString(removedTab.getId()));
+                                    if (removedTab instanceof IFileTab fileTab) {
+                                        currentProject.removeOpenTab(fileTab.pathProperty().get());
                                     }
                                 }
                             }
@@ -96,41 +95,9 @@ public class EditorController {
                 });
     }
 
-    private void handleTabOpen(OpenTabEvent<?> event) {
-        UUID tabId = UUID.randomUUID();
-        Pair<Object, Object> tabContent = event.createTabContent(tabId);
-        Tab newTab = null;
-        if (tabContent.getFirst() instanceof Tab tab) {
-            newTab = tab;
-            newTab.setText(event.getTabName());
-        } else if (tabContent.getFirst() instanceof Node node) {
-            newTab = new Tab(event.getTabName());
-            newTab.setContent(node);
-        }
-        if (newTab != null) {
-            newTab.setId(tabId.toString());
-            this.editorTabPane.getTabs().add(newTab);
-
-            if (tabContent.getSecond() instanceof IFileEditorController fileEditorController) {
-                Project project = InfoRepository.getInstance().getValue(Project.KEY);
-                if (project != null && fileEditorController.getPath() != null) {
-                    project.addOpenTab(tabId, fileEditorController.getPath());
-                }
-            }
-            this.editorTabPane.getSelectionModel().select(newTab);
-        }
-
-    }
-
-    private void handleTabClose(CloseTabEvent event) {
-        this.editorTabPane.getTabs()
-                .removeIf(childTab -> childTab.getId().equals(event.getId()));
-    }
-
     @FXML
     private void addPack(ActionEvent ignored) {
-        Project project = InfoRepository.getInstance()
-                .getValue(Project.KEY);
+        Project project = this.projectProvider.get();
         if (project != null) {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setInitialDirectory(project.getRootPath()
@@ -162,8 +129,7 @@ public class EditorController {
                                     .toPath();
                             project.getAdditionalPackLocations()
                                     .put(packDescription, repositoryPath);
-                            FileHandler.getInstance()
-                                    .addPackRepository(packDescription, repositoryPath);
+                            this.editorItemService.addPackRepositoryItem(packDescription, repositoryPath);
                         }
                     } catch (IOException ioException) {
                         LOGGER.error("Failed to read pack.mcmeta", ioException);

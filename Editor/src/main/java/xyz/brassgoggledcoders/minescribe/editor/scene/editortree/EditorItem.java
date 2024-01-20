@@ -2,10 +2,13 @@ package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
 import javafx.scene.control.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
+import xyz.brassgoggledcoders.minescribe.editor.service.editoritem.IEditorItemService;
+import xyz.brassgoggledcoders.minescribe.editor.service.tab.IEditorTabService;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +22,9 @@ public abstract class EditorItem implements Comparable<EditorItem> {
 
     private final String name;
     private final Path path;
+
+    private IEditorTabService editorTabService;
+    private IEditorItemService editorItemService;
 
     public EditorItem(String name, Path path) {
         this.name = name;
@@ -49,7 +55,9 @@ public abstract class EditorItem implements Comparable<EditorItem> {
         ContextMenu contextMenu = new ContextMenu();
         if (this.isDirectory()) {
             MenuItem reloadFolder = new MenuItem("Reload Files from Disk");
-            reloadFolder.setOnAction(event -> FileHandler.getInstance().reloadDirectory(treeCell.getItem()));
+            reloadFolder.setOnAction(event -> this.getEditorItemService()
+                    .reloadDirectory(treeCell.getItem())
+            );
             contextMenu.getItems().add(reloadFolder);
         }
         MenuItem deleteItem = new MenuItem("Delete %s".formatted(this.isDirectory() ? "Directory" : "File"));
@@ -64,8 +72,7 @@ public abstract class EditorItem implements Comparable<EditorItem> {
                     .ifPresent(ignored -> {
                         try {
                             Files.deleteIfExists(this.getPath());
-                            FileHandler.getInstance()
-                                    .reloadClosestNode(this.getPath().getParent());
+                            this.editorItemService.reloadClosestNode(this.getPath().getParent());
                         } catch (IOException e) {
                             LOGGER.error("Failed to delete path: {}", this.getPath(), e);
                             ExceptionDialog.showDialog(
@@ -108,6 +115,31 @@ public abstract class EditorItem implements Comparable<EditorItem> {
     }
 
     public String getCssClass() {
+        return null;
+    }
+
+    public void setEditorTabService(IEditorTabService editorTabService) {
+        this.editorTabService = editorTabService;
+    }
+
+    protected IEditorTabService getEditorTabService() {
+        return this.editorTabService;
+    }
+
+    public void setEditorItemService(IEditorItemService editorItemService) {
+        this.editorItemService = editorItemService;
+    }
+
+    protected IEditorItemService getEditorItemService() {
+        return this.editorItemService;
+    }
+
+    @Nullable
+    public EditorItem getParent() {
+        TreeItem<EditorItem> parentTreeItem = this.editorItemService.getClosestNode(this.getPath().getParent(), false);
+        if (parentTreeItem != null) {
+            return parentTreeItem.getValue();
+        }
         return null;
     }
 }

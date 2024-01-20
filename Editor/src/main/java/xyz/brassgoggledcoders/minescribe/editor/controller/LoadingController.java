@@ -1,19 +1,28 @@
 package xyz.brassgoggledcoders.minescribe.editor.controller;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
+import xyz.brassgoggledcoders.minescribe.core.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.FileLoadedRegistry;
+import xyz.brassgoggledcoders.minescribe.editor.service.page.IPageService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class LoadingController {
+    private final IPageService pageService;
+    private final Provider<Project> projectProvider;
+    private final Set<Registry<?, ?>> registries;
+
     @FXML
     public StackPane loading;
 
@@ -22,9 +31,16 @@ public class LoadingController {
 
     private Project project;
 
+    @Inject
+    public LoadingController(IPageService pageService, Provider<Project> projectProvider, Set<Registry<?, ?>> registries) {
+        this.pageService = pageService;
+        this.projectProvider = projectProvider;
+        this.registries = registries;
+    }
+
     @FXML
     public void initialize() {
-        this.project = InfoRepository.getInstance().getValue(Project.KEY);
+        this.project = this.projectProvider.get();
         if (project != null) {
             Path mineScribePath = project.getMineScribeFolder();
             Path loadComplete = mineScribePath.resolve(".load_complete");
@@ -41,12 +57,15 @@ public class LoadingController {
 
     private void startProjectLoad() {
         this.loadingStatus.setText("Found Project. Loading Files from ./minescribe");
+        this.registries.forEach(registry -> {
+            if (registry instanceof FileLoadedRegistry<?, ?> fileLoadedRegistry) {
+                fileLoadedRegistry.load(this.project.getMineScribeFolder());
+            }
+        });
         EditorRegistries.load(this.project.getMineScribeFolder());
         this.loadingStatus.setText("Project Loaded. Opening Editor");
 
-        InfoRepository.getInstance()
-                .getValue(ApplicationController.PAGE_REQUEST_KEY)
-                .accept("editor");
+        this.pageService.setPage("editor");
     }
 
     private class CheckLoadComplete extends TimerTask {

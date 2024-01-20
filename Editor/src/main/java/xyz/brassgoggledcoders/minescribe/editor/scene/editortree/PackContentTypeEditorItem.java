@@ -1,14 +1,14 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
+import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController;
-import xyz.brassgoggledcoders.minescribe.editor.event.tab.OpenTabEvent;
 import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.IPackContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
+import xyz.brassgoggledcoders.minescribe.editor.scene.tab.EditorFormTab;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -58,12 +58,8 @@ public class PackContentTypeEditorItem extends EditorItem {
         menuItem.setOnAction(event -> new NewFileFormDialog(this.contentNode.getNodeTrackers())
                 .showAndWait()
                 .ifPresent(newFileResult -> {
-                    Optional<FileForm> fileForm = newFileResult.parentType().getForm()
-                            .or(() -> newFileResult.childTypeOpt()
-                                    .flatMap(PackContentType::getForm)
-                            );
 
-                    Optional<NamespaceEditorItem> namespaceEditorItem = FileHandler.getInstance()
+                    Optional<NamespaceEditorItem> namespaceEditorItem = this.getEditorItemService()
                             .getNodePath(this.getPath())
                             .stream()
                             .map(TreeItem::getValue)
@@ -71,6 +67,7 @@ public class PackContentTypeEditorItem extends EditorItem {
                             .map(NamespaceEditorItem.class::cast)
                             .findFirst();
 
+                    Optional<FileForm> fileForm = newFileResult.getFileForm();
                     if (fileForm.isPresent() && namespaceEditorItem.isPresent()) {
                         Path filePath = namespaceEditorItem.get()
                                 .getPath()
@@ -87,17 +84,15 @@ public class PackContentTypeEditorItem extends EditorItem {
                             filePath = this.getPath();
                         }
 
-                        Path finalFilePath = filePath.resolve(newFileResult.fileName());
-                        treeCell.fireEvent(new OpenTabEvent<FormController>(
-                                newFileResult.fileName(),
-                                "tab/form",
-                                (controller, tabId) -> controller.setFormInfo(
-                                        finalFilePath,
-                                        newFileResult.parentType(),
-                                        newFileResult.childTypeOpt()
-                                                .orElse(null)
-                                )
-                        ));
+                        EditorFormTab editorFormTab = this.getEditorTabService()
+                                .openTab("form", filePath);
+
+                        if (editorFormTab != null) {
+                            editorFormTab.fileFormProperty()
+                                    .setValue(fileForm.get());
+                            editorFormTab.parentsProperty()
+                                    .setValue(FXCollections.observableList(newFileResult.getFullNames()));
+                        }
                     } else {
                         new Alert(Alert.AlertType.ERROR, "No Valid Form Found").show();
                     }

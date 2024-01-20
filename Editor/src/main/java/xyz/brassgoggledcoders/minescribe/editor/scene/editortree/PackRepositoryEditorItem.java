@@ -122,7 +122,8 @@ public class PackRepositoryEditorItem extends EditorItem {
                                 parentItem.getPath().resolve(result.name() + "/pack.mcmeta"),
                                 GSON.toJson(packMeta).getBytes()
                         );
-                        FileHandler.getInstance().reloadDirectory(parentItem);
+                        this.getEditorItemService()
+                                .reloadDirectory(parentItem);
                     } catch (IOException e) {
                         LOGGER.error("Failed to write pack.mcmeta", e);
                     }

@@ -40,7 +40,7 @@ public class PackEditorItem extends EditorItem {
                                 packType
                         )));
             } else if (childPath.getFileName().startsWith("pack.mcmeta")) {
-                childrenEditorItems.add(new NoFormFileEditorItem(childPath.getFileName().toString(), childPath));
+                childrenEditorItems.add(new FileViewFileEditorItem(childPath.getFileName().toString(), childPath));
             }
         }
 

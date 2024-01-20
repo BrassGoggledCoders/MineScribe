@@ -1,7 +1,6 @@
 import xyz.brassgoggledcoders.minescribe.core.service.CoreRegistryProviderService;
 
 module xyz.brassgoggledcoders.minescribe.core {
-    uses xyz.brassgoggledcoders.minescribe.core.service.IPackFileWatcherService;
     uses xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService;
 
     provides xyz.brassgoggledcoders.minescribe.core.service.IRegistryProviderService with CoreRegistryProviderService;
@@ -10,7 +9,7 @@ module xyz.brassgoggledcoders.minescribe.core {
     requires com.google.gson;
     requires com.google.common;
     requires datafixerupper;
-
+    requires jakarta.inject;
     requires org.slf4j;
 
     exports xyz.brassgoggledcoders.minescribe.core;
@@ -21,7 +20,6 @@ module xyz.brassgoggledcoders.minescribe.core {
     exports xyz.brassgoggledcoders.minescribe.core.fileform.filefield.object;
     exports xyz.brassgoggledcoders.minescribe.core.fileform.formlist;
     exports xyz.brassgoggledcoders.minescribe.core.functional;
-    exports xyz.brassgoggledcoders.minescribe.core.info;
     exports xyz.brassgoggledcoders.minescribe.core.packinfo;
     exports xyz.brassgoggledcoders.minescribe.core.registry;
     exports xyz.brassgoggledcoders.minescribe.core.service;

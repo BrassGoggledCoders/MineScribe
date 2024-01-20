@@ -1,11 +1,8 @@
 package xyz.brassgoggledcoders.minescribe.editor.message;
 
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
-import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -13,7 +10,6 @@ import java.util.Objects;
 public class MineScribeMessage {
     private final ObjectProperty<MessageType> type;
     private final ObjectProperty<Path> filePath;
-    private final ObservableValue<Path> relativePath;
     private final StringProperty field;
     private final StringProperty message;
     private final BooleanProperty valid;
@@ -23,11 +19,6 @@ public class MineScribeMessage {
         this.type = new SimpleObjectProperty<>(type);
         this.filePath = new SimpleObjectProperty<>(filePath);
         this.context = context;
-        this.relativePath = this.filePath.map(fullPath -> InfoRepository.getInstance()
-                .getValue(Project.KEY)
-                .getRootPath()
-                .relativize(fullPath)
-        );
         this.field = new SimpleStringProperty(field);
         this.message = new SimpleStringProperty(message);
         this.valid = new SimpleBooleanProperty(true);
@@ -39,10 +30,6 @@ public class MineScribeMessage {
 
     public ObjectProperty<Path> filePathProperty() {
         return this.filePath;
-    }
-
-    public ObservableValue<Path> relativeFilePath() {
-        return this.relativePath;
     }
 
     public ObjectProperty<MessageType> messageTypeProperty() {
@@ -63,13 +50,13 @@ public class MineScribeMessage {
         if (o == null || getClass() != o.getClass()) return false;
         MineScribeMessage message1 = (MineScribeMessage) o;
         return Objects.equals(type, message1.type) && Objects.equals(filePath, message1.filePath) &&
-                Objects.equals(relativePath, message1.relativePath) && Objects.equals(field, message1.field) &&
-                Objects.equals(message, message1.message) && Objects.equals(valid, message1.valid);
+                Objects.equals(field, message1.field) && Objects.equals(message, message1.message) &&
+                Objects.equals(valid, message1.valid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, filePath, relativePath, field, message, valid);
+        return Objects.hash(type, filePath, field, message, valid);
     }
 
     public Object getContext() {

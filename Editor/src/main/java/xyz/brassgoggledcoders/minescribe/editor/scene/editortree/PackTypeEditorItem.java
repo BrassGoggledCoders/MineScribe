@@ -9,7 +9,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.EditorFormDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewNamespaceResult;
@@ -78,7 +77,7 @@ public class PackTypeEditorItem extends EditorItem {
                                         .mkdirs();
 
                                 if (createdFolder) {
-                                    FileHandler.getInstance()
+                                    this.getEditorItemService()
                                             .reloadDirectory(this);
                                 }
                             });

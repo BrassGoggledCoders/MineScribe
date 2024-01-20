@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.*?>
+<?import xyz.brassgoggledcoders.minescribe.editor.scene.tab.FileTab?>
+<FileTab xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml" fx:id="tab"
+         fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.tab.FileViewController">
+    <AnchorPane prefHeight="400.0" prefWidth="600.0">
+        <TextArea fx:id="fileContents" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                  AnchorPane.rightAnchor="0"/>
+    </AnchorPane>
+</FileTab>
+

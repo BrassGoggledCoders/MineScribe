@@ -1,19 +1,18 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
-import xyz.brassgoggledcoders.minescribe.core.info.InfoRepository;
 import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class UnsavedFileEditorItem extends FileEditorItem {
-    private final UUID tabId;
+    private final Supplier<Project> projectSupplier;
 
-    public UnsavedFileEditorItem(String name, Path path, UUID tabID) {
+    public UnsavedFileEditorItem(String name, Path path, Supplier<Project> projectSupplier) {
         super(name, path);
-        this.tabId = tabID;
+        this.projectSupplier = projectSupplier;
     }
 
     @Override
@@ -23,16 +22,10 @@ public class UnsavedFileEditorItem extends FileEditorItem {
 
     @Override
     public boolean isValid() {
-        Project project = InfoRepository.getInstance()
-                .getValue(Project.KEY);
+        Project project = this.projectSupplier.get();
 
         if (project != null) {
-            boolean openTab = Optional.ofNullable(project.getOpenTabs()
-                            .get(tabId)
-                    )
-                    .filter(this.getPath()::equals)
-                    .isPresent();
-            if (openTab) {
+            if (project.getOpenTabs().contains(this.getPath())) {
                 return !Files.exists(this.getPath());
             }
         }

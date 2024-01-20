@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.javascript;
 
-import com.google.common.base.Suppliers;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.graalvm.polyglot.*;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -10,10 +11,9 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import java.io.Closeable;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
+@Singleton
 public class ScriptHandler implements Closeable {
-    private static final Supplier<ScriptHandler> INSTANCE = Suppliers.memoize(ScriptHandler::new);
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptHandler.class);
 
     private final Engine engine;
@@ -21,16 +21,16 @@ public class ScriptHandler implements Closeable {
     private final SLF4JBridgeHandler handler;
     private final AtomicReference<Path> currentScript;
 
-    public ScriptHandler() {
+    @Inject
+    public ScriptHandler(MineScribeJSHelper mineScribeJSHelper) {
         this.engine = Engine.newBuilder()
                 .build();
         this.handler = new SLF4JBridgeHandler();
         this.context = this.buildContext(engine);
-        MineScribeJSHelper helper = new MineScribeJSHelper();
         this.context.getBindings("js")
-                .putMember("minescribe", helper);
+                .putMember("minescribe", mineScribeJSHelper);
         this.context.getBindings("js")
-                .putMember("validationHelper", helper.validationHelper);
+                .putMember("validationHelper", mineScribeJSHelper.validationHelper);
         this.currentScript = new AtomicReference<>();
     }
 
@@ -70,9 +70,5 @@ public class ScriptHandler implements Closeable {
     public void close() {
         this.engine.close();
         this.context.close();
-    }
-
-    public static ScriptHandler getInstance() {
-        return INSTANCE.get();
     }
 }

@@ -15,38 +15,53 @@ module xyz.brassgoggledcoders.minescribe.editor {
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
-    requires xyz.brassgoggledcoders.minescribe.core;
+
     requires org.jetbrains.annotations;
-    requires com.google.gson;
+
     requires datafixerupper;
-    requires com.google.common;
     requires org.graalvm.polyglot;
+
+    requires com.google.common;
+    requires com.google.gson;
+
+    requires jakarta.inject;
+    requires com.google.guice;
 
     requires atlantafx.base;
     requires org.kordamp.ikonli.feather;
     requires org.kordamp.ikonli.javafx;
 
-    exports xyz.brassgoggledcoders.minescribe.editor;
+    requires xyz.brassgoggledcoders.minescribe.core;
+
     opens xyz.brassgoggledcoders.minescribe.editor to javafx.fxml;
-    exports xyz.brassgoggledcoders.minescribe.editor.controller;
     opens xyz.brassgoggledcoders.minescribe.editor.controller to javafx.fxml;
-    exports xyz.brassgoggledcoders.minescribe.editor.controller.element;
     opens xyz.brassgoggledcoders.minescribe.editor.controller.element to javafx.fxml;
-    exports xyz.brassgoggledcoders.minescribe.editor.controller.tab;
     opens xyz.brassgoggledcoders.minescribe.editor.controller.tab to javafx.fxml;
-
-    exports xyz.brassgoggledcoders.minescribe.editor.exception;
-    exports xyz.brassgoggledcoders.minescribe.editor.event.field;
-    exports xyz.brassgoggledcoders.minescribe.editor.message;
-    exports xyz.brassgoggledcoders.minescribe.editor.registry;
-    exports xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
-    exports xyz.brassgoggledcoders.minescribe.editor.javascript;
-
-    exports xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
-    exports xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content;
-    exports xyz.brassgoggledcoders.minescribe.editor.scene;
     opens xyz.brassgoggledcoders.minescribe.editor.scene to javafx.fxml;
 
+    opens xyz.brassgoggledcoders.minescribe.editor.service to com.google.guice;
+
+    exports xyz.brassgoggledcoders.minescribe.editor;
+    exports xyz.brassgoggledcoders.minescribe.editor.controller;
+    exports xyz.brassgoggledcoders.minescribe.editor.controller.element;
+    exports xyz.brassgoggledcoders.minescribe.editor.controller.tab;
+    exports xyz.brassgoggledcoders.minescribe.editor.exception;
+    exports xyz.brassgoggledcoders.minescribe.editor.event.field;
     exports xyz.brassgoggledcoders.minescribe.editor.file;
+    exports xyz.brassgoggledcoders.minescribe.editor.message;
+    exports xyz.brassgoggledcoders.minescribe.editor.javascript;
+    exports xyz.brassgoggledcoders.minescribe.editor.registry;
+    exports xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
+    exports xyz.brassgoggledcoders.minescribe.editor.project;
+    exports xyz.brassgoggledcoders.minescribe.editor.scene;
+    exports xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
+    exports xyz.brassgoggledcoders.minescribe.editor.scene.editorform.content;
+    exports xyz.brassgoggledcoders.minescribe.editor.scene.tab;
     exports xyz.brassgoggledcoders.minescribe.editor.service;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.editoritem;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.fxml;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.page;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.project;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.registry;
+    exports xyz.brassgoggledcoders.minescribe.editor.service.tab;
 }

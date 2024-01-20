@@ -1,5 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.editor.controller.element;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
@@ -8,12 +10,14 @@ import javafx.scene.layout.StackPane;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageHandler;
 import xyz.brassgoggledcoders.minescribe.editor.message.MessageType;
 import xyz.brassgoggledcoders.minescribe.editor.message.MineScribeMessage;
+import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.scene.table.MessageTypeCell;
 
 import java.nio.file.Path;
 
 public class InfoPaneController {
 
+    private final Provider<Project> projectProvider;
 
     @FXML
     private StackPane infoStackPane;
@@ -31,13 +35,24 @@ public class InfoPaneController {
     public TableColumn<MineScribeMessage, Path> pathColumn;
     private SplitPane parentPane;
 
+    @Inject
+    public InfoPaneController(Provider<Project> projectProvider) {
+        this.projectProvider = projectProvider;
+    }
+
     @FXML
     public void initialize() {
         this.typeColumn.setCellFactory(param -> new MessageTypeCell<>());
         this.typeColumn.setCellValueFactory(param -> param.getValue().messageTypeProperty());
         this.fieldColumn.setCellValueFactory(param -> param.getValue().fieldProperty());
         this.messageColumn.setCellValueFactory(param -> param.getValue().messageProperty());
-        this.pathColumn.setCellValueFactory(param -> param.getValue().relativeFilePath());
+        this.pathColumn.setCellValueFactory(param -> param.getValue()
+                .filePathProperty()
+                .map(file -> projectProvider.get()
+                        .getRootPath()
+                        .relativize(file)
+                )
+        );
         this.messageView.setItems(MessageHandler.getInstance()
                 .getMessages()
         );

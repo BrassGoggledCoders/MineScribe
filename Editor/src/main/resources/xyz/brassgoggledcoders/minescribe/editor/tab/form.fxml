@@ -3,10 +3,21 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.*?>
-<Tab xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:id="tab" onCloseRequest="#onCloseRequest"
-     onClosed="#onClosed" fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController">
+<?import xyz.brassgoggledcoders.minescribe.editor.scene.tab.EditorFormTab?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.MenuItem?>
+<EditorFormTab xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:id="tab"
+               onCloseRequest="#onCloseRequest"
+               onClosed="#onClosed"
+               fx:controller="xyz.brassgoggledcoders.minescribe.editor.controller.tab.FormController">
+    <contextMenu>
+        <ContextMenu>
+            <items>
+                <MenuItem onAction="#reloadForm" text="Reload Form"/>
+            </items>
+        </ContextMenu>
+    </contextMenu>
     <AnchorPane prefHeight="400.0" prefWidth="600.0">
         <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
             <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true" fitToHeight="true">
@@ -28,5 +39,5 @@
             </HBox>
         </VBox>
     </AnchorPane>
-</Tab>
+</EditorFormTab>
 
