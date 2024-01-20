@@ -21,7 +21,7 @@ public class Registries {
 
     @Inject
     @MineScribeInject
-    private static Registry<ResourceId, Codec<? extends Validation<?>>> validations;
+    public static Registry<ResourceId, Codec<? extends Validation<?>>> validations;
 
     public static Registry<ResourceId, Codec<? extends Validation<?>>> getValidationCodecRegistry() {
         return validations;
