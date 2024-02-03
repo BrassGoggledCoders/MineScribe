@@ -18,7 +18,6 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileField
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.RegistryFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.EditorFormDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.PackCreationResult;
 
@@ -37,8 +36,16 @@ public class PackRepositoryEditorItem extends EditorItem {
             .setPrettyPrinting()
             .create();
 
-    public PackRepositoryEditorItem(String label, Path path) {
+    private final boolean custom;
+
+    public PackRepositoryEditorItem(String label, Path path, boolean custom) {
         super(label, path);
+        this.custom = custom;
+    }
+
+    @Override
+    public boolean isValid() {
+        return !custom || this.getProject().getAdditionalPackLocations().containsKey(this.getName());
     }
 
     @Override
@@ -86,6 +93,18 @@ public class PackRepositoryEditorItem extends EditorItem {
                     .ifPresent(result -> handleCreate(treeCell.getItem(), result));
         });
         contextMenu.getItems().add(0, createNewPack);
+        if (this.getProject().getAdditionalPackLocations().containsKey(this.getName())) {
+            MenuItem removePackLocation = new MenuItem("Remove Pack Repository");
+            removePackLocation.setOnAction(actionEvent -> {
+                this.getProject()
+                        .getAdditionalPackLocations()
+                        .remove(this.getName());
+                this.getEditorItemService()
+                        .reloadRoot();
+            });
+            contextMenu.getItems()
+                    .add(1, removePackLocation);
+        }
         return contextMenu;
     }
 

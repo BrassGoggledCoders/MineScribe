@@ -8,6 +8,9 @@ import java.nio.file.Path;
 import java.util.Queue;
 
 public interface IEditorItemService {
+
+    void reloadRoot();
+
     void reloadClosestNode(@NotNull Path path);
 
     TreeItem<EditorItem> getClosestNode(@NotNull Path path, boolean expand);
@@ -18,5 +21,5 @@ public interface IEditorItemService {
 
     TreeItem<EditorItem> getRootItem();
 
-    void addPackRepositoryItem(String label, Path location);
+    void addPackRepositoryItem(String label, Path location, boolean custom);
 }

@@ -129,7 +129,7 @@ public class EditorController {
                                     .toPath();
                             project.getAdditionalPackLocations()
                                     .put(packDescription, repositoryPath);
-                            this.editorItemService.addPackRepositoryItem(packDescription, repositoryPath);
+                            this.editorItemService.addPackRepositoryItem(packDescription, repositoryPath, true);
                         }
                     } catch (IOException ioException) {
                         LOGGER.error("Failed to read pack.mcmeta", ioException);

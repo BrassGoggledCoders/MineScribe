@@ -1,11 +1,12 @@
 package xyz.brassgoggledcoders.minescribe.editor.scene.editortree;
 
+import com.google.inject.Provider;
 import javafx.scene.control.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
+import xyz.brassgoggledcoders.minescribe.editor.project.Project;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.ExceptionDialog;
 import xyz.brassgoggledcoders.minescribe.editor.service.editoritem.IEditorItemService;
 import xyz.brassgoggledcoders.minescribe.editor.service.tab.IEditorTabService;
@@ -25,6 +26,7 @@ public abstract class EditorItem implements Comparable<EditorItem> {
 
     private IEditorTabService editorTabService;
     private IEditorItemService editorItemService;
+    private Provider<Project> projectProvider;
 
     public EditorItem(String name, Path path) {
         this.name = name;
@@ -132,6 +134,14 @@ public abstract class EditorItem implements Comparable<EditorItem> {
 
     protected IEditorItemService getEditorItemService() {
         return this.editorItemService;
+    }
+
+    public void setProjectProvider(Provider<Project> projectProvider) {
+        this.projectProvider = projectProvider;
+    }
+
+    protected Project getProject() {
+        return this.projectProvider.get();
     }
 
     @Nullable

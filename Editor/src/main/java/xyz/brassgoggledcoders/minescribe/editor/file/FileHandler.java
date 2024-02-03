@@ -1,5 +1,6 @@
 package xyz.brassgoggledcoders.minescribe.editor.file;
 
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -33,10 +34,35 @@ public class FileHandler implements IEditorItemService {
 
     private final TreeItem<EditorItem> rootItem;
     private final IEditorTabService editorTabService;
+    private final Provider<Project> projectProvider;
 
-    private FileHandler(IEditorTabService editorTabService) {
+    private FileHandler(IEditorTabService editorTabService, Provider<Project> projectProvider) {
+        this.projectProvider = projectProvider;
         this.rootItem = new TreeItem<>();
         this.editorTabService = editorTabService;
+    }
+
+    @Override
+    public void reloadRoot() {
+        Iterator<TreeItem<EditorItem>> children = this.rootItem.getChildren()
+                .iterator();
+
+        while (children.hasNext()) {
+            TreeItem<EditorItem> treeItem = children.next();
+
+            if (treeItem.getValue() != null) {
+                EditorItem item = treeItem.getValue();
+                if (item.isValid()) {
+                    this.reloadDirectory(item);
+                } else {
+                    children.remove();
+                }
+            } else {
+                children.remove();
+            }
+        }
+
+
     }
 
     @Override
@@ -126,7 +152,11 @@ public class FileHandler implements IEditorItemService {
 
             try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(currentPath, path -> !childrenPaths.contains(path))) {
                 List<EditorItem> children = treeItem.getValue().createChildren(childPaths);
-                children.forEach(child -> child.setEditorTabService(this.editorTabService));
+                children.forEach(child -> {
+                    child.setEditorTabService(this.editorTabService);
+                    child.setEditorItemService(this);
+                    child.setProjectProvider(this.projectProvider);
+                });
                 children.removeIf(Predicate.not(EditorItem::isValid));
                 children.sort(EditorItem::compareTo);
                 for (EditorItem child : children) {
@@ -148,17 +178,21 @@ public class FileHandler implements IEditorItemService {
     }
 
     @Override
-    public void addPackRepositoryItem(String label, Path location) {
-        PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(label, location);
+    public void addPackRepositoryItem(String label, Path location, boolean custom) {
+        PackRepositoryEditorItem editorItem = new PackRepositoryEditorItem(label, location, custom);
+        editorItem.setProjectProvider(this.projectProvider);
+        editorItem.setEditorItemService(this);
+        editorItem.setEditorTabService(this.editorTabService);
         this.rootItem.getChildren()
                 .add(new TreeItem<>(editorItem));
         WATCHER.watchDirectory(editorItem.getPath());
         this.reloadDirectory(editorItem);
     }
 
-    public static void initialize(Project project, IEditorTabService editorTabService, Registry<ResourceId, PackRepositoryLocation> registry) {
+    public static void initialize(Provider<Project> projectProvider, IEditorTabService editorTabService, Registry<ResourceId, PackRepositoryLocation> registry) {
         if (INSTANCE == null) {
-            INSTANCE = new FileHandler(editorTabService);
+            Project project = projectProvider.get();
+            INSTANCE = new FileHandler(editorTabService, projectProvider);
             try {
                 WATCHER = FileWatcher.of(
                         INSTANCE::handleUpdates,
@@ -196,11 +230,11 @@ public class FileHandler implements IEditorItemService {
                                     return "";
                                 });
 
-                        INSTANCE.addPackRepositoryItem(repositoryLabel, packRepositoryPath);
+                        INSTANCE.addPackRepositoryItem(repositoryLabel, packRepositoryPath, false);
                     }
                 }
                 for (Map.Entry<String, Path> entries : project.getAdditionalPackLocations().entrySet()) {
-                    INSTANCE.addPackRepositoryItem(entries.getKey(), entries.getValue());
+                    INSTANCE.addPackRepositoryItem(entries.getKey(), entries.getValue(), true);
                 }
             }
         }
