@@ -1,3 +1,4 @@
+import groovy.json.JsonSlurper
 import java.net.URI
 
 plugins {
@@ -10,6 +11,9 @@ plugins {
 group = "xyz.brassgoggledcoders.minescribe"
 version = "0.1.0"
 
+val customDependencies = File("${rootProject.projectDir}/tmp/minecraft_deps.json")
+val customDependenciesJson = JsonSlurper().parseText(customDependencies.readText()) as Map<*, *>
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
@@ -20,17 +24,25 @@ repositories {
     mavenCentral()
 
     mavenLocal()
-    maven {
-        name = "Registrate"
-        url = URI("https://maven.tterrag.com/")
+
+    val mavens = customDependenciesJson["mavens"] as? Map<*, *>
+    if (mavens != null) {
+        for ((nameValue, urlValue) in mavens) {
+            maven {
+                name = nameValue.toString()
+                url = URI(urlValue.toString())
+            }
+        }
     }
 }
 
 dependencies {
     "minecraft"("net.minecraftforge:forge:1.19.2-43.2.0")
 
-    implementation(fg.deobf("com.minerarcana:Transfiguration:1.19.2-1.5.1:nodep"))
-    implementation(fg.deobf("com.tterrag.registrate:Registrate:MC1.19-1.1.5"))
+    val deObf = customDependenciesJson["deObf"] as List<*>
+    for (deObfValue in deObf) {
+        implementation(fg.deobf(deObfValue.toString()))
+    }
 
     implementation(project(":Core"))
 
