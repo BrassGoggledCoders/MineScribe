@@ -16,20 +16,23 @@ import javafx.scene.layout.AnchorPane;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.registry.Holder;
+import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.ZeroPaddedFormRenderer;
 import xyz.brassgoggledcoders.minescribe.editor.scene.form.control.CellFactoryComboBoxControl;
 import xyz.brassgoggledcoders.minescribe.editor.validation.StringRegexValidator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
-    private final ObjectProperty<PackContentParentType> parentType;
-    private final ObjectProperty<PackContentChildType> childType;
-    private final FilteredList<PackContentChildType> childTypesFiltered;
+    private final ObjectProperty<Holder<ResourceId, PackContentParentType>> parentType;
+    private final ObjectProperty<Holder<ResourceId, PackContentChildType>> childType;
+    private final FilteredList<Holder<ResourceId, PackContentChildType>> childTypesFiltered;
     private final StringProperty fileName;
     private final Form form;
 
@@ -37,50 +40,58 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
         this.childType = new SimpleObjectProperty<>();
         this.fileName = new SimpleStringProperty("");
 
-        List<PackContentParentType> parentTypes = nodeTrackers.stream()
-                .map(NodeTracker::parentType)
+        List<Holder<ResourceId, PackContentParentType>> parentTypes = nodeTrackers.stream()
+                .map(NodeTracker::parentTypeHolder)
                 .distinct()
                 .toList();
 
-        List<PackContentChildType> childTypes = nodeTrackers.stream()
-                .flatMap(nodeTracker -> nodeTracker.childTypeOpt().stream())
+        List<Holder<ResourceId, PackContentChildType>> childTypes = nodeTrackers.stream()
+                .flatMap(nodeTracker -> nodeTracker.childTypeHolderOpt()
+                        .stream()
+                )
                 .distinct()
                 .toList();
 
         if (parentTypes.isEmpty()) {
-            parentTypes = EditorRegistries.getContentParentTypes()
-                    .getValues();
+            parentTypes = new ArrayList<>(EditorRegistries.getContentParentTypes()
+                    .getHolders()
+            );
         }
         if (childTypes.isEmpty()) {
-            childTypes = EditorRegistries.getContentChildTypes()
-                    .getValues();
+            childTypes = new ArrayList<>(EditorRegistries.getContentChildTypes()
+                    .getHolders()
+            );
         }
 
         this.childTypesFiltered = FXCollections.observableArrayList(childTypes)
                 .filtered(null);
 
-        SingleSelectionField<PackContentParentType> parentField = Field.ofSingleSelectionType(parentTypes)
+        SingleSelectionField<Holder<ResourceId, PackContentParentType>> parentField = Field.ofSingleSelectionType(parentTypes)
                 .label("Parent Type")
-                .render(() -> new CellFactoryComboBoxControl<>(PackContentType::getLabel))
+                .render(() -> new CellFactoryComboBoxControl<>(holder -> holder.fold(
+                        PackContentType::getLabel,
+                        () -> FancyText.literal("<Missing Value>")
+                )))
                 .required("Parent Type is required");
 
         this.parentType = parentField.selectionProperty();
 
 
-        SingleSelectionField<PackContentChildType> childField = Field.ofSingleSelectionType(
+        SingleSelectionField<Holder<ResourceId, PackContentChildType>> childField = Field.ofSingleSelectionType(
                         new SimpleListProperty<>(this.childTypesFiltered),
                         this.childType
                 )
-                .render(() -> new CellFactoryComboBoxControl<>(PackContentType::getLabel))
+                .render(() -> new CellFactoryComboBoxControl<>(holder -> holder.fold(
+                        PackContentType::getLabel,
+                        () -> FancyText.literal("<Missing Value>")
+                )))
                 .label("Child Type")
                 .required("Child Type is required");
 
 
         this.parentType.addListener(((observable, oldValue, newValue) -> {
-            ResourceId parentId = EditorRegistries.getContentParentTypes()
-                    .getKey(newValue);
             this.childTypesFiltered.setPredicate(
-                    childValue -> childValue.getParentId().equals(parentId)
+                    childValue -> childValue.exists(value -> value.getParentId().equals(newValue.getKey()))
             );
             childField.required(!this.childTypesFiltered.isEmpty());
             childField.editable(!this.childTypesFiltered.isEmpty());
@@ -133,8 +144,10 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
         if (buttonType == ButtonTypes.CREATE) {
             this.form.persist();
             return new NewFileResult(
-                    this.parentType.get(),
-                    Optional.ofNullable(this.childType.getValue()),
+                    this.parentType.get()
+                            .get(),
+                    Optional.ofNullable(this.childType.getValue())
+                            .flatMap(Holder::getOpt),
                     this.fileName.get()
             );
         } else {

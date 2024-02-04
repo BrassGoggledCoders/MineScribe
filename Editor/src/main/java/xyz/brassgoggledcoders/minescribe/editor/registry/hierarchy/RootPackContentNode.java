@@ -4,6 +4,8 @@ import com.google.common.base.Suppliers;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentParentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.registry.Holder;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
 import java.nio.file.Path;
@@ -13,7 +15,7 @@ import java.util.function.Supplier;
 public class RootPackContentNode implements IPackContentNode {
     private static final Path PATH = Path.of(".");
     private final MineScribePackType mineScribePackType;
-    private final Supplier<List<PackContentParentType>> collectParents;
+    private final Supplier<List<Holder<ResourceId, PackContentParentType>>> collectParents;
     private final Supplier<List<NodeTracker>> collectNodeTrackers;
     private final Map<String, IPackContentNode> nodes;
 
@@ -56,16 +58,16 @@ public class RootPackContentNode implements IPackContentNode {
 
     private List<NodeTracker> collectNodeTrackers() {
         List<NodeTracker> nodeTrackers = new ArrayList<>(this.collectParents.get().size());
-        for (PackContentParentType parentType : this.collectParents.get()) {
+        for (Holder<ResourceId, PackContentParentType> parentType : this.collectParents.get()) {
             nodeTrackers.add(new NodeTracker(parentType, Optional.empty(), 0));
         }
         return nodeTrackers;
     }
 
-    private List<PackContentParentType> collectParents() {
-        List<PackContentParentType> packContentParentTypes = new ArrayList<>();
-        for (PackContentParentType parentType : EditorRegistries.getContentParentTypes()) {
-            if (parentType.getPackType() == mineScribePackType) {
+    private List<Holder<ResourceId, PackContentParentType>> collectParents() {
+        List<Holder<ResourceId, PackContentParentType>> packContentParentTypes = new ArrayList<>();
+        for (Holder<ResourceId, PackContentParentType> parentType : EditorRegistries.getContentParentTypes().getHolders()) {
+            if (parentType.exists(type -> type.getPackType() == mineScribePackType)) {
                 packContentParentTypes.add(parentType);
             }
         }
