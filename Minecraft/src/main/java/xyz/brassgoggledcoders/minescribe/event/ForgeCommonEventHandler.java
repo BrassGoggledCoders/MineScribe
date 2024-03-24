@@ -106,7 +106,7 @@ public class ForgeCommonEventHandler {
                 true
         ));
         event.registerReloadListener(new FileCopyMineScribeReloadListener(
-                "scripts/validation",
+                "scripts/validations",
                 ".js"
         ));
     }
