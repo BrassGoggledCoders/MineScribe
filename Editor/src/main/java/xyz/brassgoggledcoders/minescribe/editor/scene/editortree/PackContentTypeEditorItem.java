@@ -5,7 +5,6 @@ import javafx.scene.control.*;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.editor.file.FileHandler;
 import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.IPackContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.tab.EditorFormTab;

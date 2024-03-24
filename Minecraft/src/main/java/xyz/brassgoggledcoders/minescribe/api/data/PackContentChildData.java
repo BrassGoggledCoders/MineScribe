@@ -16,6 +16,8 @@ import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentChildType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -45,7 +47,10 @@ public record PackContentChildData(
                 this.form()
                         .map(FileFormData::toFileForm)
                         .orElse(null),
-                new ResourceId(this.parentId().getNamespace(), this.parentId().getPath())
+                new RootInfo(
+                        RootType.CONTENT,
+                        Optional.of(new ResourceId(this.parentId().getNamespace(), this.parentId().getPath()))
+                )
         );
     }
 

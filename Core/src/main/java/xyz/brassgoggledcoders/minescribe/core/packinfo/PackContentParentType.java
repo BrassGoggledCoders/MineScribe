@@ -7,6 +7,7 @@ import xyz.brassgoggledcoders.minescribe.core.codec.LazyCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootInfo;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
@@ -18,13 +19,14 @@ public class PackContentParentType extends PackContentType implements IFullName 
             MineScribeCoreCodecs.PATH.fieldOf(JsonFieldNames.PATH).forGetter(PackContentType::getPath),
             ErroringOptionalFieldCodec.of(JsonFieldNames.FORM, FileForm.CODEC).forGetter(PackContentType::getForm),
             LazyCodec.of(() -> Registries.getPackTypeRegistry().getCodec())
-                    .fieldOf(JsonFieldNames.PACK_TYPE).forGetter(PackContentParentType::getPackType)
-    ).apply(instance, (label, path, form, packType) -> new PackContentParentType(label, path, form.orElse(null), packType))));
+                    .fieldOf(JsonFieldNames.PACK_TYPE).forGetter(PackContentParentType::getPackType),
+            RootInfo.CODEC.optionalFieldOf(JsonFieldNames.ROOT_INFO, RootInfo.NAMESPACE).forGetter(PackContentParentType::getRootInfo)
+    ).apply(instance, (label, path, form, packType, parent) -> new PackContentParentType(label, path, form.orElse(null), packType, parent))));
 
     private final MineScribePackType packType;
 
-    public PackContentParentType(FancyText label, Path path, FileForm form, MineScribePackType packType) {
-        super(label, path, form);
+    public PackContentParentType(FancyText label, Path path, FileForm form, MineScribePackType packType, RootInfo rootInfo) {
+        super(label, path, form, rootInfo);
         this.packType = packType;
     }
 
@@ -41,4 +43,6 @@ public class PackContentParentType extends PackContentType implements IFullName 
                 "types/parent/" + id.path()
         );
     }
+
+
 }

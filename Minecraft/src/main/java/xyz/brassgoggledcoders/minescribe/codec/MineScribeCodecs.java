@@ -6,14 +6,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import xyz.brassgoggledcoders.minescribe.api.util.ConvertingUtil;
+import xyz.brassgoggledcoders.minescribe.core.codec.EnumCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.ErroringOptionalFieldCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.JsonCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
+
+import java.util.Optional;
 
 public class MineScribeCodecs {
 
@@ -40,17 +45,21 @@ public class MineScribeCodecs {
     );
 
     public static final Codec<PackContentParentType> PACK_CONTENT_PARENT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            LABEL_STRING.fieldOf("label").forGetter(PackContentType::getLabel),
-            MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentType::getPath),
-            ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentType::getForm),
-            MS_PACK_TYPE.fieldOf("packType").forGetter(PackContentParentType::getPackType)
-    ).apply(instance, (label, path, form, packType) -> new PackContentParentType(label, path, form.orElse(null), packType)));
+            LABEL_STRING.fieldOf(JsonFieldNames.LABEL).forGetter(PackContentType::getLabel),
+            MineScribeCoreCodecs.PATH.fieldOf(JsonFieldNames.PATH).forGetter(PackContentType::getPath),
+            ErroringOptionalFieldCodec.of(JsonFieldNames.FORM, FileForm.CODEC).forGetter(PackContentType::getForm),
+            MS_PACK_TYPE.fieldOf(JsonFieldNames.PACK_TYPE).forGetter(PackContentParentType::getPackType),
+            RootInfo.CODEC.optionalFieldOf(JsonFieldNames.ROOT_INFO, RootInfo.NAMESPACE).forGetter(PackContentParentType::getRootInfo)
+    ).apply(instance, (label, path, form, packType, parent) -> new PackContentParentType(label, path, form.orElse(null), packType, parent)));
 
     public static final Codec<PackContentChildType> PACK_CONTENT_CHILD_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            LABEL_STRING.fieldOf("label").forGetter(PackContentType::getLabel),
-            MineScribeCoreCodecs.PATH.fieldOf("path").forGetter(PackContentType::getPath),
-            ErroringOptionalFieldCodec.of("form", FileForm.CODEC).forGetter(PackContentType::getForm),
-            RESOURCE_ID.fieldOf("parentId").forGetter(PackContentChildType::getParentId)
+            LABEL_STRING.fieldOf(JsonFieldNames.LABEL).forGetter(PackContentType::getLabel),
+            MineScribeCoreCodecs.PATH.fieldOf(JsonFieldNames.PATH).forGetter(PackContentType::getPath),
+            ErroringOptionalFieldCodec.of(JsonFieldNames.FORM, FileForm.CODEC).forGetter(PackContentType::getForm),
+            RESOURCE_ID.fieldOf(JsonFieldNames.PARENT_ID).xmap(
+                    id -> new RootInfo(RootType.CONTENT, Optional.of(id)),
+                    info -> info.id().orElseThrow()
+            ).forGetter(PackContentChildType::getRootInfo)
     ).apply(instance, (label, path, form, packType) -> new PackContentChildType(label, path, form.orElse(null), packType)));
 
     public static final Codec<ObjectType> OBJECT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
@@ -59,9 +68,9 @@ public class MineScribeCodecs {
     ).apply(instance, ObjectType::new));
 
     public static final Codec<SerializerType> SERIALIZER_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            RESOURCE_ID.fieldOf("parentId").forGetter(SerializerType::parentId),
-            Codec.STRING.fieldOf("serializerId").forGetter(SerializerType::serializerId),
-            LABEL_STRING.fieldOf("label").forGetter(SerializerType::label),
-            FileForm.CODEC.fieldOf("form").forGetter(SerializerType::fileForm)
+            RESOURCE_ID.fieldOf(JsonFieldNames.PARENT_ID).forGetter(SerializerType::parentId),
+            Codec.STRING.fieldOf(JsonFieldNames.SERIALIZER_ID).forGetter(SerializerType::serializerId),
+            LABEL_STRING.fieldOf(JsonFieldNames.LABEL).forGetter(SerializerType::label),
+            FileForm.CODEC.fieldOf(JsonFieldNames.FORM).forGetter(SerializerType::fileForm)
     ).apply(instance, SerializerType::new));
 }

@@ -4,6 +4,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.MineScribeInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
@@ -27,7 +28,7 @@ public class PackTypeEditorItem extends EditorItem {
     public PackTypeEditorItem(String name, Path path, MineScribePackType packType) {
         super(name, path);
         this.packType = packType;
-        if (packType.name().equalsIgnoreCase("MINESCRIBE")) {
+        if (packType.name().equalsIgnoreCase(MineScribeInfo.ID)) {
             EditorRegistries.addSourcePath(path);
         }
     }

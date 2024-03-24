@@ -1,6 +1,5 @@
 package xyz.brassgoggledcoders.minescribe.editor.exception;
 
-import javafx.scene.control.Alert;
 import org.controlsfx.dialog.ExceptionDialog;
 
 public class FormException extends Exception {

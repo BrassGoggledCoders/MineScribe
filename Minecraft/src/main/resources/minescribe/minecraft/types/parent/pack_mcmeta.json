@@ -1,0 +1,11 @@
+{
+  "id": "minecraft:pack_mcmeta",
+  "label": {
+    "text": "Pack Metadata (pack.mcmeta)"
+  },
+  "rootInfo": {
+    "type": "PACK"
+  },
+  "packType": "SERVER_DATA",
+  "path": "pack.mcmeta"
+}

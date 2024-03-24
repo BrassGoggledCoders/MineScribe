@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Holder;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
@@ -30,9 +31,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
-    private final ObjectProperty<Holder<ResourceId, PackContentParentType>> parentType;
-    private final ObjectProperty<Holder<ResourceId, PackContentChildType>> childType;
-    private final FilteredList<Holder<ResourceId, PackContentChildType>> childTypesFiltered;
+    private final ObjectProperty<Holder<ResourceId, PackContentType>> parentType;
+    private final ObjectProperty<Holder<ResourceId, PackContentType>> childType;
+    private final FilteredList<Holder<ResourceId, PackContentType>> childTypesFiltered;
     private final StringProperty fileName;
     private final Form form;
 
@@ -40,12 +41,12 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
         this.childType = new SimpleObjectProperty<>();
         this.fileName = new SimpleStringProperty("");
 
-        List<Holder<ResourceId, PackContentParentType>> parentTypes = nodeTrackers.stream()
+        List<Holder<ResourceId, PackContentType>> parentTypes = nodeTrackers.stream()
                 .map(NodeTracker::parentTypeHolder)
                 .distinct()
                 .toList();
 
-        List<Holder<ResourceId, PackContentChildType>> childTypes = nodeTrackers.stream()
+        List<Holder<ResourceId, PackContentType>> childTypes = nodeTrackers.stream()
                 .flatMap(nodeTracker -> nodeTracker.childTypeHolderOpt()
                         .stream()
                 )
@@ -66,7 +67,7 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
         this.childTypesFiltered = FXCollections.observableArrayList(childTypes)
                 .filtered(null);
 
-        SingleSelectionField<Holder<ResourceId, PackContentParentType>> parentField = Field.ofSingleSelectionType(parentTypes)
+        SingleSelectionField<Holder<ResourceId, PackContentType>> parentField = Field.ofSingleSelectionType(parentTypes)
                 .label("Parent Type")
                 .render(() -> new CellFactoryComboBoxControl<>(holder -> holder.fold(
                         PackContentType::getLabel,
@@ -77,7 +78,7 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
         this.parentType = parentField.selectionProperty();
 
 
-        SingleSelectionField<Holder<ResourceId, PackContentChildType>> childField = Field.ofSingleSelectionType(
+        SingleSelectionField<Holder<ResourceId, PackContentType>> childField = Field.ofSingleSelectionType(
                         new SimpleListProperty<>(this.childTypesFiltered),
                         this.childType
                 )
@@ -90,9 +91,9 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
 
 
         this.parentType.addListener(((observable, oldValue, newValue) -> {
-            this.childTypesFiltered.setPredicate(
-                    childValue -> childValue.exists(value -> value.getParentId().equals(newValue.getKey()))
-            );
+            this.childTypesFiltered.setPredicate(childValue -> childValue.exists(value -> value.getRootInfo()
+                    .matches(RootType.CONTENT, newValue.getKey())
+            ));
             childField.required(!this.childTypesFiltered.isEmpty());
             childField.editable(!this.childTypesFiltered.isEmpty());
         }));
@@ -156,8 +157,8 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
     }
 
     public record NewFileResult(
-            PackContentParentType parentType,
-            Optional<PackContentChildType> childTypeOpt,
+            PackContentType parentType,
+            Optional<PackContentType> childTypeOpt,
             String fileName
     ) {
         public Optional<FileForm> getFileForm() {

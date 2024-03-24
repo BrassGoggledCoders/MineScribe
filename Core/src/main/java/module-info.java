@@ -26,4 +26,5 @@ module xyz.brassgoggledcoders.minescribe.core {
     exports xyz.brassgoggledcoders.minescribe.core.text;
     exports xyz.brassgoggledcoders.minescribe.core.util;
     exports xyz.brassgoggledcoders.minescribe.core.validation;
+    exports xyz.brassgoggledcoders.minescribe.core.packinfo.parent;
 }

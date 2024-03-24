@@ -3,6 +3,8 @@ package xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
 import xyz.brassgoggledcoders.minescribe.core.registry.Holder;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
 
@@ -11,19 +13,19 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public record NodeTracker(
-        Holder<ResourceId, PackContentParentType> parentTypeHolder,
-        Optional<Holder<ResourceId, PackContentChildType>> childTypeHolderOpt,
+        Holder<ResourceId, PackContentType> parentTypeHolder,
+        Optional<Holder<ResourceId, PackContentType>> childTypeHolderOpt,
         int depth
 ) {
     @NotNull
     public Collection<NodeTracker> advancePath(Path path) {
-        PackContentParentType parentType = this.parentTypeHolder()
+        PackContentType parentType = this.parentTypeHolder()
                 .get();
 
         if (parentType != null) {
             Path parentPath = parentType.getPath();
             if (depth >= parentPath.getNameCount()) {
-                PackContentChildType packContentChildType = this.childTypeHolderOpt.flatMap(Holder::getOpt)
+                PackContentType packContentChildType = this.childTypeHolderOpt.flatMap(Holder::getOpt)
                         .orElse(null);
                 if (packContentChildType != null) {
                     int childDepth = this.depth() - parentPath.getNameCount();
@@ -65,9 +67,9 @@ public record NodeTracker(
     @NotNull
     private List<NodeTracker> createNodeTracksForChildren(Path path) {
         List<NodeTracker> nodeTrackerList = new ArrayList<>();
-        for (Holder<ResourceId, PackContentChildType> childTypeHolder : EditorRegistries.getContentChildTypes().getHolders()) {
+        for (Holder<ResourceId, PackContentType> childTypeHolder : EditorRegistries.getContentChildTypes().getHolders()) {
             ResourceId parentId = this.parentTypeHolder.getKey();
-            if (childTypeHolder.exists(childType -> childType.getParentId().equals(parentId) && childType.getPath().startsWith(path))) {
+            if (childTypeHolder.exists(childType -> matchesChild(childType, parentId, path))) {
                 nodeTrackerList.add(new NodeTracker(
                         this.parentTypeHolder(),
                         Optional.of(childTypeHolder),
@@ -83,6 +85,18 @@ public record NodeTracker(
             ));
         }
         return nodeTrackerList;
+    }
+
+    private boolean matchesChild(PackContentType childType, ResourceId parentId, Path path) {
+        RootInfo rootInfo = childType.getRootInfo();
+
+        if (rootInfo.type() == RootType.CONTENT) {
+            if (rootInfo.id().isPresent() && rootInfo.id().get().equals(parentId)) {
+                return childType.getPath().startsWith(path);
+            }
+        }
+
+        return false;
     }
 
     public Optional<FileForm> getForm() {
