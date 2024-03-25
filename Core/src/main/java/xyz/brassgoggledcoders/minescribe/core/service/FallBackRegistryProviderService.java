@@ -20,15 +20,7 @@ public class FallBackRegistryProviderService implements IRegistryProviderService
             }
     );
 
-    public static Registry<ResourceId, PackContentParentType> PARENT_TYPES = new BasicStaticRegistry<>(
-            RegistryNames.CONTENT_PARENT_TYPES,
-            ResourceId.CODEC,
-            register -> {
-
-            }
-    );
-
-    public static Registry<ResourceId, PackContentChildType> CONTENT_TYPES = new BasicStaticRegistry<>(
+    public static Registry<ResourceId, PackContentType> CONTENT_TYPES = new BasicStaticRegistry<>(
             RegistryNames.CONTENT_TYPES,
             ResourceId.CODEC,
             register -> {
@@ -57,7 +49,6 @@ public class FallBackRegistryProviderService implements IRegistryProviderService
     public FallBackRegistryProviderService() {
         this.registries = List.of(
                 PACK_TYPES,
-                PARENT_TYPES,
                 OBJECT_TYPES,
                 FORM_LISTS,
                 CONTENT_TYPES

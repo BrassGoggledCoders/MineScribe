@@ -12,13 +12,12 @@ import xyz.brassgoggledcoders.minescribe.core.codec.JsonCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FileForm;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ObjectType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.SerializerType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootInfo;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
-import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
-
-import java.util.Optional;
 
 public class MineScribeCodecs {
 
@@ -34,23 +33,10 @@ public class MineScribeCodecs {
 
     public static final Codec<PackType> PACK_TYPE = new EnumCodec<>(PackType.class);
 
-    public static final Codec<MineScribePackType> MS_PACK_TYPE = PACK_TYPE.xmap(
-            mcPackType -> Registries.getPackTypeRegistry().getValue(mcPackType.name()),
-            msPackType -> PackType.valueOf(msPackType.name())
-    );
-
     public static final Codec<ResourceId> RESOURCE_ID = ResourceLocation.CODEC.xmap(
             rl -> new ResourceId(rl.getNamespace(), rl.getPath()),
             rId -> new ResourceLocation(rId.namespace(), rId.path())
     );
-
-    public static final Codec<PackContentParentType> PACK_CONTENT_PARENT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
-            LABEL_STRING.fieldOf(JsonFieldNames.LABEL).forGetter(PackContentType::getLabel),
-            MineScribeCoreCodecs.PATH.fieldOf(JsonFieldNames.PATH).forGetter(PackContentType::getPath),
-            ErroringOptionalFieldCodec.of(JsonFieldNames.FORM, FileForm.CODEC).forGetter(PackContentType::getForm),
-            MS_PACK_TYPE.fieldOf(JsonFieldNames.PACK_TYPE).forGetter(PackContentParentType::getPackType),
-            RootInfo.CODEC.optionalFieldOf(JsonFieldNames.ROOT_INFO, RootInfo.NAMESPACE).forGetter(PackContentParentType::getRootInfo)
-    ).apply(instance, (label, path, form, packType, parent) -> new PackContentParentType(label, path, form.orElse(null), packType, parent)));
 
     public static final Codec<PackContentType> CONTENT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             LABEL_STRING.fieldOf(JsonFieldNames.LABEL).forGetter(PackContentType::getLabel),

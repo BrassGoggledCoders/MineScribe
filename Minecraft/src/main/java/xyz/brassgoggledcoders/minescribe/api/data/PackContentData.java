@@ -15,8 +15,6 @@ import xyz.brassgoggledcoders.minescribe.core.codec.ErroringOptionalFieldCodec;
 import xyz.brassgoggledcoders.minescribe.core.codec.MineScribeCoreCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
-import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootInfo;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
 
 import java.nio.file.Path;
@@ -52,7 +50,7 @@ public record PackContentData(
         );
     }
 
-
+    @SuppressWarnings("unused")
     public static JsonCodecProvider<PackContentData> createProvider(
             DataGenerator dataGenerator,
             ExistingFileHelper existingFileHelper,
@@ -63,7 +61,7 @@ public record PackContentData(
         collectValues.accept(contentData -> {
             if (contentData.rootInfo().type() == RootType.CONTENT) {
                 ResourceLocation parentId = contentData.rootInfo.id()
-                    .orElseThrow(() -> new IllegalStateException("No Content Parent set"));
+                        .orElseThrow(() -> new IllegalStateException("No Content Parent set"));
                 ResourceLocation actualParentId = new ResourceLocation(
                         parentId.getNamespace(),
                         "types/content/" + parentId.getPath() + ".json"

@@ -31,10 +31,11 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
             "pack_repositories",
             PackRepositoryLocation.CODEC
     );
-    private static final BasicJsonRegistry<PackContentParentType> contentParentTypes = new BasicJsonRegistry<>(
-            RegistryNames.CONTENT_PARENT_TYPES,
-            Path.of("types", "parent").toString(),
-            PackContentParentType.CODEC
+
+    private static final BasicJsonRegistry<PackContentType> contentTypes = new BasicJsonRegistry<>(
+            RegistryNames.CONTENT_TYPES,
+            Path.of("types", "content").toString(),
+            PackContentType.CODEC
     );
 
     private static final BasicJsonRegistry<FormList> formValueLists = new BasicJsonRegistry<>(
@@ -119,7 +120,7 @@ public class EditorRegistryProviderService implements IRegistryProviderService {
                 packTypes,
                 packRepositoryLocations,
                 formValueLists,
-                contentParentTypes,
+                contentTypes,
                 objectTypes,
                 serializerTypes,
                 editorFormFieldTransforms,

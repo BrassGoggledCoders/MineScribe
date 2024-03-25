@@ -75,12 +75,6 @@ public class ForgeCommonEventHandler {
                 }
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
-                "types/parent",
-                MineScribeCodecs.PACK_CONTENT_PARENT_TYPE,
-                PackContentParentType.CODEC,
-                true
-        ));
-        event.registerReloadListener(new CodecMineScribeReloadListener<>(
                 "types/content",
                 MineScribeCodecs.CONTENT_TYPE,
                 PackContentType.CODEC,
