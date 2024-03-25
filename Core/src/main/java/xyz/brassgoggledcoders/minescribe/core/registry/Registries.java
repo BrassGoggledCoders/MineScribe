@@ -43,12 +43,8 @@ public class Registries {
         return Registries.getRegistry(RegistryNames.FORM_LISTS);
     }
 
-    public static Registry<ResourceId, PackContentParentType> getContentParentTypes() {
-        return Registries.getRegistry(RegistryNames.CONTENT_PARENT_TYPES);
-    }
-
-    public static Registry<ResourceId, PackContentChildType> getContentChildTypes() {
-        return Registries.getRegistry(RegistryNames.CONTENT_CHILD_TYPES);
+    public static Registry<ResourceId, PackContentType> getContentTypes() {
+        return Registries.getRegistry(RegistryNames.CONTENT_TYPES);
     }
 
     public static Registry<ResourceId, SerializerType> getSerializerTypes() {

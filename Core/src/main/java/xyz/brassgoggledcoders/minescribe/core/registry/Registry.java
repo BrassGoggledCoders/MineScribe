@@ -1,7 +1,5 @@
 package xyz.brassgoggledcoders.minescribe.core.registry;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,17 +8,20 @@ import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Registry<K, V> implements Iterable<V> {
     private final String id;
-    private final BiMap<K, V> values;
+    private final Map<K, Holder<K, V>> byKey;
+    private final Map<V, Holder<K, V>> byValue;
     private final Codec<V> dispatchCodec;
     private final Function<V, String> aliasFunction;
 
     public Registry(String id, Codec<K> kCodec, Function<V, String> aliasFunction) {
         this.id = id;
         this.aliasFunction = Objects.requireNonNullElseGet(aliasFunction, () -> value -> null);
-        this.values = HashBiMap.create();
+        this.byKey = new HashMap<>();
+        this.byValue = new HashMap<>();
         this.dispatchCodec = new BiMapDispatchCodec<>(
                 this.id,
                 kCodec,
@@ -35,29 +36,35 @@ public class Registry<K, V> implements Iterable<V> {
     }
 
     public boolean register(K key, V value) {
-        if (this.values.containsKey(key)) {
-            V oldValue = this.values.get(key);
-            if (!oldValue.equals(value)) {
-                this.values.put(key, value);
-                return true;
-            }
-        } else {
-            this.values.put(key, value);
-            return true;
+        Holder<K, V> holder = this.byKey.computeIfAbsent(key, Holder::new);
+        V oldValue = holder.get();
+        if (oldValue != null) {
+            this.byValue.remove(oldValue);
         }
-        return false;
+        holder.bind(value);
+        this.byValue.put(value, holder);
+        return true;
     }
 
-    public BiMap<K, V> getMap() {
-        return values;
+    public Map<K, Holder<K, V>> getMap() {
+        return byKey;
     }
 
     public V getValue(K key) {
-        return this.getMap().get(key);
+        Holder<K, V> holder = this.getMap().get(key);
+        if (holder != null) {
+            return holder.get();
+        } else {
+            return null;
+        }
     }
 
     public List<V> getValues() {
-        return new ArrayList<>(this.getMap().values());
+        return this.byKey.values()
+                .stream()
+                .map(Holder::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public Codec<V> getCodec() {
@@ -79,8 +86,7 @@ public class Registry<K, V> implements Iterable<V> {
     @NotNull
     @Override
     public Iterator<V> iterator() {
-        return this.getMap()
-                .values()
+        return this.getValues()
                 .iterator();
     }
 
@@ -98,7 +104,12 @@ public class Registry<K, V> implements Iterable<V> {
     }
 
     public K getKey(V value) {
-        return this.getMap().inverse().get(value);
+        Holder<K, V> holder = this.byValue.get(value);
+        if (holder != null) {
+            return holder.getKey();
+        } else {
+            return null;
+        }
     }
 
     @SuppressWarnings("unused")
@@ -108,5 +119,9 @@ public class Registry<K, V> implements Iterable<V> {
 
     public void validate() {
 
+    }
+
+    public Collection<Holder<K, V>> getHolders() {
+        return this.byKey.values();
     }
 }

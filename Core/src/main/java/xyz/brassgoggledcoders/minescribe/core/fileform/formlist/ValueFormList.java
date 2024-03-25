@@ -4,11 +4,14 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
+import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.JsonFieldNames;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.registry.Registries;
+import xyz.brassgoggledcoders.minescribe.core.util.CachedValue;
 
 import java.util.List;
+import java.util.MissingResourceException;
 import java.util.function.Supplier;
 
 public class ValueFormList implements IFormList<String> {
@@ -17,14 +20,20 @@ public class ValueFormList implements IFormList<String> {
     ).apply(instance, ValueFormList::new));
 
     private final ResourceId id;
-    private final Supplier<List<String>> values;
+    private final CachedValue<List<String>, Exception> values;
 
     public ValueFormList(ResourceId id) {
         this.id = id;
-        this.values = Suppliers.memoize(() -> Registries.getFormListValues()
-                .getValue(this.getId())
-                .values()
-        );
+        this.values = new CachedValue<>(() -> {
+            FormList formList = Registries.getFormListValues()
+                    .getValue(this.getId());
+
+            if (formList != null) {
+                return formList.values();
+            } else {
+                throw new Exception("Failed to get Values for %s".formatted(this.getId()));
+            }
+        });
     }
 
     public ResourceId getId() {
@@ -32,7 +41,7 @@ public class ValueFormList implements IFormList<String> {
     }
 
     @Override
-    public List<String> getValues() {
+    public List<String> getValues() throws Exception {
         return this.values.get();
     }
 

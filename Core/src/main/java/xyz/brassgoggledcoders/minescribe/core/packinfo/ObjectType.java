@@ -14,7 +14,7 @@ public record ObjectType(
 ) implements IFullName, ILabeledValue {
     public static final Codec<ObjectType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             FancyText.CODEC.fieldOf(JsonFieldNames.LABEL).forGetter(ObjectType::label),
-            FileForm.CODEC.fieldOf("form").forGetter(ObjectType::fileForm)
+            FileForm.CODEC.fieldOf(JsonFieldNames.FORM).forGetter(ObjectType::fileForm)
     ).apply(instance, ObjectType::new));
 
     @Override

@@ -3,7 +3,19 @@
     "fields": [
       {
         "definition": {
-          "type": "string"
+          "type": "single_selection",
+          "lists": [
+            {
+              "type": "registry",
+              "fullNameId": true,
+              "registry": "contentTypes"
+            },
+            {
+              "type": "registry",
+              "fullNameId": true,
+              "registry": "objectTypes"
+            }
+          ]
         },
         "info": {
           "field": "parentId",
@@ -17,8 +29,8 @@
           "type": "string"
         },
         "info": {
-          "field": "label",
-          "label": "Label",
+          "field": "serializerId",
+          "label": "ID",
           "required": true,
           "sortOrder": 2
         }
@@ -28,8 +40,8 @@
           "type": "string"
         },
         "info": {
-          "field": "path",
-          "label": "Path",
+          "field": "label",
+          "label": "Label",
           "required": true,
           "sortOrder": 3
         }
@@ -47,10 +59,13 @@
       }
     ]
   },
-  "id": "minescribe:child_type",
+  "id": "minescribe:serializer_type",
   "label": {
-    "text": "Child Type"
+    "text": "Serializer Type"
   },
-  "packType": "MINESCRIBE",
-  "path": "types\\child"
+  "rootInfo": {
+    "type": "NAMESPACE",
+    "id": "minescribe"
+  },
+  "path": "types\\serializer"
 }

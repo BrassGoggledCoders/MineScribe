@@ -1,8 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.core.registry;
 
 public class RegistryNames {
-    public static final String CONTENT_PARENT_TYPES =  "contentParentTypes";
-    public static final String CONTENT_CHILD_TYPES = "contentChildTypes";
+    public static final String CONTENT_TYPES = "contentTypes";
     public static final String FORM_LISTS = "formLists";
     public static final String FORM_LIST_VALUES = "formListValues";
     public static final String SERIALIZER_TYPES = "serializerTypes";

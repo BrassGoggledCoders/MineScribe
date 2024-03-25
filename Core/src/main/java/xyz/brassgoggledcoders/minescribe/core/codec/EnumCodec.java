@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.codec;
+package xyz.brassgoggledcoders.minescribe.core.codec;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -17,7 +17,7 @@ public class EnumCodec<E extends Enum<E>> implements Codec<E> {
         return ops.getStringValue(input)
                 .flatMap(name -> {
                     for (E value: this.enumClass.getEnumConstants()) {
-                        if (name.equals(value.name())) {
+                        if (name.equalsIgnoreCase(value.name())) {
                             return DataResult.success(Pair.of(value, input));
                         }
                     }

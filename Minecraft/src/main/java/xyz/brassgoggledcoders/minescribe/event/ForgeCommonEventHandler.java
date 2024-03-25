@@ -15,12 +15,9 @@ import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.tags.ITagManager;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
-import xyz.brassgoggledcoders.minescribe.api.data.FileFieldData;
-import xyz.brassgoggledcoders.minescribe.api.data.FileFieldInfoData;
-import xyz.brassgoggledcoders.minescribe.api.data.FileFormData;
-import xyz.brassgoggledcoders.minescribe.api.data.PackContentChildData;
+import xyz.brassgoggledcoders.minescribe.api.data.*;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherFormListsEvent;
-import xyz.brassgoggledcoders.minescribe.api.event.GatherPackContentChildTypes;
+import xyz.brassgoggledcoders.minescribe.api.event.GatherPackContentTypes;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
 import xyz.brassgoggledcoders.minescribe.codec.MineScribeCodecs;
 import xyz.brassgoggledcoders.minescribe.core.fileform.FormList;
@@ -29,6 +26,7 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.ListSelectionFi
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.FileIdFormList;
 import xyz.brassgoggledcoders.minescribe.core.fileform.formlist.ValueFormList;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.*;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.util.MineScribeStringHelper;
 import xyz.brassgoggledcoders.minescribe.data.CodecMineScribeReloadListener;
@@ -36,10 +34,7 @@ import xyz.brassgoggledcoders.minescribe.data.FileCopyMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
 
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -77,18 +72,12 @@ public class ForgeCommonEventHandler {
                 }
         ));
         event.registerReloadListener(new CodecMineScribeReloadListener<>(
-                "types/parent",
-                MineScribeCodecs.PACK_CONTENT_PARENT_TYPE,
-                PackContentParentType.CODEC,
-                true
-        ));
-        event.registerReloadListener(new CodecMineScribeReloadListener<>(
-                "types/child",
-                MineScribeCodecs.PACK_CONTENT_CHILD_TYPE,
-                PackContentChildType.CODEC,
+                "types/content",
+                MineScribeCodecs.CONTENT_TYPE,
+                PackContentType.CODEC,
                 true,
                 () -> {
-                    GatherPackContentChildTypes gatherEvent = new GatherPackContentChildTypes();
+                    GatherPackContentTypes gatherEvent = new GatherPackContentTypes();
                     MinecraftForge.EVENT_BUS.post(gatherEvent);
                     return gatherEvent.getValues();
                 }
@@ -106,7 +95,7 @@ public class ForgeCommonEventHandler {
                 true
         ));
         event.registerReloadListener(new FileCopyMineScribeReloadListener(
-                "scripts/validation",
+                "scripts/validations",
                 ".js"
         ));
     }
@@ -114,6 +103,15 @@ public class ForgeCommonEventHandler {
     @SubscribeEvent
     public static void registerFormLists(GatherFormListsEvent formListsEvent) {
         MinecraftServer minecraftServer = ServerLifecycleHooks.getCurrentServer();
+
+        formListsEvent.register(new FormList(
+                new ResourceId("root_types"),
+                FancyText.literal("Root Type"),
+                Arrays.stream(RootType.values())
+                        .map(RootType::toString)
+                        .toList()
+        ));
+
         if (minecraftServer != null) {
             RegistryAccess registryAccess = minecraftServer.registryAccess();
             registryAccess.registries()
@@ -192,7 +190,7 @@ public class ForgeCommonEventHandler {
     }
 
     @SubscribeEvent
-    public static void registerChildTypes(GatherPackContentChildTypes gatherPackContentChildTypes) {
+    public static void registerChildTypes(GatherPackContentTypes gatherPackContentTypes) {
         MinecraftServer minecraftServer = ServerLifecycleHooks.getCurrentServer();
         if (minecraftServer != null) {
             RegistryAccess registryAccess = minecraftServer.registryAccess();
@@ -204,9 +202,12 @@ public class ForgeCommonEventHandler {
                         if (tagPath.startsWith("tags")) {
                             tagPath = tagPath.subpath(1, tagPath.getNameCount());
                         }
-                        return new PackContentChildData(
+                        return new PackContentData(
                                 id,
-                                new ResourceLocation("tag"),
+                                new RootInfoData(
+                                        RootType.CONTENT,
+                                        new ResourceLocation("tag")
+                                ),
                                 Component.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
                                         .replace("_", " ")
                                         .replace("/", " ")
@@ -238,7 +239,7 @@ public class ForgeCommonEventHandler {
                                 ))
                         );
                     })
-                    .forEach(gatherPackContentChildTypes::register);
+                    .forEach(gatherPackContentTypes::register);
 
         }
     }

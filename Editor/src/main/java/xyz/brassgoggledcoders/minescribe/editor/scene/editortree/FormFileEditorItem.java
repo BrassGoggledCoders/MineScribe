@@ -7,10 +7,12 @@ import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.NodeTracker;
 import xyz.brassgoggledcoders.minescribe.editor.scene.tab.EditorFormTab;
+import xyz.brassgoggledcoders.minescribe.editor.scene.tab.FileTab;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 public class FormFileEditorItem extends FileEditorItem {
     private final List<NodeTracker> nodes;
@@ -36,21 +38,34 @@ public class FormFileEditorItem extends FileEditorItem {
     }
 
     public void openTab() {
-        this.nodes.stream()
+        Optional<NodeTracker> nodeTrackerOpt = this.nodes.stream()
                 .filter(node -> node.getForm().isPresent())
-                .findFirst()
-                .ifPresent(nodeTracker -> {
-                    EditorFormTab editorFormTab = this.getEditorTabService()
-                            .openTab("form", this.getPath());
+                .findFirst();
 
-                    if (editorFormTab != null) {
-                        editorFormTab.setText(this.getName());
-                        nodeTracker.getForm()
-                                        .ifPresent(editorFormTab.fileFormProperty()::set);
-                        editorFormTab.parentsProperty()
-                                .setValue(FXCollections.observableList(nodeTracker.getFullNames()));
-                    }
-                });
+        if (nodeTrackerOpt.isPresent()) {
+            nodeTrackerOpt.ifPresent(nodeTracker -> {
+                EditorFormTab editorFormTab = this.getEditorTabService()
+                        .openTab("form", this.getPath());
+
+                if (editorFormTab != null) {
+                    editorFormTab.setText(this.getName());
+                    nodeTracker.getForm()
+                            .ifPresent(editorFormTab.fileFormProperty()::set);
+                    editorFormTab.parentsProperty()
+                            .setValue(FXCollections.observableList(nodeTracker.getFullNames()));
+                }
+            });
+        } else {
+            FileTab fileTab = this.getEditorTabService()
+                    .openTab("file_view", this.getPath());
+
+            if (fileTab != null) {
+                fileTab.setText(this.getName());
+                fileTab.pathProperty()
+                        .setValue(this.getPath());
+            }
+        }
+
     }
 
     @Override
