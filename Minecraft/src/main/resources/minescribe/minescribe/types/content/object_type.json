@@ -1,0 +1,40 @@
+{
+  "label": {
+    "text": "Object Type"
+  },
+  "path": "types\\object",
+  "form": {
+    "fields": [
+      {
+        "definition": {
+          "objectId": "minescribe:fancy_text",
+          "transform": {
+            "field": "text"
+          },
+          "type": "object_ref"
+        },
+        "info": {
+          "required": true,
+          "label": "Label",
+          "field": "label",
+          "sortOrder": 0
+        }
+      },
+      {
+        "definition": {
+          "objectId": "minescribe:file_form",
+          "type": "object_ref"
+        },
+        "info": {
+          "label": "File Form",
+          "field": "form",
+          "sortOrder": 1
+        }
+      }
+    ]
+  },
+  "rootInfo": {
+    "type": "NAMESPACE",
+    "id": "minescribe:minescribe"
+  }
+}

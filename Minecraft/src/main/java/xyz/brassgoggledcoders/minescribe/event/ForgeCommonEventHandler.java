@@ -34,10 +34,7 @@ import xyz.brassgoggledcoders.minescribe.data.FileCopyMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
 
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -106,6 +103,15 @@ public class ForgeCommonEventHandler {
     @SubscribeEvent
     public static void registerFormLists(GatherFormListsEvent formListsEvent) {
         MinecraftServer minecraftServer = ServerLifecycleHooks.getCurrentServer();
+
+        formListsEvent.register(new FormList(
+                new ResourceId("root_types"),
+                FancyText.literal("Root Type"),
+                Arrays.stream(RootType.values())
+                        .map(RootType::toString)
+                        .toList()
+        ));
+
         if (minecraftServer != null) {
             RegistryAccess registryAccess = minecraftServer.registryAccess();
             registryAccess.registries()

@@ -8,7 +8,9 @@ import javafx.scene.control.TreeCell;
 import org.jetbrains.annotations.NotNull;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.PackContentType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
 import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.IPackContentNode;
 import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.PackContentHierarchy;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewFileFormDialog;
@@ -27,7 +29,7 @@ public class NamespaceEditorItem extends EditorItem {
     public NamespaceEditorItem(String name, Path path, MineScribePackType packType) {
         super(name, path);
         this.contentNode = PackContentHierarchy.getInstance()
-                .getNodeFor(RootInfo.NAMESPACE);
+                .getNodeFor(new RootInfo(RootType.NAMESPACE, new ResourceId(packType.name())));
     }
 
     @Override

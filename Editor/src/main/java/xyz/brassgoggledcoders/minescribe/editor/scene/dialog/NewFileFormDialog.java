@@ -54,8 +54,11 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
                 .toList();
 
         if (parentTypes.isEmpty()) {
-            parentTypes = new ArrayList<>(EditorRegistries.getContentParentTypes()
+            parentTypes = new ArrayList<>(EditorRegistries.getContentTypes()
                     .getHolders()
+                    .stream()
+                    .filter(holder -> holder.exists(packContentType -> packContentType.getRootInfo().type() == RootType.NAMESPACE))
+                    .toList()
             );
         }
         if (childTypes.isEmpty()) {

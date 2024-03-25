@@ -70,7 +70,7 @@ public class RootPackContentNode implements IPackContentNode {
 
     private List<Holder<ResourceId, PackContentType>> collectParents() {
         List<Holder<ResourceId, PackContentType>> packContentParentTypes = new ArrayList<>();
-        for (Holder<ResourceId, PackContentType> parentType : EditorRegistries.getContentParentTypes().getHolders()) {
+        for (Holder<ResourceId, PackContentType> parentType : EditorRegistries.getContentTypes().getHolders()) {
             if (parentType.exists(type -> type.getRootInfo().equals(this.rootInfo))) {
                 packContentParentTypes.add(parentType);
             }

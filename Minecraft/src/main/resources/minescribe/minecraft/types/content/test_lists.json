@@ -47,6 +47,9 @@
   "label": {
     "text": "Testing Lists of Fields"
   },
-  "packType": "MINESCRIBE",
+  "rootInfo": {
+    "type": "NAMESPACE",
+    "id": "server_data"
+  },
   "path": "test"
 }

@@ -1,7 +1,10 @@
 {
   "label": "Parent Type",
-  "path": "types\\parent",
-  "packType": "MINESCRIBE",
+  "path": "types\\content",
+  "rootInfo": {
+    "type": "NAMESPACE",
+    "id": "minescribe"
+  },
   "form": {
     "fields": [
       {
@@ -32,17 +35,12 @@
       },
       {
         "definition": {
-          "type": "single_selection",
-          "lists": [
-            {
-              "type": "registry",
-              "registry": "packTypes"
-            }
-          ]
+          "type": "object_ref",
+          "objectId": "minescribe:root_info"
         },
         "info": {
-          "label": "Pack Type",
-          "field": "packType",
+          "label": "Root Info",
+          "field": "rootInfo",
           "sortOrder": 3,
           "required": true
         }

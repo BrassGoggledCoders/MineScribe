@@ -9,6 +9,9 @@
   "label": {
     "text": "Recipe"
   },
-  "packType": "SERVER_DATA",
+  "rootInfo": {
+    "type": "NAMESPACE",
+    "id": "server_data"
+  },
   "path": "recipes"
 }

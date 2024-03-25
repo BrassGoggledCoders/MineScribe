@@ -3,6 +3,9 @@
   "label": {
     "text": "Tag"
   },
-  "packType": "SERVER_DATA",
+  "rootInfo": {
+    "type": "NAMESPACE",
+    "id": "server_data"
+  },
   "path": "tags"
 }
