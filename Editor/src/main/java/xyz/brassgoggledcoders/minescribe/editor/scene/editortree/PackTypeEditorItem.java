@@ -10,13 +10,20 @@ import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileField;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.FileFieldInfo;
 import xyz.brassgoggledcoders.minescribe.core.fileform.filefield.StringFileFieldDefinition;
 import xyz.brassgoggledcoders.minescribe.core.packinfo.MineScribePackType;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.ResourceId;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootInfo;
+import xyz.brassgoggledcoders.minescribe.core.packinfo.parent.RootType;
 import xyz.brassgoggledcoders.minescribe.editor.registry.EditorRegistries;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.IPackContentNode;
+import xyz.brassgoggledcoders.minescribe.editor.registry.hierarchy.PackContentHierarchy;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.EditorFormDialog;
 import xyz.brassgoggledcoders.minescribe.editor.scene.dialog.NewNamespaceResult;
 import xyz.brassgoggledcoders.minescribe.editor.validation.RegexFieldValidation;
 
 import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,10 +31,13 @@ import java.util.stream.StreamSupport;
 
 public class PackTypeEditorItem extends EditorItem {
     private final MineScribePackType packType;
+    private final IPackContentNode contentNode;
 
     public PackTypeEditorItem(String name, Path path, MineScribePackType packType) {
         super(name, path);
         this.packType = packType;
+        this.contentNode = PackContentHierarchy.getInstance()
+                .getNodeFor(new RootInfo(RootType.PACK_TYPE, new ResourceId(packType.name())));
         if (packType.name().equalsIgnoreCase(MineScribeInfo.ID)) {
             EditorRegistries.addSourcePath(path);
         }
@@ -35,9 +45,24 @@ public class PackTypeEditorItem extends EditorItem {
 
     @Override
     public @NotNull List<EditorItem> createChildren(DirectoryStream<Path> childPaths) {
-        return StreamSupport.stream(childPaths.spliterator(), false)
-                .<EditorItem>map(path -> new NamespaceEditorItem(path.getFileName().toString(), path, this.packType))
-                .collect(Collectors.toList());
+        List<EditorItem> editorItems = new ArrayList<>();
+        for (Path childPath : childPaths) {
+            Path relativePath = this.getPath()
+                    .relativize(childPath);
+            IPackContentNode childNode = this.contentNode.getNode(relativePath);
+            if (childNode != null) {
+                if (Files.isDirectory(childPath)) {
+                    editorItems.add(new PackContentTypeEditorItem(childPath.getFileName().toString(), childPath, childNode));
+                } else if (Files.isRegularFile(childPath)) {
+                    editorItems.add(new FormFileEditorItem(
+                            relativePath.toString(),
+                            childPath,
+                            childNode.getNodeTrackers()
+                    ));
+                }
+            }
+        }
+        return editorItems;
     }
 
     @Override

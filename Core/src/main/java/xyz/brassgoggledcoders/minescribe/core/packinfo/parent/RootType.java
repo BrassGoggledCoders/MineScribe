@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import xyz.brassgoggledcoders.minescribe.core.codec.EnumCodec;
 
 public enum RootType {
-    PACK_REPOSITORY,
     PACK,
     PACK_TYPE,
     NAMESPACE,
