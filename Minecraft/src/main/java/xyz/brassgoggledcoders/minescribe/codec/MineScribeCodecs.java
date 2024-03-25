@@ -52,15 +52,12 @@ public class MineScribeCodecs {
             RootInfo.CODEC.optionalFieldOf(JsonFieldNames.ROOT_INFO, RootInfo.NAMESPACE).forGetter(PackContentParentType::getRootInfo)
     ).apply(instance, (label, path, form, packType, parent) -> new PackContentParentType(label, path, form.orElse(null), packType, parent)));
 
-    public static final Codec<PackContentChildType> PACK_CONTENT_CHILD_TYPE = RecordCodecBuilder.create(instance -> instance.group(
+    public static final Codec<PackContentType> CONTENT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             LABEL_STRING.fieldOf(JsonFieldNames.LABEL).forGetter(PackContentType::getLabel),
             MineScribeCoreCodecs.PATH.fieldOf(JsonFieldNames.PATH).forGetter(PackContentType::getPath),
             ErroringOptionalFieldCodec.of(JsonFieldNames.FORM, FileForm.CODEC).forGetter(PackContentType::getForm),
-            RESOURCE_ID.fieldOf(JsonFieldNames.PARENT_ID).xmap(
-                    id -> new RootInfo(RootType.CONTENT, Optional.of(id)),
-                    info -> info.id().orElseThrow()
-            ).forGetter(PackContentChildType::getRootInfo)
-    ).apply(instance, (label, path, form, packType) -> new PackContentChildType(label, path, form.orElse(null), packType)));
+            RootInfo.CODEC.fieldOf(JsonFieldNames.ROOT_INFO).forGetter(PackContentType::getRootInfo)
+    ).apply(instance, (label, path, form, packType) -> new PackContentType(label, path, form.orElse(null), packType)));
 
     public static final Codec<ObjectType> OBJECT_TYPE = RecordCodecBuilder.create(instance -> instance.group(
             FancyText.CODEC.fieldOf(JsonFieldNames.LABEL).forGetter(ObjectType::getLabel),

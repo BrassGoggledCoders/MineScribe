@@ -67,7 +67,7 @@ public record NodeTracker(
     @NotNull
     private List<NodeTracker> createNodeTracksForChildren(Path path) {
         List<NodeTracker> nodeTrackerList = new ArrayList<>();
-        for (Holder<ResourceId, PackContentType> childTypeHolder : EditorRegistries.getContentChildTypes().getHolders()) {
+        for (Holder<ResourceId, PackContentType> childTypeHolder : EditorRegistries.getContentTypes().getHolders()) {
             ResourceId parentId = this.parentTypeHolder.getKey();
             if (childTypeHolder.exists(childType -> matchesChild(childType, parentId, path))) {
                 nodeTrackerList.add(new NodeTracker(

@@ -13,7 +13,7 @@
             {
               "type": "registry",
               "fullNameId": true,
-              "registry": "contentChildTypes"
+              "registry": "contentTypes"
             },
             {
               "type": "registry",

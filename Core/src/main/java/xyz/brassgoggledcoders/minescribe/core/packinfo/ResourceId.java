@@ -20,13 +20,13 @@ public record ResourceId(
     public ResourceId(String id) {
         this(
                 id.indexOf(':') != -1 ? id.substring(0, id.indexOf(':')) : "minescribe",
-                id.indexOf(':') != -1 ? id.substring(id.indexOf(':') + 1).replace("\\", "/") : id.replace("\\", "/")
+                id.indexOf(':') != -1 ? id.substring(id.indexOf(':') + 1) : id
         );
     }
 
     public ResourceId(String namespace, String path) {
-        this.namespace = namespace.replace("\\", "/");
-        this.path = path.replace("\\", "/");
+        this.namespace = namespace.replace("\\", "/").toLowerCase(Locale.ROOT);
+        this.path = path.replace("\\", "/").toLowerCase(Locale.ROOT);
     }
 
     @Override

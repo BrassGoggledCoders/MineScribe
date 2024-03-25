@@ -59,8 +59,11 @@ public class NewFileFormDialog extends Dialog<NewFileFormDialog.NewFileResult> {
             );
         }
         if (childTypes.isEmpty()) {
-            childTypes = new ArrayList<>(EditorRegistries.getContentChildTypes()
+            childTypes = new ArrayList<>(EditorRegistries.getContentTypes()
                     .getHolders()
+                    .stream()
+                    .filter(holder -> holder.exists(packContentType -> packContentType.getRootInfo().type() == RootType.CONTENT))
+                    .toList()
             );
         }
 

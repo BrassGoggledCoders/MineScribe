@@ -41,14 +41,4 @@ public class PackContentChildType extends PackContentType implements IFullName {
     public ResourceId getParentId() {
         return parentId;
     }
-
-    @Override
-    public ResourceId getFullName() {
-        ResourceId id = Registries.getContentChildTypes()
-                .getKey(this);
-        return new ResourceId(
-                id.namespace(),
-                "types/child/" + id.path()
-        );
-    }
 }
