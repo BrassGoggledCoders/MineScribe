@@ -1,19 +1,15 @@
 package xyz.brassgoggledcoders.minescribe.event;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryManager;
-import net.minecraftforge.registries.tags.ITagManager;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 import xyz.brassgoggledcoders.minescribe.api.data.*;
 import xyz.brassgoggledcoders.minescribe.api.event.GatherFormListsEvent;
@@ -34,7 +30,10 @@ import xyz.brassgoggledcoders.minescribe.data.FileCopyMineScribeReloadListener;
 import xyz.brassgoggledcoders.minescribe.util.PackTypeHelper;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -67,7 +66,7 @@ public class ForgeCommonEventHandler {
                 false,
                 () -> {
                     GatherFormListsEvent formListsEvent = new GatherFormListsEvent();
-                    MinecraftForge.EVENT_BUS.post(formListsEvent);
+                    NeoForge.EVENT_BUS.post(formListsEvent);
                     return formListsEvent.getValues();
                 }
         ));
@@ -78,7 +77,7 @@ public class ForgeCommonEventHandler {
                 true,
                 () -> {
                     GatherPackContentTypes gatherEvent = new GatherPackContentTypes();
-                    MinecraftForge.EVENT_BUS.post(gatherEvent);
+                    NeoForge.EVENT_BUS.post(gatherEvent);
                     return gatherEvent.getValues();
                 }
         ));
@@ -112,135 +111,95 @@ public class ForgeCommonEventHandler {
                         .toList()
         ));
 
-        if (minecraftServer != null) {
-            RegistryAccess registryAccess = minecraftServer.registryAccess();
-            registryAccess.registries()
-                    .map(RegistryAccess.RegistryEntry::value)
-                    .map(registry -> {
-                        ResourceLocation registryId = registry.key().location();
-                        ResourceId id = new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath());
-                        return new FormList(
-                                id,
-                                FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
-                                        .replace("_", " ")
-                                        .replace("/", " ")
-                                )),
-                                registry.keySet()
-                                        .stream()
-                                        .map(ResourceLocation::toString)
-                                        .toList()
-                        );
-                    })
-                    .forEach(formListsEvent::register);
-
-            registryAccess.registries()
-                    .map(RegistryAccess.RegistryEntry::value)
-                    .map(registry -> {
-                        ResourceLocation registryId = registry.key().location();
-                        ResourceId id = new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath());
-                        return new FormList(
-                                id,
-                                FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
-                                        .replace("_", " ")
-                                        .replace("/", " ")
-                                )),
-                                registry.getTagNames()
-                                        .map(tagKey -> "#" + tagKey.location())
-                                        .toList()
-                        );
-                    })
-                    .forEach(formListsEvent::register);
-
-            List<ResourceLocation> registries = RegistryManager.getRegistryNamesForSyncToClient();
-            Set<ResourceLocation> resourceKeys = Registry.REGISTRY.keySet();
-            registries.removeAll(resourceKeys);
-            for (ResourceLocation registryId : registries) {
-                ResourceId id = new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath());
-                IForgeRegistry<?> forgeRegistry = RegistryManager.ACTIVE.getRegistry(registryId);
-                if (forgeRegistry != null) {
-                    formListsEvent.register(new FormList(
+        RegistryAccess registryAccess = minecraftServer.registryAccess();
+        registryAccess.registries()
+                .map(RegistryAccess.RegistryEntry::value)
+                .map(registry -> {
+                    ResourceLocation registryId = registry.key().location();
+                    ResourceId id = new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath());
+                    return new FormList(
                             id,
                             FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
                                     .replace("_", " ")
                                     .replace("/", " ")
                             )),
-                            forgeRegistry.getKeys()
+                            registry.keySet()
                                     .stream()
                                     .map(ResourceLocation::toString)
                                     .toList()
-                    ));
+                    );
+                })
+                .forEach(formListsEvent::register);
 
-                    ITagManager<?> tagManager = forgeRegistry.tags();
-                    if (tagManager != null) {
-                        ResourceId tagId = new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath());
-                        formListsEvent.register(new FormList(
-                                tagId,
-                                FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
-                                        .replace("_", " ")
-                                        .replace("/", " ")
-                                )),
-                                tagManager.getTagNames()
-                                        .map(tagKey -> "#" + tagKey.location())
-                                        .toList()
-                        ));
-                    }
-                }
-            }
-        }
+        registryAccess.registries()
+                .map(RegistryAccess.RegistryEntry::value)
+                .map(registry -> {
+                    ResourceLocation registryId = registry.key().location();
+                    ResourceId id = new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath());
+                    return new FormList(
+                            id,
+                            FancyText.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
+                                    .replace("_", " ")
+                                    .replace("/", " ")
+                            )),
+                            registry.getTagNames()
+                                    .map(tagKey -> "#" + tagKey.location())
+                                    .toList()
+                    );
+                })
+                .forEach(formListsEvent::register);
     }
 
     @SubscribeEvent
     public static void registerChildTypes(GatherPackContentTypes gatherPackContentTypes) {
         MinecraftServer minecraftServer = ServerLifecycleHooks.getCurrentServer();
-        if (minecraftServer != null) {
-            RegistryAccess registryAccess = minecraftServer.registryAccess();
-            registryAccess.registries()
-                    .map(registry -> {
-                        ResourceLocation registryId = registry.key().location();
-                        ResourceLocation id = new ResourceLocation(registryId.getNamespace(), "tag/" + registryId.getPath());
-                        Path tagPath = Path.of(TagManager.getTagDir(registry.key()));
-                        if (tagPath.startsWith("tags")) {
-                            tagPath = tagPath.subpath(1, tagPath.getNameCount());
-                        }
-                        return new PackContentData(
-                                id,
-                                new RootInfoData(
-                                        RootType.CONTENT,
-                                        new ResourceLocation("tag")
-                                ),
-                                Component.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
-                                        .replace("_", " ")
-                                        .replace("/", " ")
-                                ) + " Tags"),
-                                tagPath,
-                                Optional.of(FileFormData.of(
-                                        new FileFieldData<>(
-                                                new CheckBoxFileFieldDefinition(false),
-                                                new FileFieldInfoData(
-                                                        "Replace",
-                                                        "replace",
-                                                        0,
-                                                        false
-                                                )
-                                        ),
-                                        new FileFieldData<>(
-                                                new ListSelectionFileFieldDefinition(List.of(
-                                                        new ValueFormList(new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath())),
-                                                        new ValueFormList(new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath())),
-                                                        new FileIdFormList("**data/*/tags/" + tagPath + "**", "#")
-                                                )),
-                                                new FileFieldInfoData(
-                                                        "Values",
-                                                        "values",
-                                                        1,
-                                                        false
-                                                )
-                                        )
-                                ))
-                        );
-                    })
-                    .forEach(gatherPackContentTypes::register);
+        RegistryAccess registryAccess = minecraftServer.registryAccess();
+        registryAccess.registries()
+                .map(registry -> {
+                    ResourceLocation registryId = registry.key().location();
+                    ResourceLocation id = new ResourceLocation(registryId.getNamespace(), "tag/" + registryId.getPath());
+                    Path tagPath = Path.of(TagManager.getTagDir(registry.key()));
+                    if (tagPath.startsWith("tags")) {
+                        tagPath = tagPath.subpath(1, tagPath.getNameCount());
+                    }
+                    return new PackContentData(
+                            id,
+                            new RootInfoData(
+                                    RootType.CONTENT,
+                                    new ResourceLocation("tag")
+                            ),
+                            Component.literal(MineScribeStringHelper.toTitleCase(registryId.getPath()
+                                    .replace("_", " ")
+                                    .replace("/", " ")
+                            ) + " Tags"),
+                            tagPath,
+                            Optional.of(FileFormData.of(
+                                    new FileFieldData<>(
+                                            new CheckBoxFileFieldDefinition(false),
+                                            new FileFieldInfoData(
+                                                    "Replace",
+                                                    "replace",
+                                                    0,
+                                                    false
+                                            )
+                                    ),
+                                    new FileFieldData<>(
+                                            new ListSelectionFileFieldDefinition(List.of(
+                                                    new ValueFormList(new ResourceId(registryId.getNamespace(), "registry/" + registryId.getPath())),
+                                                    new ValueFormList(new ResourceId(registryId.getNamespace(), "tag/" + registryId.getPath())),
+                                                    new FileIdFormList("**data/*/tags/" + tagPath + "**", "#")
+                                            )),
+                                            new FileFieldInfoData(
+                                                    "Values",
+                                                    "values",
+                                                    1,
+                                                    false
+                                            )
+                                    )
+                            ))
+                    );
+                })
+                .forEach(gatherPackContentTypes::register);
 
-        }
     }
 }

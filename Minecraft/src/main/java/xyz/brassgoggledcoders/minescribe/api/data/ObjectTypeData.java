@@ -5,8 +5,6 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.JsonCodecProvider;
 import xyz.brassgoggledcoders.minescribe.api.MineScribeAPI;
 
 import java.util.HashMap;
@@ -21,24 +19,4 @@ public record ObjectTypeData(
             ResourceLocation.CODEC.fieldOf("id").forGetter(ObjectTypeData::id),
             FileFormData.CODEC.fieldOf("form").forGetter(ObjectTypeData::form)
     ).apply(instance, ObjectTypeData::new));
-
-    public static JsonCodecProvider<ObjectTypeData> createProvider(
-            DataGenerator dataGenerator,
-            ExistingFileHelper existingFileHelper,
-            String modid,
-            Consumer<Consumer<ObjectTypeData>> collectValues
-    ) {
-        Map<ResourceLocation, ObjectTypeData> values = new HashMap<>();
-        collectValues.accept(objectTypeData -> values.put(objectTypeData.id(), objectTypeData));
-        return new JsonCodecProvider<>(
-                dataGenerator,
-                existingFileHelper,
-                modid,
-                JsonOps.INSTANCE,
-                MineScribeAPI.PACK_TYPE,
-                "types/object",
-                CODEC,
-                values
-        );
-    }
 }

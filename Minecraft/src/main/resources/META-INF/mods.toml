@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[43,44)"
+loaderVersion="[2,)"
 license="MIT"
 
 [[mods]]
@@ -10,15 +10,7 @@ authors="SkySom"
 description='''Datapacks FOR DAYS'''
 
 [[dependencies.minescribe]]
-modId="forge"
-mandatory=true #mandatory
-versionRange="[43.2.0,43.3.0)"
-ordering="NONE"
-side="BOTH"
-
-[[dependencies.minescribe]]
 modId="minecraft"
-mandatory=true
-versionRange="[1.19.2,1.19.3)"
+versionRange="[1.20.4,1.20.5)"
 ordering="NONE"
 side="BOTH"

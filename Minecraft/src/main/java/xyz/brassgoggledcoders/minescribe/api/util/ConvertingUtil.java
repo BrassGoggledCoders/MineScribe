@@ -1,7 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.api.util;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.contents.PlainTextContents.LiteralContents;
 import xyz.brassgoggledcoders.minescribe.core.text.FancyText;
 import xyz.brassgoggledcoders.minescribe.core.text.LiteralFancyText;
 

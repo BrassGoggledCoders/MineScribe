@@ -4,25 +4,23 @@ import com.google.common.base.Suppliers;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.packs.repository.*;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.FolderRepositorySource;
+import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.server.packs.resources.ReloadInstance;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.util.Unit;
-import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.PathPackResources;
-import net.minecraftforge.resource.ResourcePackLoader;
+import net.minecraft.world.level.validation.DirectoryValidator;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.resource.ResourcePackLoader;
 import xyz.brassgoggledcoders.minescribe.api.MineScribeAPI;
 import xyz.brassgoggledcoders.minescribe.api.event.RegisterMineScribeReloadListenerEvent;
 
 import java.lang.ref.WeakReference;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MineScribeResourceManager {
@@ -35,7 +33,7 @@ public class MineScribeResourceManager {
 
     public MineScribeResourceManager() {
         this.resourceManager = new ReloadableResourceManager(MineScribeAPI.PACK_TYPE);
-        MinecraftForge.EVENT_BUS.post(new RegisterMineScribeReloadListenerEvent(this.resourceManager));
+        NeoForge.EVENT_BUS.post(new RegisterMineScribeReloadListenerEvent(this.resourceManager));
         this.fileManager = new MineScribeFileManager(FMLPaths.GAMEDIR.get());
     }
 
@@ -44,19 +42,18 @@ public class MineScribeResourceManager {
         if (this.serverWeakReference == null || this.serverWeakReference.get() != currentServer) {
             if (currentServer != null) {
                 this.packRepository = new PackRepository(
-                        MineScribeAPI.PACK_TYPE,
                         new FolderRepositorySource(
                                 Minecraft.getInstance().getResourcePackDirectory(),
-                                PackSource.DEFAULT
+                                PackType.CLIENT_RESOURCES,
+                                PackSource.DEFAULT,
+                                new DirectoryValidator(path -> true)
                         ),
-                        new FolderRepositorySource(
-                                currentServer.getFile(LevelResource.DATAPACK_DIR.getId()),
-                                PackSource.WORLD
-                        )
+                        new ServerPacksSource(new DirectoryValidator(path -> true))
                 );
-                ResourcePackLoader.loadResourcePacks(
+
+                ResourcePackLoader.populatePackRepository(
                         this.packRepository,
-                        MineScribeResourceManager::buildPackFinder
+                        MineScribeAPI.PACK_TYPE
                 );
                 this.serverWeakReference = new WeakReference<>(currentServer);
             } else {
@@ -83,23 +80,6 @@ public class MineScribeResourceManager {
 
     public MineScribeFileManager getFileManager() {
         return this.fileManager;
-    }
-
-    private static RepositorySource buildPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks) {
-        return (packList, factory) -> serverPackFinder(modResourcePacks, packList, factory);
-    }
-
-    private static void serverPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks, Consumer<Pack> consumer, Pack.PackConstructor factory) {
-        for (Map.Entry<IModFile, ? extends PathPackResources> e : modResourcePacks.entrySet()) {
-            IModInfo mod = e.getKey().getModInfos().get(0);
-            if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
-            final String name = "mod:" + mod.getModId();
-            final Pack packInfo = Pack.create(name, false, e::getValue, factory, Pack.Position.BOTTOM, PackSource.DEFAULT);
-            if (packInfo == null) {
-                continue;
-            }
-            consumer.accept(packInfo);
-        }
     }
 
     public static MineScribeResourceManager getInstance() {

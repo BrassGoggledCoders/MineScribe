@@ -7,14 +7,8 @@ include("Minecraft")
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven("https://maven.minecraftforge.net") {
-            name = "Forge"
-        }
-        maven("https://maven.parchmentmc.org") {
-            name = "ParchmentMC"
-        }
-        maven("https://repo.spongepowered.org/repository/maven-public") {
-            name = "Mixin"
+        maven("https://maven.neoforged.net/releases") {
+            name = "NeoForge"
         }
     }
 }

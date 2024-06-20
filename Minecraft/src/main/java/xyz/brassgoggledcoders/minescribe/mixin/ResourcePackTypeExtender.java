@@ -21,13 +21,13 @@ public class ResourcePackTypeExtender {
     private static PackType[] $VALUES;
 
     @Invoker(value = "<init>")
-    private static PackType create(String name, int ordinal, String directoryName, com.mojang.bridge.game.PackType packType) {
+    private static PackType create(String name, int ordinal, String directoryName) {
         throw new IllegalStateException("Unreachable");
     }
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void classInit(CallbackInfo cb) {
-        var entry = create("MINESCRIBE", $VALUES.length, "minescribe", com.mojang.bridge.game.PackType.DATA);
+        var entry = create("MINESCRIBE", $VALUES.length, "minescribe");
 
         MineScribeAPI.PACK_TYPE = entry;
 

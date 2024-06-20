@@ -55,7 +55,7 @@ public class MineScribeCommand {
                                             );
                                             context.getSource()
                                                     .sendSuccess(
-                                                            Component.literal("MineScribe generation complete"),
+                                                            () -> Component.literal("MineScribe generation complete"),
                                                             true
                                                     );
                                             MineScribe.LOGGER.info("MineScribe generation complete");

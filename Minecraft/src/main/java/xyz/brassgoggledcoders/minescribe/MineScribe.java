@@ -1,8 +1,7 @@
 package xyz.brassgoggledcoders.minescribe;
 
-
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.core.MineScribeRuntime;
