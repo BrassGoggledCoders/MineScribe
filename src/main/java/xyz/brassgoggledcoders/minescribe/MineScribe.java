@@ -1,33 +1,28 @@
 package xyz.brassgoggledcoders.minescribe;
 
-import io.github.palexdev.materialfx.theming.JavaFXThemes;
-import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
-import io.github.palexdev.materialfx.theming.UserAgentBuilder;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import xyz.brassgoggledcoders.minescribe.controller.ApplicationController;
 import xyz.brassgoggledcoders.minescribe.controller.OpenProjectController;
 import xyz.brassgoggledcoders.minescribe.project.Project;
+import xyz.brassgoggledcoders.minescribe.theme.ThemeManager;
+import xyz.brassgoggledcoders.minescribe.util.PreferenceHelper;
 
 import java.io.IOException;
-import java.util.prefs.Preferences;
 
 public class MineScribe extends Application {
     private final ObjectProperty<Project> project = new SimpleObjectProperty<>();
 
     @Override
     public void start(Stage stage) throws IOException {
-
-        Preferences minescribeUserNode = Preferences.userNodeForPackage(MineScribe.class);
-        this.project.setValue(Project.loadProject(minescribeUserNode));
+        this.project.setValue(PreferenceHelper.loadPreference(Project.class, "project"));
         this.project.addListener((observableValue, project, newProject) ->
-                Project.saveProject(minescribeUserNode, newProject)
+                PreferenceHelper.savePreferences(project, "project")
         );
 
         if (this.project.getValue() == null) {
@@ -48,10 +43,13 @@ public class MineScribe extends Application {
         }
 
         if (project.getValue() != null) {
-            String javaVersion = System.getProperty("java.version");
-            String javafxVersion = System.getProperty("javafx.version");
-            Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-            Scene scene = new Scene(new StackPane(l), 640, 480);
+            FXMLLoader loader = new FXMLLoader(MineScribe.class.getResource("application.fxml"));
+            Scene scene = new Scene(loader.load(), 1000, 1000);
+            ThemeManager.getInstance()
+                    .setup(scene);
+            loader.<ApplicationController>getController()
+                    .getProjectProperty()
+                    .bindBidirectional(this.project);
             stage.setScene(scene);
             stage.show();
         } else {

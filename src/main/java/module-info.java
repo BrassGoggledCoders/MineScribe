@@ -8,6 +8,9 @@ module xyz.brassgoggledcoders.minescribe {
     requires org.slf4j;
 
     requires com.fasterxml.jackson.databind;
+    requires atlantafx.base;
+    requires com.dlsc.preferencesfx;
+    requires java.desktop;
 
     opens xyz.brassgoggledcoders.minescribe to javafx.graphics;
 
