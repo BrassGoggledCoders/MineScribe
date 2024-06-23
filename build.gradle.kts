@@ -28,9 +28,6 @@ dependencies {
 
     implementation("com.dlsc.preferencesfx:preferencesfx-core:11.8.0")
 
-    //https://github.com/andy-goryachev/FxDock
-    implementation("libs:FxDock")
-
     runtimeOnly("org.slf4j:slf4j-simple:2.0.13")
 }
 
