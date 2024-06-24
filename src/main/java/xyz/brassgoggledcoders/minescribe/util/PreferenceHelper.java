@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.MineScribe;
 
+import java.util.function.Supplier;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -13,6 +14,14 @@ public class PreferenceHelper {
     private static final Preferences APPLICATION_PREFERENCES = Preferences.userNodeForPackage(MineScribe.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(PreferenceHelper.class);
+
+    public static <T> T loadOrCreate(Class<T> tClass, String key, Supplier<T> constructor) {
+        T value = loadPreference(tClass, key);
+        if (value == null) {
+            value = constructor.get();
+        }
+        return value;
+    }
 
     public static <T> T loadPreference(Class<T> clazz, String key) {
         try {

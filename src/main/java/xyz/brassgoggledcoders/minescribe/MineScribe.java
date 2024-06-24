@@ -9,20 +9,36 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import xyz.brassgoggledcoders.minescribe.controller.ApplicationController;
 import xyz.brassgoggledcoders.minescribe.controller.OpenProjectController;
+import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
 import xyz.brassgoggledcoders.minescribe.project.Project;
 import xyz.brassgoggledcoders.minescribe.theme.ThemeManager;
-import xyz.brassgoggledcoders.minescribe.util.PreferenceHelper;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class MineScribe extends Application {
+    private final ObjectProperty<ApplicationPreferences> applicationPreferences = new SimpleObjectProperty<>();
     private final ObjectProperty<Project> project = new SimpleObjectProperty<>();
 
     @Override
     public void start(Stage stage) throws IOException {
-        this.project.setValue(PreferenceHelper.loadPreference(Project.class, "project"));
+        this.applicationPreferences.set(ApplicationPreferences.load());
+
+        Path lastProjectPath = this.applicationPreferences.getValue()
+                .getLastProject();
+
+        if (lastProjectPath != null) {
+            this.project.setValue(Project.checkPath(lastProjectPath)
+                    .fold(
+                            Project::new,
+                            errorString -> null
+                    )
+            );
+        }
+
         this.project.addListener((observableValue, project, newProject) ->
-                PreferenceHelper.savePreferences(project, "project")
+                this.applicationPreferences.getValue()
+                        .setLastProject(newProject.projectPath())
         );
 
         if (this.project.getValue() == null) {
@@ -44,12 +60,25 @@ public class MineScribe extends Application {
 
         if (project.getValue() != null) {
             FXMLLoader loader = new FXMLLoader(MineScribe.class.getResource("application.fxml"));
-            Scene scene = new Scene(loader.load(), 1000, 1000);
+            Scene scene = new Scene(
+                    loader.load(),
+                    this.applicationPreferences.getValue().getHeight(),
+                    this.applicationPreferences.getValue().getWidth()
+            );
+
             ThemeManager.getInstance()
                     .setup(scene);
             loader.<ApplicationController>getController()
                     .getProjectProperty()
                     .bindBidirectional(this.project);
+            if (this.applicationPreferences.getValue().getXPos() != Double.MIN_NORMAL) {
+                stage.setX(this.applicationPreferences.getValue().getXPos());
+            }
+            if (this.applicationPreferences.getValue().getYPos() != Double.MIN_NORMAL) {
+                stage.setY(this.applicationPreferences.getValue().getYPos());
+            }
+            this.applicationPreferences.getValue()
+                            .subscribeTo(stage);
             stage.setScene(scene);
             stage.show();
         } else {

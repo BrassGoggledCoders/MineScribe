@@ -9,6 +9,7 @@ import javafx.stage.DirectoryChooser;
 import xyz.brassgoggledcoders.minescribe.project.Project;
 
 import java.io.File;
+import java.util.Optional;
 
 public class OpenProjectController {
 
@@ -25,25 +26,15 @@ public class OpenProjectController {
         File directory = directoryChooser.showDialog(anchorPane.getScene()
                 .getWindow()
         );
-        if (directory != null && directory.exists() && directory.isDirectory()) {
-            if (directory.getName().endsWith(".minescribe")) {
-                directory = directory.getParentFile();
-            }
-
-            File minescribeChild = new File(directory, ".minescribe");
-            if (minescribeChild.exists() && minescribeChild.isDirectory()) {
-                File loadComplete = new File(minescribeChild, ".load-complete");
-                if (loadComplete.exists()) {
-                    this.project.setValue(new Project(directory.toPath()));
-                } else {
-                    new Alert(Alert.AlertType.ERROR, ".minescribe folder does not contain required resources, run 'minescribe generate' command in Minecraft")
-                            .showAndWait();
-                }
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Folder does not container a valid .minescribe folder")
-                        .showAndWait();
-            }
-        }
+        Project.checkPath(directory.toPath())
+                .fold(
+                        path -> Optional.of(new Project(path)),
+                        errorString -> {
+                            new Alert(Alert.AlertType.ERROR, errorString)
+                                    .showAndWait();
+                            return Optional.<Project>empty();
+                        }
+                ).ifPresent(this.project::setValue);
     }
 
     public ObjectProperty<Project> projectProperty() {

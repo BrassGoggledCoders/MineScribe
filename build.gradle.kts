@@ -22,6 +22,8 @@ repositories {
 dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
     implementation("org.slf4j:slf4j-api:2.0.13")
+    implementation("org.jetbrains:annotations:24.0.0")
+    implementation("io.vavr:vavr:0.10.4")
 
     implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
     implementation("org.kordamp.ikonli:ikonli-material2-pack:12.3.1")

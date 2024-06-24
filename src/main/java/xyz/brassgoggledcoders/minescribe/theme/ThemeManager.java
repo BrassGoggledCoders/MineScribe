@@ -67,7 +67,7 @@ public final class ThemeManager {
         );
         MineScribePreferences.getThemePreferences()
                 .theme()
-                .addListener((observable, oldValue, newValue) -> this.setTheme(newValue));
+                .subscribe(this::setTheme);
     }
 
     public ObservableList<Theme> getThemes() {
