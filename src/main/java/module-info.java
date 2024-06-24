@@ -13,6 +13,8 @@ module xyz.brassgoggledcoders.minescribe {
     requires org.jetbrains.annotations;
     requires com.fasterxml.jackson.databind;
     requires io.vavr;
+    requires org.kordamp.ikonli.javafx;
+    requires org.kordamp.ikonli.material2;
 
     opens xyz.brassgoggledcoders.minescribe to javafx.graphics;
 
