@@ -8,6 +8,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.stage.DirectoryChooser;
 import org.controlsfx.dialog.ExceptionDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.project.Project;
 
 import java.io.File;
@@ -17,6 +19,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 public class OpenProjectController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenProjectController.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final ObjectProperty<Project> project = new SimpleObjectProperty<>();
@@ -49,6 +52,7 @@ public class OpenProjectController {
             try {
                 return Optional.of(MAPPER.readValue(projectFilePath.toFile(), Project.class));
             } catch (IOException e) {
+                LOGGER.error("Failed to load existing project", e);
                 ExceptionDialog exceptionDialog = new ExceptionDialog(e);
                 exceptionDialog.setTitle("Failed to load existing project");
                 exceptionDialog.showAndWait();
@@ -56,7 +60,13 @@ public class OpenProjectController {
             }
         }
 
-        return Optional.of(new Project(path));
+        Project newProject = new Project(path);
+        try {
+            MAPPER.writeValue(projectFilePath.toFile(), newProject);
+        } catch (IOException e) {
+            LOGGER.error("Failed to write new project", e);
+        }
+        return Optional.of(newProject);
     }
 
     public ObjectProperty<Project> projectProperty() {

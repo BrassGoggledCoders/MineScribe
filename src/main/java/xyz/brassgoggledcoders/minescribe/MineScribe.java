@@ -8,6 +8,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.controller.ApplicationController;
 import xyz.brassgoggledcoders.minescribe.controller.OpenProjectController;
 import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
@@ -19,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class MineScribe extends Application {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MineScribe.class);
+
     private final ObjectProperty<ApplicationPreferences> applicationPreferences = new SimpleObjectProperty<>();
     private final ObjectProperty<Project> project = new SimpleObjectProperty<>();
     private final ObservableValue<ProjectPreferences> projectPreferences = project.map(ProjectPreferences::load);
@@ -34,7 +38,10 @@ public class MineScribe extends Application {
             this.project.setValue(Project.checkPath(lastProjectPath, false)
                     .fold(
                             Project::new,
-                            errorString -> null
+                            errorString -> {
+                                LOGGER.error(errorString);
+                                return null;
+                            }
                     )
             );
         }
