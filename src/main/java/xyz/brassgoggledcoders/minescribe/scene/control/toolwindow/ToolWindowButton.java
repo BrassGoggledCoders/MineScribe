@@ -9,6 +9,8 @@ public class ToolWindowButton extends Button {
         this.toolWindow = toolWindow;
         this.graphicProperty()
                 .bind(toolWindow.graphicProperty());
+        this.tooltipProperty()
+                .bind(toolWindow.tooltipProperty());
     }
 
     public ToolWindow getToolWindow() {

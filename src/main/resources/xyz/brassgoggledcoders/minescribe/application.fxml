@@ -22,7 +22,7 @@
             <ToolWindow>
                 <text>Problems</text>
                 <location>BOTTOM_LEFT</location>
-                <FontIcon iconLiteral="mdi2a-alert-circle"/>
+                <FontIcon iconLiteral="mdi2a-alert-circle-outline"/>
             </ToolWindow>
             <ToolWindow>
                 <text>TODO</text>
@@ -37,7 +37,7 @@
             <ToolWindow>
                 <text>Structure</text>
                 <location>RIGHT_BOTTOM</location>
-                <FontIcon iconLiteral="mdi2g-graph"/>
+                <FontIcon iconLiteral="mdi2g-graph-outline"/>
             </ToolWindow>
             <ToolWindow>
                 <text>Bookmarks</text>
