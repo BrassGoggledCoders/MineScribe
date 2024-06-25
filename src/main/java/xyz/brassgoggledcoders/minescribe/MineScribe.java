@@ -68,9 +68,13 @@ public class MineScribe extends Application {
 
             ThemeManager.getInstance()
                     .setup(scene);
-            loader.<ApplicationController>getController()
-                    .getProjectProperty()
+            ApplicationController applicationController = loader.getController();
+
+            applicationController.getProjectProperty()
                     .bindBidirectional(this.project);
+            applicationController.getApplicationPreferences()
+                    .bindBidirectional(this.applicationPreferences);
+
             if (this.applicationPreferences.getValue().getXPos() != Double.MIN_NORMAL) {
                 stage.setX(this.applicationPreferences.getValue().getXPos());
             }

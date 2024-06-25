@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import xyz.brassgoggledcoders.minescribe.scene.control.ToolWindowPane?>
+<?import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindow?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="xyz.brassgoggledcoders.minescribe.controller.ApplicationController"
             fx:id="application"
 >
-
     <ToolWindowPane AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
                     AnchorPane.topAnchor="0">
         <top>
             <fx:include source="./menubar.fxml"/>
         </top>
+        <toolWindows>
+            <ToolWindow>
+                <text>TODO</text>
+                <location>LEFT_TOP</location>
+                <FontIcon iconLiteral="mdoal-format_list_bulleted"/>
+            </ToolWindow>
+        </toolWindows>
         <AnchorPane>
 
         </AnchorPane>

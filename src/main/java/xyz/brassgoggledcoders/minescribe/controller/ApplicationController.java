@@ -4,9 +4,12 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
+import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
 import xyz.brassgoggledcoders.minescribe.project.Project;
+import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindowLocation;
 
 public class ApplicationController {
+    private final ObjectProperty<ApplicationPreferences> applicationPreferences = new SimpleObjectProperty<>();
     private final ObjectProperty<Project> projectProperty;
 
     @FXML
@@ -20,11 +23,12 @@ public class ApplicationController {
         return projectProperty;
     }
 
-    public void setProject(Project value) {
-        this.projectProperty.setValue(value);
+    public ObjectProperty<ApplicationPreferences> getApplicationPreferences() {
+        return applicationPreferences;
     }
 
-    public Project getProject() {
-        return this.projectProperty.getValue();
+    @FXML
+    public ToolWindowLocation getLocation(String name) {
+        return ToolWindowLocation.LEFT_TOP;
     }
 }
