@@ -4,12 +4,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import xyz.brassgoggledcoders.minescribe.controller.ApplicationController;
 import xyz.brassgoggledcoders.minescribe.controller.OpenProjectController;
 import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
+import xyz.brassgoggledcoders.minescribe.preferences.ProjectPreferences;
 import xyz.brassgoggledcoders.minescribe.project.Project;
 import xyz.brassgoggledcoders.minescribe.theme.ThemeManager;
 
@@ -19,6 +21,7 @@ import java.nio.file.Path;
 public class MineScribe extends Application {
     private final ObjectProperty<ApplicationPreferences> applicationPreferences = new SimpleObjectProperty<>();
     private final ObjectProperty<Project> project = new SimpleObjectProperty<>();
+    private final ObservableValue<ProjectPreferences> projectPreferences = project.map(ProjectPreferences::load);
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -28,7 +31,7 @@ public class MineScribe extends Application {
                 .getLastProject();
 
         if (lastProjectPath != null) {
-            this.project.setValue(Project.checkPath(lastProjectPath)
+            this.project.setValue(Project.checkPath(lastProjectPath, false)
                     .fold(
                             Project::new,
                             errorString -> null
@@ -74,6 +77,8 @@ public class MineScribe extends Application {
                     .bindBidirectional(this.project);
             applicationController.getApplicationPreferences()
                     .bindBidirectional(this.applicationPreferences);
+            applicationController.getProjectPreferencesProperty()
+                    .bind(this.projectPreferences);
 
             if (this.applicationPreferences.getValue().getXPos() != Double.MIN_NORMAL) {
                 stage.setX(this.applicationPreferences.getValue().getXPos());
@@ -82,7 +87,7 @@ public class MineScribe extends Application {
                 stage.setY(this.applicationPreferences.getValue().getYPos());
             }
             this.applicationPreferences.getValue()
-                            .subscribeTo(stage);
+                    .subscribeTo(stage);
             stage.setScene(scene);
             stage.show();
         } else {
