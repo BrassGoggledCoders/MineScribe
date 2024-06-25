@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import xyz.brassgoggledcoders.minescribe.scene.control.ToolWindowPane?>
+<?import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindowPane?>
 <?import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindow?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <AnchorPane xmlns="http://javafx.com/javafx"
@@ -15,9 +15,34 @@
         </top>
         <toolWindows>
             <ToolWindow>
-                <text>TODO</text>
+                <text>Project</text>
                 <location>LEFT_TOP</location>
-                <FontIcon iconLiteral="mdoal-format_list_bulleted"/>
+                <FontIcon iconLiteral="mdi2f-folder-outline"/>
+            </ToolWindow>
+            <ToolWindow>
+                <text>Problems</text>
+                <location>BOTTOM_LEFT</location>
+                <FontIcon iconLiteral="mdi2a-alert-circle"/>
+            </ToolWindow>
+            <ToolWindow>
+                <text>TODO</text>
+                <location>LEFT_BOTTOM</location>
+                <FontIcon iconLiteral="mdi2f-format-list-bulleted"/>
+            </ToolWindow>
+            <ToolWindow>
+                <text>Search</text>
+                <location>RIGHT_TOP</location>
+                <FontIcon iconLiteral="mdi2m-magnify"/>
+            </ToolWindow>
+            <ToolWindow>
+                <text>Structure</text>
+                <location>RIGHT_BOTTOM</location>
+                <FontIcon iconLiteral="mdi2g-graph"/>
+            </ToolWindow>
+            <ToolWindow>
+                <text>Bookmarks</text>
+                <location>BOTTOM_RIGHT</location>
+                <FontIcon iconLiteral="mdi2b-bookmark-outline"/>
             </ToolWindow>
         </toolWindows>
         <AnchorPane>

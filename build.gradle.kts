@@ -26,7 +26,7 @@ dependencies {
     implementation("io.vavr:vavr:0.10.4")
 
     implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
-    implementation("org.kordamp.ikonli:ikonli-material2-pack:12.3.1")
+    implementation("org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1")
     implementation("io.github.mkpaz:atlantafx-base:2.0.1")
 
     implementation("com.dlsc.preferencesfx:preferencesfx-core:11.8.0")

@@ -14,7 +14,7 @@ module xyz.brassgoggledcoders.minescribe {
     requires com.fasterxml.jackson.databind;
     requires io.vavr;
     requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.ikonli.material2;
+    requires org.kordamp.ikonli.materialdesign2;
     requires org.controlsfx.controls;
 
     opens xyz.brassgoggledcoders.minescribe to javafx.graphics;
