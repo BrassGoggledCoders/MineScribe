@@ -5,6 +5,9 @@ module xyz.brassgoggledcoders.minescribe {
 
     requires atlantafx.base;
     requires com.dlsc.preferencesfx;
+    requires org.kordamp.ikonli.javafx;
+    requires org.kordamp.ikonli.materialdesign2;
+    requires org.controlsfx.controls;
 
     requires java.prefs;
 
@@ -13,11 +16,24 @@ module xyz.brassgoggledcoders.minescribe {
     requires org.jetbrains.annotations;
     requires com.fasterxml.jackson.databind;
     requires io.vavr;
-    requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.ikonli.materialdesign2;
-    requires org.controlsfx.controls;
 
-    opens xyz.brassgoggledcoders.minescribe to javafx.graphics;
+
+    requires net.rgielen.fxweaver.core;
+    requires net.rgielen.fxweaver.spring;
+
+    requires spring.beans;
+    requires spring.boot;
+    requires spring.boot.autoconfigure;
+    requires spring.context;
+    requires spring.core;
 
     exports xyz.brassgoggledcoders.minescribe;
+    exports xyz.brassgoggledcoders.minescribe.event;
+    exports xyz.brassgoggledcoders.minescribe.preferences;
+    exports xyz.brassgoggledcoders.minescribe.project;
+    exports xyz.brassgoggledcoders.minescribe.service;
+    exports xyz.brassgoggledcoders.minescribe.initializer;
+
+    opens xyz.brassgoggledcoders.minescribe to javafx.graphics;
+    opens xyz.brassgoggledcoders.minescribe.initializer to javafx.graphics;
 }

@@ -2,16 +2,24 @@ package xyz.brassgoggledcoders.minescribe.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import xyz.brassgoggledcoders.minescribe.preferences.MineScribePreferences;
+import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import xyz.brassgoggledcoders.minescribe.service.UserPreferencesService;
 
+@Component
+@FxmlView("/xyz/brassgoggledcoders/minescribe/menu_bar.fxml")
 public class MenuBarController {
+    private final UserPreferencesService userPreferencesService;
 
-    public MenuBarController() {
+    @Autowired
+    public MenuBarController(UserPreferencesService userPreferencesService) {
+        this.userPreferencesService = userPreferencesService;
     }
 
     @FXML
     private void openSettings() {
-        MineScribePreferences.openSettings();
+        this.userPreferencesService.openSettings();
     }
 
     @FXML

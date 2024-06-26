@@ -4,11 +4,15 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
+import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
 import xyz.brassgoggledcoders.minescribe.preferences.ProjectPreferences;
 import xyz.brassgoggledcoders.minescribe.project.Project;
 import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindowLocation;
 
+@Component
+@FxmlView("/xyz/brassgoggledcoders/minescribe/application.fxml")
 public class ApplicationController {
     private final ObjectProperty<ApplicationPreferences> applicationPreferences;
     private final ObjectProperty<Project> projectProperty;

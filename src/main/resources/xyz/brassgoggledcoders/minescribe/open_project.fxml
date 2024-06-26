@@ -16,7 +16,7 @@
             <HBox alignment="CENTER">
                 <Button prefHeight="64" prefWidth="64" onAction="#findProject">
                     <graphic>
-                        <FontIcon iconLiteral="mdal-create_new_folder" iconSize="64"/>
+                        <FontIcon iconLiteral="mdi2f-folder-multiple-plus-outline" iconSize="64"/>
                     </graphic>
                 </Button>
             </HBox>

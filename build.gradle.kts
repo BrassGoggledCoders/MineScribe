@@ -1,7 +1,10 @@
 plugins {
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.springframework.boot") version "3.3.1"
 }
+
+apply(plugin = "io.spring.dependency-management")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -15,11 +18,11 @@ javafx {
 
 repositories {
     mavenCentral()
-
-    flatDir(mapOf("name" to "libs", "dirs" to "$projectDir/libs"))
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("net.rgielen:javafx-weaver-spring-boot-starter:1.3.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
     implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("org.jetbrains:annotations:24.0.0")
@@ -30,11 +33,9 @@ dependencies {
     implementation("io.github.mkpaz:atlantafx-base:2.0.1")
 
     implementation("com.dlsc.preferencesfx:preferencesfx-core:11.8.0")
-
-    runtimeOnly("org.slf4j:slf4j-simple:2.0.13")
 }
 
 application {
-    mainClass = "xyz.brassgoggledcoders.minescribe.MineScribe"
+    mainClass = "xyz.brassgoggledcoders.minescribe.MineScribeSpringApplication"
 }
 

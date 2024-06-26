@@ -4,14 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.brassgoggledcoders.minescribe.MineScribe;
+import xyz.brassgoggledcoders.minescribe.MineScribeApplication;
 
 import java.util.function.Supplier;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class PreferenceHelper {
-    private static final Preferences APPLICATION_PREFERENCES = Preferences.userNodeForPackage(MineScribe.class);
+    private static final Preferences APPLICATION_PREFERENCES = Preferences.userNodeForPackage(MineScribeApplication.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(PreferenceHelper.class);
 
