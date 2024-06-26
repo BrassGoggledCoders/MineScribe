@@ -12,9 +12,12 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -22,6 +25,8 @@ import java.util.Iterator;
 @SuppressWarnings("unused")
 @DefaultProperty("content")
 public class ToolWindowPane extends BorderPane {
+    private final Logger LOGGER = LoggerFactory.getLogger(ToolWindowPane.class);
+
     private final EnumMap<ToolWindowLocation, ToolBar> toolBars = new EnumMap<>(ToolWindowLocation.class);
 
     private final ObjectProperty<Node> content = new SimpleObjectProperty<>(this, "content");
@@ -36,11 +41,6 @@ public class ToolWindowPane extends BorderPane {
             ToolBar toolBar = new ToolBar();
             toolBar.setOrientation(Orientation.VERTICAL);
 
-            if (toolWindowLocation.isTop()) {
-                toolBar.getItems()
-                        .addLast(new Separator());
-            }
-
             if (toolWindowLocation.isGrow()) {
                 VBox.setVgrow(toolBar, Priority.ALWAYS);
             }
@@ -48,10 +48,51 @@ public class ToolWindowPane extends BorderPane {
             if (toolWindowLocation.isLeft()) {
                 leftToolBars.getChildren()
                         .add(toolBar);
+                if (toolWindowLocation.isTop()) {
+                    leftToolBars.getChildren()
+                            .add(new Separator());
+                }
             } else {
                 rightToolBars.getChildren()
                         .add(toolBar);
+                if (toolWindowLocation.isTop()) {
+                    rightToolBars.getChildren()
+                            .add(new Separator());
+                }
             }
+
+            toolBar.setOnDragEntered(dragEvent -> {
+                if (dragEvent.getGestureSource() instanceof ToolWindowButton) {
+                    LOGGER.info("Entered {}", toolWindowLocation);
+                    dragEvent.consume();
+                }
+            });
+
+            toolBar.setOnDragExited(dragEvent -> {
+                if (dragEvent.getGestureSource() instanceof ToolWindowButton toolWindowButton) {
+                    toolBar.getItems()
+                            .remove(toolWindowButton);
+                    LOGGER.info("Exited {}", toolWindowLocation);
+                    dragEvent.consume();
+                }
+            });
+
+            toolBar.setOnDragOver(dragEvent -> {
+                if (dragEvent.getGestureSource() instanceof ToolWindowButton toolWindowButton) {
+                    dragEvent.acceptTransferModes(TransferMode.MOVE);
+                    dragEvent.consume();
+                }
+            });
+
+            toolBar.setOnDragDropped(dragEvent -> {
+                LOGGER.info("Drag Dropped {}", toolWindowLocation);
+                if (dragEvent.getGestureSource() instanceof ToolWindowButton toolWindowButton) {
+                    toolWindowButton.getToolWindow()
+                            .setLocation(toolWindowLocation);
+                    this.addToolWindowToLocation(toolWindowButton.getToolWindow());
+                    dragEvent.consume();
+                }
+            });
 
             this.toolBars.put(toolWindowLocation, toolBar);
         }
@@ -125,6 +166,7 @@ public class ToolWindowPane extends BorderPane {
                 Node toolBarItem = toolBarItems.next();
                 if (toolBarItem instanceof ToolWindowButton toolWindowButton) {
                     if (toolWindowButton.getToolWindow() == toolWindow) {
+                        //TODO: Handle this for Drag and Drop
                         if (toolWindowLocation == toolWindow.getLocation()) {
                             alreadyAdded = true;
                         } else {
@@ -137,9 +179,6 @@ public class ToolWindowPane extends BorderPane {
         if (!alreadyAdded) {
             ToolWindowLocation location = toolWindow.getLocation();
             int offsets = 1;
-            if (location.isTop()) {
-                offsets = 2;
-            }
 
             ObservableList<Node> items = toolBars.get(location)
                     .getItems();

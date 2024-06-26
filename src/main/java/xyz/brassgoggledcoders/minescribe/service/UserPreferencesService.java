@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@SuppressWarnings("unused")
 public class UserPreferencesService {
     private final Logger LOGGER = LoggerFactory.getLogger(UserPreferencesService.class);
 
