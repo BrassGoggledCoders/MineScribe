@@ -114,7 +114,8 @@ public final class ThemeService {
         scene.getStylesheets()
                 .setAll(
                         theme.getUserAgentStylesheet(),
-                        "/minescribe/css/moderna-bridge.css"
+                        "/minescribe/css/moderna-bridge.css",
+                        "/minescribe/css/minescribe.css"
                 );
         scene.getRoot()
                 .pseudoClassStateChanged(DARK, theme.isDarkMode());

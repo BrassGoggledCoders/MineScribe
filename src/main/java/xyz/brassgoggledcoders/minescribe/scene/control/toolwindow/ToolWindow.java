@@ -5,6 +5,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.Skin;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
 
@@ -38,5 +39,10 @@ public class ToolWindow extends Labeled {
 
     public final ObjectProperty<Node> contentProperty() {
         return content;
+    }
+
+    @Override
+    public Skin<ToolWindow> createDefaultSkin() {
+        return new ToolWindowSkin(this);
     }
 }

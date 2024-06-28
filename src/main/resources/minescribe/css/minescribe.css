@@ -1,0 +1,4 @@
+
+.tool-button-pane {
+    -fx-background-color: -color-border-muted, -color-bg-subtle;
+}

@@ -8,11 +8,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
-import javafx.scene.control.ToolBar;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -20,81 +17,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.EnumMap;
-import java.util.Iterator;
 
 @SuppressWarnings("unused")
 @DefaultProperty("content")
 public class ToolWindowPane extends BorderPane {
     private final Logger LOGGER = LoggerFactory.getLogger(ToolWindowPane.class);
 
-    private final EnumMap<ToolWindowLocation, ToolBar> toolBars = new EnumMap<>(ToolWindowLocation.class);
+    private final EnumMap<ToolWindowLocation, ToolWindowToolBar> toolBars = new EnumMap<>(ToolWindowLocation.class);
 
     private final ObjectProperty<Node> content = new SimpleObjectProperty<>(this, "content");
     private final ListProperty<ToolWindow> toolWindows = new SimpleListProperty<>(this, "toolWindows", FXCollections.observableArrayList());
     private final ObjectProperty<ToolWindowLocationHandler> toolWindowLocationLoader = new SimpleObjectProperty<>(this, "toolWindowLocationLoader");
 
     public ToolWindowPane() {
+        this.getStyleClass().add("tool-window-pane");
         VBox leftToolBars = new VBox();
         VBox rightToolBars = new VBox();
+        leftToolBars.getStyleClass()
+                .add("tool-button-pane");
+        rightToolBars.getStyleClass()
+                .add("tool-button-pane");
 
         for (ToolWindowLocation toolWindowLocation : ToolWindowLocation.values()) {
-            ToolBar toolBar = new ToolBar();
-            toolBar.setOrientation(Orientation.VERTICAL);
+            ToolWindowToolBar toolWindowToolBar = new ToolWindowToolBar(toolWindowLocation);
 
             if (toolWindowLocation.isGrow()) {
-                VBox.setVgrow(toolBar, Priority.ALWAYS);
+                VBox.setVgrow(toolWindowToolBar, Priority.ALWAYS);
             }
 
             if (toolWindowLocation.isLeft()) {
                 leftToolBars.getChildren()
-                        .add(toolBar);
+                        .add(toolWindowToolBar);
                 if (toolWindowLocation.isTop()) {
                     leftToolBars.getChildren()
                             .add(new Separator());
                 }
             } else {
                 rightToolBars.getChildren()
-                        .add(toolBar);
+                        .add(toolWindowToolBar);
                 if (toolWindowLocation.isTop()) {
                     rightToolBars.getChildren()
                             .add(new Separator());
                 }
             }
 
-            toolBar.setOnDragEntered(dragEvent -> {
-                if (dragEvent.getGestureSource() instanceof ToolWindowButton) {
-                    LOGGER.info("Entered {}", toolWindowLocation);
-                    dragEvent.consume();
-                }
-            });
-
-            toolBar.setOnDragExited(dragEvent -> {
-                if (dragEvent.getGestureSource() instanceof ToolWindowButton toolWindowButton) {
-                    toolBar.getItems()
-                            .remove(toolWindowButton);
-                    LOGGER.info("Exited {}", toolWindowLocation);
-                    dragEvent.consume();
-                }
-            });
-
-            toolBar.setOnDragOver(dragEvent -> {
-                if (dragEvent.getGestureSource() instanceof ToolWindowButton toolWindowButton) {
-                    dragEvent.acceptTransferModes(TransferMode.MOVE);
-                    dragEvent.consume();
-                }
-            });
-
-            toolBar.setOnDragDropped(dragEvent -> {
-                LOGGER.info("Drag Dropped {}", toolWindowLocation);
-                if (dragEvent.getGestureSource() instanceof ToolWindowButton toolWindowButton) {
-                    toolWindowButton.getToolWindow()
-                            .setLocation(toolWindowLocation);
-                    this.addToolWindowToLocation(toolWindowButton.getToolWindow());
-                    dragEvent.consume();
-                }
-            });
-
-            this.toolBars.put(toolWindowLocation, toolBar);
+            this.toolBars.put(toolWindowLocation, toolWindowToolBar);
         }
 
         this.setLeft(leftToolBars);
@@ -150,43 +117,14 @@ public class ToolWindowPane extends BorderPane {
         while (change.next()) {
             if (change.wasAdded()) {
                 change.getAddedSubList()
-                        .forEach(this::addToolWindowToLocation);
+                        .forEach(toolWindow -> {
+                            if (toolWindow.getLocation() != null) {
+                                ToolWindowToolBar toolWindowToolBar = this.toolBars.get(toolWindow.getLocation());
+                                toolWindowToolBar.getItems()
+                                        .add(new ToolWindowButton(toolWindow));
+                            }
+                        });
             }
-        }
-    }
-
-    public void addToolWindowToLocation(ToolWindow toolWindow) {
-        boolean alreadyAdded = false;
-        for (ToolWindowLocation toolWindowLocation : ToolWindowLocation.values()) {
-            ToolBar toolBar = toolBars.get(toolWindowLocation);
-            Iterator<Node> toolBarItems = toolBar.getItems()
-                    .iterator();
-
-            while (toolBarItems.hasNext()) {
-                Node toolBarItem = toolBarItems.next();
-                if (toolBarItem instanceof ToolWindowButton toolWindowButton) {
-                    if (toolWindowButton.getToolWindow() == toolWindow) {
-                        //TODO: Handle this for Drag and Drop
-                        if (toolWindowLocation == toolWindow.getLocation()) {
-                            alreadyAdded = true;
-                        } else {
-                            toolBarItems.remove();
-                        }
-                    }
-                }
-            }
-        }
-        if (!alreadyAdded) {
-            ToolWindowLocation location = toolWindow.getLocation();
-            int offsets = 1;
-
-            ObservableList<Node> items = toolBars.get(location)
-                    .getItems();
-
-            while (items.size() < offsets) {
-                offsets -= 1;
-            }
-            items.add(items.size() - offsets, new ToolWindowButton(toolWindow));
         }
     }
 }
