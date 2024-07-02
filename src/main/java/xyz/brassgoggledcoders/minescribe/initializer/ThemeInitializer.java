@@ -6,7 +6,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.event.SceneReadyEvent;
-import xyz.brassgoggledcoders.minescribe.event.StageReadyEvent;
 import xyz.brassgoggledcoders.minescribe.event.ThemePreferencesChangedEvent;
 import xyz.brassgoggledcoders.minescribe.service.ThemeService;
 

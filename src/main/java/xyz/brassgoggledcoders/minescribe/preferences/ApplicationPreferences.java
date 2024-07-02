@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.preferences;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import javafx.beans.property.*;
 import javafx.stage.Stage;
@@ -15,17 +16,20 @@ public class ApplicationPreferences {
     private final DoubleProperty width;
     private final DoubleProperty height;
 
+    @JsonIgnore
+    private boolean dirty = false;
+
     public ApplicationPreferences() {
         this.lastProject = new SimpleObjectProperty<>();
-        this.lastProject.addListener((observable, oldValue, newValue) -> this.save());
+        this.lastProject.addListener((observable, oldValue, newValue) -> this.markDirty());
         this.xPos = new SimpleDoubleProperty(Double.MIN_VALUE);
-        this.xPos.addListener((observable, oldValue, newValue) -> this.save());
+        this.xPos.addListener((observable, oldValue, newValue) -> this.markDirty());
         this.yPos = new SimpleDoubleProperty(Double.MIN_VALUE);
-        this.yPos.addListener((observable, oldValue, newValue) -> this.save());
+        this.yPos.addListener((observable, oldValue, newValue) -> this.markDirty());
         this.width = new SimpleDoubleProperty(600);
-        this.width.addListener((observable, oldValue, newValue) -> this.save());
+        this.width.addListener((observable, oldValue, newValue) -> this.markDirty());
         this.height = new SimpleDoubleProperty(400);
-        this.height.addListener((observable, oldValue, newValue) -> this.save());
+        this.height.addListener((observable, oldValue, newValue) -> this.markDirty());
     }
 
     @JsonGetter
@@ -78,8 +82,15 @@ public class ApplicationPreferences {
         this.height.set(height);
     }
 
-    private void save() {
-        PreferenceHelper.savePreferences(this, "application");
+    private void markDirty() {
+        this.dirty = true;
+    }
+
+    public void trySave() {
+        if (dirty) {
+            PreferenceHelper.savePreferences(this, "application");
+            dirty = false;
+        }
     }
 
     public void subscribeTo(Stage stage) {

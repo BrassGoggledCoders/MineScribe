@@ -3,7 +3,7 @@ package xyz.brassgoggledcoders.minescribe.initializer;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.event.StageReadyEvent;
@@ -11,7 +11,7 @@ import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
 import xyz.brassgoggledcoders.minescribe.service.ApplicationPreferencesService;
 
 @Component
-public class ApplicationPreferencesInitializer implements ApplicationListener<StageReadyEvent> {
+public class ApplicationPreferencesInitializer {
     private final ApplicationPreferencesService applicationPreferencesService;
 
     @Autowired
@@ -21,8 +21,8 @@ public class ApplicationPreferencesInitializer implements ApplicationListener<St
 
 
     @Order(50)
-    @Override
-    public void onApplicationEvent(@NotNull StageReadyEvent event) {
+    @EventListener(StageReadyEvent.class)
+    public void onStageReadyEvent(@NotNull StageReadyEvent event) {
         ApplicationPreferences applicationPreferences = applicationPreferencesService.getApplicationPreferences();
         Stage stage = event.getStage();
 
@@ -35,7 +35,7 @@ public class ApplicationPreferencesInitializer implements ApplicationListener<St
         if (applicationPreferences.getYPos() != Double.MIN_NORMAL) {
             stage.setY(applicationPreferences.getYPos());
         }
-        
+
         applicationPreferences.subscribeTo(stage);
     }
 }

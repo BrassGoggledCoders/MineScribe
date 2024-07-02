@@ -5,7 +5,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import xyz.brassgoggledcoders.minescribe.event.SavePreferencesEvent;
 import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
 
 @Service
@@ -21,4 +23,11 @@ public class ApplicationPreferencesService {
     public ApplicationPreferences getApplicationPreferences() {
         return applicationPreferences.get();
     }
+
+    @EventListener(SavePreferencesEvent.class)
+    public void saveValues(SavePreferencesEvent ignoredEvent) {
+        this.applicationPreferences.getValue()
+                .trySave();
+    }
+
 }
