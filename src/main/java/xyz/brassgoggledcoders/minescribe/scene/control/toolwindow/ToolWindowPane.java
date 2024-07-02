@@ -13,7 +13,10 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +83,9 @@ public class ToolWindowPane extends BorderPane {
         this.setLeft(leftToolBars);
         this.setRight(rightToolBars);
 
+        this.leftToolWindows.setOrientation(Orientation.VERTICAL);
+        this.rightToolWindows.setOrientation(Orientation.VERTICAL);
+
         this.toolWindowLocationLoader.subscribe(this::handlerLoaderChange);
         this.toolWindows.addListener(this::handleToolWindowChange);
         this.setCenter(verticalPane);
@@ -95,11 +101,13 @@ public class ToolWindowPane extends BorderPane {
     }
 
     private void handleWindowUpdate(ToolWindowLocation toolWindowLocation, @Nullable Node node) {
+        if (node != null) {
+            node.getProperties()
+                    .put(ToolWindowLocation.KEY, toolWindowLocation);
+        }
         if (!toolWindowLocation.isTop() && !toolWindowLocation.isGrow()) {
             removeExisting(this.bottomToolWindows, toolWindowLocation);
             if (node != null) {
-                node.getProperties()
-                        .put(ToolWindowLocation.KEY, toolWindowLocation);
                 if (this.bottomToolWindows.getParent() == null) {
                     this.verticalPane.getItems()
                             .addLast(this.bottomToolWindows);
@@ -117,6 +125,40 @@ public class ToolWindowPane extends BorderPane {
             }
         } else if (toolWindowLocation.isLeft()) {
             removeExisting(this.leftToolWindows, toolWindowLocation);
+            if (node != null) {
+                if (this.leftToolWindows.getParent() == null) {
+                    this.horizontalPane.getItems()
+                            .addFirst(this.leftToolWindows);
+                }
+                if (toolWindowLocation.isTop()) {
+                    this.leftToolWindows.getItems()
+                            .addFirst(node);
+                } else {
+                    this.leftToolWindows.getItems()
+                            .addLast(node);
+                }
+            } else if (this.leftToolWindows.getItems().isEmpty()) {
+                this.horizontalPane.getItems()
+                        .remove(this.leftToolWindows);
+            }
+        } else {
+            removeExisting(this.rightToolWindows, toolWindowLocation);
+            if (node != null) {
+                if (this.rightToolWindows.getParent() == null) {
+                    this.horizontalPane.getItems()
+                            .addLast(this.rightToolWindows);
+                }
+                if (toolWindowLocation.isTop()) {
+                    this.rightToolWindows.getItems()
+                            .addFirst(node);
+                } else {
+                    this.rightToolWindows.getItems()
+                            .addLast(node);
+                }
+            } else if (this.rightToolWindows.getItems().isEmpty()) {
+                this.horizontalPane.getItems()
+                        .remove(this.rightToolWindows);
+            }
         }
     }
 

@@ -17,6 +17,9 @@
                 <text>Project</text>
                 <location>LEFT_TOP</location>
                 <FontIcon iconLiteral="mdi2f-folder-outline"/>
+                <content>
+                    <fx:include source="./toolwindow/project.fxml"/>
+                </content>
             </ToolWindow>
             <ToolWindow>
                 <text>Problems</text>
@@ -30,20 +33,21 @@
                 <text>TODO</text>
                 <location>LEFT_BOTTOM</location>
                 <FontIcon iconLiteral="mdi2f-format-list-bulleted"/>
-            </ToolWindow>
-            <ToolWindow>
-                <text>Search</text>
-                <location>RIGHT_TOP</location>
-                <FontIcon iconLiteral="mdi2m-magnify"/>
+                <content>
+                    <fx:include source="./toolwindow/todo.fxml"/>
+                </content>
             </ToolWindow>
             <ToolWindow>
                 <text>Structure</text>
                 <location>RIGHT_BOTTOM</location>
                 <FontIcon iconLiteral="mdi2g-graph-outline"/>
+                <content>
+                    <fx:include source="./toolwindow/structure.fxml"/>
+                </content>
             </ToolWindow>
             <ToolWindow>
                 <text>Bookmarks</text>
-                <location>BOTTOM_RIGHT</location>
+                <location>RIGHT_TOP</location>
                 <content>
                     <fx:include source="./toolwindow/bookmarks.fxml"/>
                 </content>
