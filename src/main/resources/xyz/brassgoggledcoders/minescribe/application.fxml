@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindowPane?>
-<?import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindow?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.*?>
+<?import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.*?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="xyz.brassgoggledcoders.minescribe.controller.ApplicationController"
@@ -23,6 +22,9 @@
                 <text>Problems</text>
                 <location>BOTTOM_LEFT</location>
                 <FontIcon iconLiteral="mdi2a-alert-circle-outline"/>
+                <content>
+                    <fx:include source="./toolwindow/problems.fxml"/>
+                </content>
             </ToolWindow>
             <ToolWindow>
                 <text>TODO</text>
@@ -42,11 +44,12 @@
             <ToolWindow>
                 <text>Bookmarks</text>
                 <location>BOTTOM_RIGHT</location>
+                <content>
+                    <fx:include source="./toolwindow/bookmarks.fxml"/>
+                </content>
                 <FontIcon iconLiteral="mdi2b-bookmark-outline"/>
             </ToolWindow>
         </toolWindows>
-        <AnchorPane>
-
-        </AnchorPane>
+        <fx:include source="editor.fxml"/>
     </ToolWindowPane>
 </AnchorPane>
