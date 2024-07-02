@@ -4,6 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Toggle;
@@ -63,13 +64,28 @@ public class ToolWindowToolBar extends ToolBar {
         this.setOnDragDropped(dragEvent -> {
             LOGGER.info("Drag Dropped {}", this.location.getValue());
             if (dragEvent.getGestureSource() instanceof ToolWindowButton toolWindowButton) {
-                this.getItems()
-                        .add(new ToolWindowButton(toolWindowButton.getToolWindow()));
-                dragEvent.consume();
+                for (int x = 0; x < this.getItems().size(); x++) {
+                    Node itemNode = this.getItems()
+                            .get(x);
+
+                    Bounds itemBounds = itemNode.screenToLocal(itemNode.getBoundsInLocal());
+                    if (-dragEvent.getSceneY() > itemBounds.getCenterY()) {
+                        this.getItems()
+                                .add(x, new ToolWindowButton(toolWindowButton.getToolWindow()));
+                        dragEvent.consume();
+                        break;
+                    }
+                }
+                if (!dragEvent.isConsumed()) {
+                    this.getItems()
+                            .addLast(new ToolWindowButton(toolWindowButton.getToolWindow()));
+                    dragEvent.consume();
+                }
             }
         });
 
-        this.getItems().addListener(this::itemListener);
+        this.getItems()
+                .addListener(this::itemListener);
     }
 
     private void itemListener(ListChangeListener.Change<? extends Node> change) {
