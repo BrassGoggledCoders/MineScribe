@@ -8,7 +8,7 @@
             fx:id="application"
 >
     <ToolWindowPane AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
-                    AnchorPane.topAnchor="0">
+                    AnchorPane.topAnchor="0" fx:id="toolWindowPane">
         <top>
             <fx:include source="./menubar.fxml"/>
         </top>

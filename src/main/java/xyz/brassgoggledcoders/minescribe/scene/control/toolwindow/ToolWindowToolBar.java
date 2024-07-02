@@ -20,11 +20,13 @@ public class ToolWindowToolBar extends ToolBar {
     private final Logger LOGGER = LoggerFactory.getLogger(ToolWindowPane.class);
 
     private final ObjectProperty<ToolWindowLocation> location;
+    private final ObjectProperty<IToolWindowInfoHandler> toolWindowInfoHandler;
     private final ToggleGroup group;
     private final BiConsumer<ToolWindowLocation, Node> updateSelected;
 
     public ToolWindowToolBar(ToolWindowLocation location, BiConsumer<ToolWindowLocation, Node> updateSelected) {
         this.location = new SimpleObjectProperty<>(this, "location", location);
+        this.toolWindowInfoHandler = new SimpleObjectProperty<>(this, "toolWindowInfoHandler", null);
         this.group = new ToggleGroup();
         this.updateSelected = updateSelected;
         this.setOrientation(Orientation.VERTICAL);
@@ -78,6 +80,14 @@ public class ToolWindowToolBar extends ToolBar {
                             if (node instanceof ToolWindowButton toolWindowButton) {
                                 toolWindowButton.setToggleGroup(this.group);
                                 toolWindowButton.setLocation(this.getLocation());
+                                if (this.toolWindowInfoHandler.getValue() != null) {
+                                    this.toolWindowInfoHandler.getValue()
+                                            .setToolWindowLocation(
+                                                    toolWindowButton.getToolWindow()
+                                                            .getText(),
+                                                    this.getLocation()
+                                            );
+                                }
                             }
                         });
             }
@@ -99,5 +109,9 @@ public class ToolWindowToolBar extends ToolBar {
     public final ToolWindowLocation getLocation() {
         return this.locationProperty()
                 .getValue();
+    }
+
+    public final ObjectProperty<IToolWindowInfoHandler> toolWindowInfoHandlerProperty() {
+        return this.toolWindowInfoHandler;
     }
 }

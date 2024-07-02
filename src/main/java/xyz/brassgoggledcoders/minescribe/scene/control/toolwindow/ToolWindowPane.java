@@ -34,7 +34,7 @@ public class ToolWindowPane extends BorderPane {
 
     private final ObjectProperty<Node> content = new SimpleObjectProperty<>(this, "content");
     private final ListProperty<ToolWindow> toolWindows = new SimpleListProperty<>(this, "toolWindows", FXCollections.observableArrayList());
-    private final ObjectProperty<ToolWindowLocationHandler> toolWindowLocationLoader = new SimpleObjectProperty<>(this, "toolWindowLocationLoader");
+    private final ObjectProperty<IToolWindowInfoHandler> toolWindowInfoHandler = new SimpleObjectProperty<>(this, "toolWindowInfoHandler");
 
     private final SplitPane verticalPane = new SplitPane();
     private final SplitPane horizontalPane = new SplitPane();
@@ -56,7 +56,7 @@ public class ToolWindowPane extends BorderPane {
 
         for (ToolWindowLocation toolWindowLocation : ToolWindowLocation.values()) {
             ToolWindowToolBar toolWindowToolBar = new ToolWindowToolBar(toolWindowLocation, this::handleWindowUpdate);
-
+            this.toolWindowInfoHandler.bindBidirectional(toolWindowToolBar.toolWindowInfoHandlerProperty());
             if (toolWindowLocation.isGrow()) {
                 VBox.setVgrow(toolWindowToolBar, Priority.ALWAYS);
             }
@@ -86,7 +86,7 @@ public class ToolWindowPane extends BorderPane {
         this.leftToolWindows.setOrientation(Orientation.VERTICAL);
         this.rightToolWindows.setOrientation(Orientation.VERTICAL);
 
-        this.toolWindowLocationLoader.subscribe(this::handlerLoaderChange);
+        this.toolWindowInfoHandler.subscribe(this::updateInfoHandler);
         this.toolWindows.addListener(this::handleToolWindowChange);
         this.setCenter(verticalPane);
 
@@ -213,22 +213,40 @@ public class ToolWindowPane extends BorderPane {
         return this.content;
     }
 
-    public ToolWindowLocationHandler getToolWindowLocationLoader() {
-        return this.toolWindowLocationLoader.get();
+    public IToolWindowInfoHandler getToolWindowInfoHandler() {
+        return this.toolWindowInfoHandler.get();
     }
 
-    public void setToolWindowLocationLoader(ToolWindowLocationHandler toolWindowLocationHandler) {
-        this.toolWindowLocationLoader.set(toolWindowLocationHandler);
+    public void setToolWindowInfoHandler(IToolWindowInfoHandler toolWindowLocationHandler) {
+        this.toolWindowInfoHandler.set(toolWindowLocationHandler);
     }
 
-    public void handlerLoaderChange(ToolWindowLocationHandler toolWindowLocationHandler) {
+    public void updateInfoHandler(IToolWindowInfoHandler toolWindowLocationHandler) {
         if (toolWindowLocationHandler != null) {
             for (ToolWindow toolWindow : this.getToolWindows()) {
                 String text = toolWindow.getText();
                 if (text != null) {
                     ToolWindowLocation toolWindowLocation = toolWindowLocationHandler.getToolWindowLocation(text);
                     if (toolWindowLocation != null) {
-                        toolWindow.setLocation(toolWindowLocation);
+                        ToolWindowToolBar toolWindowToolBar = this.toolBars.get(toolWindowLocation);
+                        if (toolWindowToolBar != null) {
+                            ToolWindowLocation previousLocation = toolWindow.getLocation();
+                            if (previousLocation != null) {
+                                ToolWindowToolBar previousToolBar = this.toolBars.get(previousLocation);
+                                if (previousToolBar != null) {
+                                    previousToolBar.getItems()
+                                            .removeIf(node -> {
+                                                if (node instanceof ToolWindowButton toolWindowButton) {
+                                                    return toolWindowButton.getToolWindow() == toolWindow;
+                                                }
+
+                                                return false;
+                                            });
+                                }
+                            }
+                            toolWindowToolBar.getItems()
+                                    .add(new ToolWindowButton(toolWindow));
+                        }
                     }
                 }
             }
