@@ -41,6 +41,14 @@ public class ToolWindow extends Labeled {
         return content;
     }
 
+    public void setContent(Node content) {
+        this.content.set(content);
+    }
+
+    public Node getContent() {
+        return this.content.getValue();
+    }
+
     @Override
     public Skin<ToolWindow> createDefaultSkin() {
         return new ToolWindowSkin(this);

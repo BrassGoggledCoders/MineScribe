@@ -8,6 +8,8 @@ public enum ToolWindowLocation {
     RIGHT_BOTTOM(false, false, true),
     BOTTOM_RIGHT(false, false);
 
+    public static final String KEY = "toolWindowLocation";
+
     private final boolean left;
     private final boolean top;
     private final boolean grow;
