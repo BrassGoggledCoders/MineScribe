@@ -18,14 +18,14 @@ import java.util.function.BiConsumer;
 
 @SuppressWarnings("unused")
 public class ToolWindowToolBar extends ToolBar {
-    private final Logger LOGGER = LoggerFactory.getLogger(ToolWindowPane.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ToolWindowMainPane.class);
 
     private final ObjectProperty<ToolWindowLocation> location;
     private final ObjectProperty<IToolWindowInfoHandler> toolWindowInfoHandler;
     private final ToggleGroup group;
-    private final BiConsumer<ToolWindowLocation, Node> updateSelected;
+    private final BiConsumer<ToolWindowLocation, ToolWindow> updateSelected;
 
-    public ToolWindowToolBar(ToolWindowLocation location, BiConsumer<ToolWindowLocation, Node> updateSelected) {
+    public ToolWindowToolBar(ToolWindowLocation location, BiConsumer<ToolWindowLocation, ToolWindow> updateSelected) {
         this.location = new SimpleObjectProperty<>(this, "location", location);
         this.toolWindowInfoHandler = new SimpleObjectProperty<>(this, "toolWindowInfoHandler", null);
         this.group = new ToggleGroup();
@@ -112,7 +112,7 @@ public class ToolWindowToolBar extends ToolBar {
 
     private void updateToggle(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         if (newValue instanceof ToolWindowButton toolWindowButton) {
-            this.updateSelected.accept(this.getLocation(), toolWindowButton.getContent());
+            this.updateSelected.accept(this.getLocation(), toolWindowButton.getToolWindow());
         } else {
             this.updateSelected.accept(this.getLocation(), null);
         }

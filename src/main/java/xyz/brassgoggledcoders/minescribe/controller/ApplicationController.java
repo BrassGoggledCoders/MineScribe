@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
-import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindowPane;
+import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindowMainPane;
 import xyz.brassgoggledcoders.minescribe.service.ToolWindowPreferencesService;
 
 @Component
@@ -13,7 +13,7 @@ public class ApplicationController {
     private final ToolWindowPreferencesService toolWindowPreferencesService;
 
     @FXML
-    private ToolWindowPane toolWindowPane;
+    private ToolWindowMainPane toolWindowMainPane;
 
     @FXML
     private AnchorPane application;
@@ -24,6 +24,6 @@ public class ApplicationController {
 
     @FXML
     public void initialize() {
-        this.toolWindowPane.setToolWindowInfoHandler(toolWindowPreferencesService);
+        this.toolWindowMainPane.setToolWindowInfoHandler(toolWindowPreferencesService);
     }
 }

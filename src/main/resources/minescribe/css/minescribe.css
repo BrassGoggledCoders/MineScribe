@@ -2,3 +2,14 @@
 .tool-button-pane {
     -fx-background-color: -color-border-muted, -color-bg-subtle;
 }
+
+.tool-window-pane {
+    -fx-background-color: -color-border-muted, -color-bg-subtle;
+}
+
+.tool-window-title {
+    -fx-background-color: -color-border-muted, -color-bg-subtle;
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 7;
+}

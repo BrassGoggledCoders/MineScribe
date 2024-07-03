@@ -7,8 +7,8 @@
             fx:controller="xyz.brassgoggledcoders.minescribe.controller.ApplicationController"
             fx:id="application"
 >
-    <ToolWindowPane AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
-                    AnchorPane.topAnchor="0" fx:id="toolWindowPane">
+    <ToolWindowMainPane AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
+                        AnchorPane.topAnchor="0" fx:id="toolWindowMainPane">
         <top>
             <fx:include source="./menubar.fxml"/>
         </top>
@@ -55,5 +55,5 @@
             </ToolWindow>
         </toolWindows>
         <fx:include source="editor.fxml"/>
-    </ToolWindowPane>
+    </ToolWindowMainPane>
 </AnchorPane>
