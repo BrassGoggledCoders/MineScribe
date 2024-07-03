@@ -9,6 +9,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 
+@SuppressWarnings("unused")
 public class ToolWindowButton extends ToggleButton {
     private final ObjectProperty<ToolWindowLocation> location;
     private final ToolWindow toolWindow;

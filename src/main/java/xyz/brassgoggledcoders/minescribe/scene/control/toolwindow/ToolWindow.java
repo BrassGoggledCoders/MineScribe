@@ -9,6 +9,7 @@ import javafx.scene.control.Skin;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
 
+@SuppressWarnings("unused")
 @DefaultProperty("graphic")
 public class ToolWindow extends Labeled {
     private final ObjectProperty<ToolWindowLocation> location = new SimpleObjectProperty<>(this, "location", ToolWindowLocation.LEFT_TOP);
