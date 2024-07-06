@@ -7,7 +7,7 @@
          prefWidth="Infinity"
 >
     <Menu text="File">
-        <MenuItem text="Open Project"/>
+        <MenuItem text="Open Project" onAction="#openProject"/>
         <MenuItem text="Settings" onAction="#openSettings"/>
         <MenuItem text="Exit" onAction="#exit"/>
     </Menu>

@@ -29,6 +29,7 @@ module xyz.brassgoggledcoders.minescribe {
 
     exports xyz.brassgoggledcoders.minescribe;
     exports xyz.brassgoggledcoders.minescribe.event;
+    exports xyz.brassgoggledcoders.minescribe.fxweaver;
     exports xyz.brassgoggledcoders.minescribe.preferences;
     exports xyz.brassgoggledcoders.minescribe.project;
     exports xyz.brassgoggledcoders.minescribe.scene.control.toolwindow;

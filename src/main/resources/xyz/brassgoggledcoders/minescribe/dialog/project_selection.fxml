@@ -6,7 +6,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="xyz.brassgoggledcoders.minescribe.controller.OpenProjectController"
+            fx:controller="xyz.brassgoggledcoders.minescribe.controller.dialog.ProjectSelectionController"
             prefHeight="200.0" prefWidth="400.0" fx:id="anchorPane"
 >
     <GridPane alignment="CENTER" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
