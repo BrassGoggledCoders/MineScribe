@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.service;
+package xyz.brassgoggledcoders.minescribe.service.preferences;
 
 import atlantafx.base.theme.Theme;
 import com.dlsc.preferencesfx.PreferencesFx;
@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import xyz.brassgoggledcoders.minescribe.event.ThemePreferencesChangedEvent;
 import xyz.brassgoggledcoders.minescribe.preferences.ThemePreferences;
+import xyz.brassgoggledcoders.minescribe.service.ThemeService;
 import xyz.brassgoggledcoders.minescribe.util.PlatformFuture;
 
 import java.util.concurrent.ExecutionException;

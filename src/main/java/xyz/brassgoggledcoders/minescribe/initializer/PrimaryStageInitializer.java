@@ -18,7 +18,7 @@ import xyz.brassgoggledcoders.minescribe.event.StageReadyEvent;
 import xyz.brassgoggledcoders.minescribe.fxweaver.FxStageWeaver;
 import xyz.brassgoggledcoders.minescribe.project.Project;
 import xyz.brassgoggledcoders.minescribe.service.ProjectService;
-import xyz.brassgoggledcoders.minescribe.service.UserPreferencesService;
+import xyz.brassgoggledcoders.minescribe.service.preferences.UserPreferencesService;
 
 @Component
 public class PrimaryStageInitializer implements ApplicationListener<StageReadyEvent> {

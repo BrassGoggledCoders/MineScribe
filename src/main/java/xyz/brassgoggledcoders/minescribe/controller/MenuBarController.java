@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.controller.dialog.ProjectSelectionController;
 import xyz.brassgoggledcoders.minescribe.fxweaver.FxStageWeaver;
-import xyz.brassgoggledcoders.minescribe.service.UserPreferencesService;
+import xyz.brassgoggledcoders.minescribe.service.preferences.UserPreferencesService;
 
 @Component
 @FxmlView("/xyz/brassgoggledcoders/minescribe/menu_bar.fxml")

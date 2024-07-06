@@ -12,6 +12,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import xyz.brassgoggledcoders.minescribe.project.Project;
+import xyz.brassgoggledcoders.minescribe.service.preferences.ApplicationPreferencesService;
 
 import java.io.IOException;
 import java.nio.file.Files;

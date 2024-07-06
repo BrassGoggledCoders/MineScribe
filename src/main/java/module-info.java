@@ -34,6 +34,7 @@ module xyz.brassgoggledcoders.minescribe {
     exports xyz.brassgoggledcoders.minescribe.project;
     exports xyz.brassgoggledcoders.minescribe.scene.control.toolwindow;
     exports xyz.brassgoggledcoders.minescribe.service;
+    exports xyz.brassgoggledcoders.minescribe.service.preferences;
     exports xyz.brassgoggledcoders.minescribe.initializer;
 
     opens xyz.brassgoggledcoders.minescribe to javafx.graphics;

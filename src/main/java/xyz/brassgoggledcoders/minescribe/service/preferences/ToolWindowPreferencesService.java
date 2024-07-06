@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.service;
+package xyz.brassgoggledcoders.minescribe.service.preferences;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

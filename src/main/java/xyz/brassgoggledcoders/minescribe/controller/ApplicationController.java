@@ -5,7 +5,7 @@ import javafx.scene.layout.AnchorPane;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.scene.control.toolwindow.ToolWindowMainPane;
-import xyz.brassgoggledcoders.minescribe.service.ToolWindowPreferencesService;
+import xyz.brassgoggledcoders.minescribe.service.preferences.ToolWindowPreferencesService;
 
 @Component
 @FxmlView("/xyz/brassgoggledcoders/minescribe/application.fxml")
