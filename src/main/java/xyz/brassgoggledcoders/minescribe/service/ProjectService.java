@@ -56,6 +56,11 @@ public class ProjectService {
                 .getValue();
     }
 
+    public Path getProjectPath() {
+        return this.getProject()
+                .projectPath();
+    }
+
     private Project tryLoadProject() {
         Path lastProjectPath = this.applicationPreferencesService.getApplicationPreferences()
                 .getLastProject();

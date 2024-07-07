@@ -1,3 +1,6 @@
 {
-  "application.minescribe.title": "MineScribe"
+  "application.minescribe.title": "MineScribe",
+  "menubar.minescribe.new": "New",
+  "menubar.minescribe.new.pack": "New Pack",
+  "menubar.minescribe.new.import": "Import Pack"
 }

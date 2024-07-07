@@ -7,6 +7,10 @@
          prefWidth="Infinity" fx:id="menuBar"
 >
     <Menu text="File">
+        <Menu text="%menubar.minescribe.new">
+            <MenuItem text="%menubar.minescribe.new.pack" onAction="#newPack"/>
+            <MenuItem text="%menubar.minescribe.new.import" onAction="#importPack"/>
+        </Menu>
         <MenuItem text="Open Project" onAction="#openProject"/>
         <MenuItem text="Settings" onAction="#openSettings"/>
         <MenuItem text="Exit" onAction="#exit"/>

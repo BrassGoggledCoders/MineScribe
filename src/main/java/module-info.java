@@ -32,6 +32,7 @@ module xyz.brassgoggledcoders.minescribe {
     exports xyz.brassgoggledcoders.minescribe.event;
     exports xyz.brassgoggledcoders.minescribe.initializer;
     exports xyz.brassgoggledcoders.minescribe.model;
+    exports xyz.brassgoggledcoders.minescribe.model.view;
     exports xyz.brassgoggledcoders.minescribe.preferences;
     exports xyz.brassgoggledcoders.minescribe.project;
     exports xyz.brassgoggledcoders.minescribe.registry;

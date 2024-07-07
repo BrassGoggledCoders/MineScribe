@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.HBox?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="xyz.brassgoggledcoders.minescribe.controller.dialog.PackImportController"
-            prefHeight="400.0" prefWidth="600.0">
-    <ScrollPane>
-        <HBox fx:id="packList">
+            prefHeight="400.0" prefWidth="700.0">
+    <ListView fx:id="packListPane" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="0"
+              AnchorPane.topAnchor="0">
 
-        </HBox>
-    </ScrollPane>
+    </ListView>
 </AnchorPane>

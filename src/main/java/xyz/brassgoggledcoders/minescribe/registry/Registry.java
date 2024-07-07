@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.collections.ObservableSet;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.brassgoggledcoders.minescribe.service.JsonService;
@@ -14,8 +15,9 @@ import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 
-public class Registry<T> {
+public class Registry<T> implements Iterable<RegistryHolder<T>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Registry.class);
 
     private final String name;
@@ -164,5 +166,15 @@ public class Registry<T> {
         this.values.clear();
         this.registryRoots.clear();
         this.mappedValues.clear();
+    }
+
+    @NotNull
+    @Override
+    public Iterator<RegistryHolder<T>> iterator() {
+        return this.values.iterator();
+    }
+
+    public ObservableList<RegistryHolder<T>> getValues() {
+        return this.values;
     }
 }

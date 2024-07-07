@@ -6,6 +6,7 @@ import javafx.scene.control.MenuBar;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import xyz.brassgoggledcoders.minescribe.controller.dialog.PackImportController;
 import xyz.brassgoggledcoders.minescribe.controller.dialog.ProjectSelectionController;
 import xyz.brassgoggledcoders.minescribe.service.preferences.UserPreferencesService;
 import xyz.brassgoggledcoders.minescribe.service.ui.DialogService;
@@ -39,6 +40,20 @@ public class MenuBarController {
     private void openProject() {
         this.dialogService.showDialogAndWait(
                 ProjectSelectionController.class,
+                this.menuBar.getScene()
+                        .getWindow()
+        );
+    }
+
+    @FXML
+    private void newPack() {
+
+    }
+
+    @FXML
+    private void importPack() {
+        this.dialogService.showDialogAndWait(
+                PackImportController.class,
                 this.menuBar.getScene()
                         .getWindow()
         );

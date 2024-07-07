@@ -13,3 +13,12 @@
     -fx-border-width: 0 0 1 0;
     -fx-padding: 7;
 }
+
+.import-pane {
+    -fx-border-color: -color-border-muted;
+}
+
+.borders {
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 0 0 1 0;
+}

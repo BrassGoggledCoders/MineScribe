@@ -10,8 +10,7 @@
             prefHeight="200.0" prefWidth="400.0" fx:id="anchorPane"
 >
     <GridPane alignment="CENTER" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
-              AnchorPane.rightAnchor="0"
-              AnchorPane.topAnchor="0">
+              AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <VBox prefWidth="100" prefHeight="100" spacing="10">
             <HBox alignment="CENTER">
                 <Button prefHeight="64" prefWidth="64" onAction="#findProject">

@@ -59,7 +59,10 @@ public class PrimaryStageInitializer implements ApplicationListener<ApplicationR
         project = this.projectService.getProject();
 
         if (project != null) {
-            FxControllerAndView<ApplicationController, AnchorPane> applicationView = fxWeaver.load(ApplicationController.class);
+            FxControllerAndView<ApplicationController, AnchorPane> applicationView = fxWeaver.load(
+                    ApplicationController.class,
+                    localizationService.getResourceBundle()
+            );
             Scene scene = new Scene(applicationView.getView()
                     .orElseThrow()
             );

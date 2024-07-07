@@ -38,12 +38,15 @@ public class DialogService {
 
         if (controllerAndView.getController() instanceof IDialogController<V> dialogController) {
             dialog.titleProperty().bind(dialogController.titleProperty());
-            dialogController.closingProperty()
-                    .addListener((obs, oldValue, newValue) -> {
-                        if (newValue) {
-                            dialog.close();
-                        }
-                    });
+            if (dialogController.closingProperty() != null) {
+                dialogController.closingProperty()
+                        .addListener((obs, oldValue, newValue) -> {
+                            if (newValue) {
+                                dialog.close();
+                            }
+                        });
+            }
+
 
             dialogPane.getButtonTypes()
                     .addAll(dialogController.getButtonTypes());
