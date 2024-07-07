@@ -9,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import xyz.brassgoggledcoders.minescribe.event.ProjectOpenedEvent;
 import xyz.brassgoggledcoders.minescribe.project.Project;
 import xyz.brassgoggledcoders.minescribe.service.preferences.ApplicationPreferencesService;
 
@@ -25,18 +27,25 @@ public class ProjectService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectService.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private final ApplicationContext applicationContext;
     private final ApplicationPreferencesService applicationPreferencesService;
 
     private ObjectProperty<Project> project;
 
     @Autowired
-    public ProjectService(ApplicationPreferencesService applicationPreferencesService) {
+    public ProjectService(ApplicationContext applicationContext, ApplicationPreferencesService applicationPreferencesService) {
+        this.applicationContext = applicationContext;
         this.applicationPreferencesService = applicationPreferencesService;
     }
 
     public ObjectProperty<Project> projectProperty() {
         if (this.project == null) {
             this.project = new SimpleObjectProperty<>(this, "currentProject", tryLoadProject());
+            this.project.subscribe(newValue -> {
+                if (newValue != null) {
+                    this.applicationContext.publishEvent(new ProjectOpenedEvent(newValue));
+                }
+            });
         }
 
         return this.project;
@@ -107,6 +116,5 @@ public class ProjectService {
     private void setProject(Project project) {
         this.projectProperty()
                 .setValue(project);
-
     }
 }

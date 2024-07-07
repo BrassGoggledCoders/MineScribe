@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 
 @Service
 public class LocalizationService {
-
     private final SimpleObjectProperty<ResourceBundle> resourceBundle;
 
     public LocalizationService() {

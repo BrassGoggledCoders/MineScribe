@@ -25,18 +25,20 @@ module xyz.brassgoggledcoders.minescribe {
     requires spring.boot.autoconfigure;
     requires spring.context;
     requires spring.core;
+    requires java.rmi;
 
     exports xyz.brassgoggledcoders.minescribe;
     exports xyz.brassgoggledcoders.minescribe.controller.dialog;
     exports xyz.brassgoggledcoders.minescribe.event;
     exports xyz.brassgoggledcoders.minescribe.initializer;
+    exports xyz.brassgoggledcoders.minescribe.model;
     exports xyz.brassgoggledcoders.minescribe.preferences;
     exports xyz.brassgoggledcoders.minescribe.project;
+    exports xyz.brassgoggledcoders.minescribe.registry;
     exports xyz.brassgoggledcoders.minescribe.scene.control.toolwindow;
     exports xyz.brassgoggledcoders.minescribe.service;
     exports xyz.brassgoggledcoders.minescribe.service.preferences;
     exports xyz.brassgoggledcoders.minescribe.service.ui;
-    exports xyz.brassgoggledcoders.minescribe.theme;
 
     opens xyz.brassgoggledcoders.minescribe to javafx.graphics;
     opens xyz.brassgoggledcoders.minescribe.initializer to javafx.graphics;

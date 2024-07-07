@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.event.ApplicationReadyEvent;
+import xyz.brassgoggledcoders.minescribe.event.ProjectOpenedEvent;
 import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
 import xyz.brassgoggledcoders.minescribe.service.preferences.ApplicationPreferencesService;
 
@@ -37,5 +38,13 @@ public class ApplicationPreferencesInitializer {
         }
 
         applicationPreferences.subscribeTo(stage);
+    }
+
+    @EventListener(ProjectOpenedEvent.class)
+    public void onProjectOpenedEvent(@NotNull ProjectOpenedEvent event) {
+        this.applicationPreferencesService.getApplicationPreferences()
+                .setLastProject(event.getProject()
+                        .projectPath()
+                );
     }
 }
