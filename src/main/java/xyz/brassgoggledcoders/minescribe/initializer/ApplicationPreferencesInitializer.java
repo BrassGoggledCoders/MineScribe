@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import xyz.brassgoggledcoders.minescribe.event.StageReadyEvent;
+import xyz.brassgoggledcoders.minescribe.event.ApplicationReadyEvent;
 import xyz.brassgoggledcoders.minescribe.preferences.ApplicationPreferences;
 import xyz.brassgoggledcoders.minescribe.service.preferences.ApplicationPreferencesService;
 
@@ -21,8 +21,8 @@ public class ApplicationPreferencesInitializer {
 
 
     @Order(50)
-    @EventListener(StageReadyEvent.class)
-    public void onStageReadyEvent(@NotNull StageReadyEvent event) {
+    @EventListener(ApplicationReadyEvent.class)
+    public void onApplicationReadyEvent(@NotNull ApplicationReadyEvent event) {
         ApplicationPreferences applicationPreferences = applicationPreferencesService.getApplicationPreferences();
         Stage stage = event.getStage();
 

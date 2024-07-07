@@ -1,12 +1,12 @@
 package xyz.brassgoggledcoders.minescribe.controller.dialog;
 
+import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.service.ProjectService;
 
@@ -14,19 +14,19 @@ import java.io.File;
 
 @Component
 @FxmlView("/xyz/brassgoggledcoders/minescribe/dialog/project_selection.fxml")
-public class ProjectSelectionController extends DialogController {
+public class ProjectSelectionController implements IDialogController<Boolean> {
     private final ProjectService projectService;
+    private final SimpleBooleanProperty projectFoundProperty;
+    private final SimpleStringProperty titleProperty;
 
     @FXML
     private Node anchorPane;
 
-    @FXML
-    private Stage stage;
-
     @Autowired
-    public ProjectSelectionController(ApplicationContext applicationContext, ProjectService projectService) {
-        super(applicationContext);
+    public ProjectSelectionController(ProjectService projectService) {
         this.projectService = projectService;
+        this.projectFoundProperty = new SimpleBooleanProperty(this, "projectFound", false);
+        this.titleProperty = new SimpleStringProperty(this, "titleProperty");
     }
 
     @FXML
@@ -38,14 +38,17 @@ public class ProjectSelectionController extends DialogController {
                 .getWindow()
         );
         if (directory != null) {
-            if (this.projectService.tryOpenProject(directory.toPath())) {
-                this.stage.hide();
-            }
+            this.projectFoundProperty.setValue(this.projectService.tryOpenProject(directory.toPath()));
         }
     }
 
     @Override
-    protected Stage getStage() {
-        return this.stage;
+    public ReadOnlyStringProperty titleProperty() {
+        return this.titleProperty;
+    }
+
+    @Override
+    public ReadOnlyBooleanProperty closingProperty() {
+        return this.projectFoundProperty;
     }
 }

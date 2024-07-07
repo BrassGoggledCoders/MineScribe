@@ -2,23 +2,26 @@ package xyz.brassgoggledcoders.minescribe.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
+import javafx.scene.control.MenuBar;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.controller.dialog.ProjectSelectionController;
-import xyz.brassgoggledcoders.minescribe.fxweaver.FxStageWeaver;
 import xyz.brassgoggledcoders.minescribe.service.preferences.UserPreferencesService;
+import xyz.brassgoggledcoders.minescribe.service.ui.DialogService;
 
 @Component
 @FxmlView("/xyz/brassgoggledcoders/minescribe/menu_bar.fxml")
 public class MenuBarController {
-    private final FxStageWeaver fxWeaver;
+    private final DialogService dialogService;
     private final UserPreferencesService userPreferencesService;
 
+    @FXML
+    private MenuBar menuBar;
+
     @Autowired
-    public MenuBarController(FxStageWeaver fxWeaver, UserPreferencesService userPreferencesService) {
-        this.fxWeaver = fxWeaver;
+    public MenuBarController(DialogService dialogService, UserPreferencesService userPreferencesService) {
+        this.dialogService = dialogService;
         this.userPreferencesService = userPreferencesService;
     }
 
@@ -34,8 +37,10 @@ public class MenuBarController {
 
     @FXML
     private void openProject() {
-        this.fxWeaver.loadStage(ProjectSelectionController.class)
-                .stage()
-                .ifPresent(Stage::showAndWait);
+        this.dialogService.showDialogAndWait(
+                ProjectSelectionController.class,
+                this.menuBar.getScene()
+                        .getWindow()
+        );
     }
 }

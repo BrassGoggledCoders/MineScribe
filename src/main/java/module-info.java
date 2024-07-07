@@ -10,13 +10,12 @@ module xyz.brassgoggledcoders.minescribe {
     requires org.controlsfx.controls;
 
     requires java.prefs;
+    requires java.desktop;
 
     requires org.slf4j;
-    requires java.desktop;
     requires org.jetbrains.annotations;
     requires com.fasterxml.jackson.databind;
     requires io.vavr;
-
 
     requires net.rgielen.fxweaver.core;
     requires net.rgielen.fxweaver.spring;
@@ -28,14 +27,16 @@ module xyz.brassgoggledcoders.minescribe {
     requires spring.core;
 
     exports xyz.brassgoggledcoders.minescribe;
+    exports xyz.brassgoggledcoders.minescribe.controller.dialog;
     exports xyz.brassgoggledcoders.minescribe.event;
-    exports xyz.brassgoggledcoders.minescribe.fxweaver;
+    exports xyz.brassgoggledcoders.minescribe.initializer;
     exports xyz.brassgoggledcoders.minescribe.preferences;
     exports xyz.brassgoggledcoders.minescribe.project;
     exports xyz.brassgoggledcoders.minescribe.scene.control.toolwindow;
     exports xyz.brassgoggledcoders.minescribe.service;
     exports xyz.brassgoggledcoders.minescribe.service.preferences;
-    exports xyz.brassgoggledcoders.minescribe.initializer;
+    exports xyz.brassgoggledcoders.minescribe.service.ui;
+    exports xyz.brassgoggledcoders.minescribe.theme;
 
     opens xyz.brassgoggledcoders.minescribe to javafx.graphics;
     opens xyz.brassgoggledcoders.minescribe.initializer to javafx.graphics;

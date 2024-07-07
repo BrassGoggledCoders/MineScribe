@@ -1,13 +1,11 @@
 package xyz.brassgoggledcoders.minescribe;
 
 import javafx.application.Application;
-import org.springframework.beans.factory.ObjectProvider;
+import net.rgielen.fxweaver.core.FxWeaver;
+import net.rgielen.fxweaver.spring.SpringFxWeaver;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import xyz.brassgoggledcoders.minescribe.fxweaver.FxStageWeaver;
-
-import java.util.ResourceBundle;
 
 @SpringBootApplication
 public class MineScribeSpringApplication {
@@ -16,7 +14,7 @@ public class MineScribeSpringApplication {
     }
 
     @Bean
-    public FxStageWeaver fxWeaver(ConfigurableApplicationContext applicationContext, ObjectProvider<ResourceBundle> bundleProvider) {
-        return new FxStageWeaver(applicationContext::getBean, applicationContext::close, bundleProvider);
+    public FxWeaver fxWeaver(ConfigurableApplicationContext applicationContext) {
+        return new SpringFxWeaver(applicationContext);
     }
 }

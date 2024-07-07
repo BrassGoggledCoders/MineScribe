@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import xyz.brassgoggledcoders.minescribe.event.SavePreferencesEvent;
-import xyz.brassgoggledcoders.minescribe.event.StageReadyEvent;
+import xyz.brassgoggledcoders.minescribe.event.ApplicationReadyEvent;
 import xyz.brassgoggledcoders.minescribe.util.EventScheduledService;
 
 @Component
@@ -19,8 +19,8 @@ public class ScheduleInitializer {
         this.applicationContext = applicationContext;
     }
 
-    @EventListener(StageReadyEvent.class)
-    public void stageReady(StageReadyEvent ignoredEvent) {
+    @EventListener(ApplicationReadyEvent.class)
+    public void stageReady(ApplicationReadyEvent ignoredEvent) {
         EventScheduledService<SavePreferencesEvent> scheduledService = new EventScheduledService<>(
                 this.applicationContext,
                 () -> new SavePreferencesEvent(this)

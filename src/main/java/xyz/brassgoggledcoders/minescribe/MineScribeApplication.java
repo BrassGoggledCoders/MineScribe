@@ -5,7 +5,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import xyz.brassgoggledcoders.minescribe.event.StageReadyEvent;
+import xyz.brassgoggledcoders.minescribe.event.ApplicationReadyEvent;
 
 public class MineScribeApplication extends Application {
     private ConfigurableApplicationContext applicationContext;
@@ -22,7 +22,7 @@ public class MineScribeApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        this.applicationContext.publishEvent(new StageReadyEvent(stage));
+        this.applicationContext.publishEvent(new ApplicationReadyEvent(stage));
     }
 
     @Override
