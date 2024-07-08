@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class Project {
     private final UUID uuid;
-    private final SimpleListProperty<Path> importedPacks;
+    private final SimpleListProperty<String> importedPacks;
 
     public Project() {
         this(UUID.randomUUID(), new ArrayList<>());
@@ -25,7 +25,7 @@ public class Project {
     @JsonCreator
     public Project(
             @JsonProperty("uuid") UUID uuid,
-            @JsonProperty("importedPacks") List<Path> importedPacks
+            @JsonProperty("importedPacks") List<String> importedPacks
     ) {
         this.uuid = uuid;
         this.importedPacks = new SimpleListProperty<>(this, "importedPacks", FXCollections.observableArrayList(importedPacks));
@@ -35,11 +35,11 @@ public class Project {
         return uuid;
     }
 
-    public ListProperty<Path> importedPacksProperty() {
+    public ListProperty<String> importedPacksProperty() {
         return importedPacks;
     }
 
-    public List<Path> getImportedPacks() {
+    public List<String> getImportedPacks() {
         return importedPacks;
     }
 

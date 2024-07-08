@@ -1,9 +1,11 @@
 package xyz.brassgoggledcoders.minescribe.controller.dialog;
 
-import javafx.beans.property.*;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
 import javafx.stage.DirectoryChooser;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;

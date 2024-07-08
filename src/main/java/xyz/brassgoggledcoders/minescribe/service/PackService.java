@@ -1,6 +1,7 @@
 package xyz.brassgoggledcoders.minescribe.service;
 
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import xyz.brassgoggledcoders.minescribe.model.ProjectPathAnchor;
 import xyz.brassgoggledcoders.minescribe.model.pack.Pack;
 import xyz.brassgoggledcoders.minescribe.model.pack.PackRepository;
 import xyz.brassgoggledcoders.minescribe.model.pack.metadata.PackMetaDataContainer;
+import xyz.brassgoggledcoders.minescribe.project.Project;
 import xyz.brassgoggledcoders.minescribe.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.registry.RegistryHolder;
 
@@ -35,6 +37,8 @@ public class PackService {
 
     private final SimpleListProperty<Pack> importedPacks;
 
+    private final ObservableValue<List<Path>> importedPaths;
+
     @Autowired
     public PackService(Registry<PackRepository> packRepositoryRegistry, ProjectService projectService,
                        JsonService jsonService) {
@@ -43,22 +47,31 @@ public class PackService {
         this.jsonService = jsonService;
 
         this.importedPacks = new SimpleListProperty<>(this, "importedPacks");
+
+        this.importedPaths = this.projectService.projectProperty()
+                .flatMap(Project::importedPacksProperty)
+                .map(pathStrings -> pathStrings.stream()
+                        .map(pathString -> {
+                            Path path = Path.of(pathString);
+                            if (!path.isAbsolute()) {
+                                path = this.projectService.getProjectPath()
+                                        .resolve(path);
+                            }
+                            return path;
+                        })
+                        .toList()
+                );
     }
 
     public ObservableList<Pack> getImportedPacks() {
         if (this.importedPacks.getValue() == null) {
-            List<Path> importedPaths = this.projectService.getProject()
-                    .getImportedPacks();
-
-            this.importedPacks.setValue(FXCollections.observableArrayList(this.getPacks(importedPaths::contains)));
+            this.importedPacks.setValue(FXCollections.observableArrayList(this.getPacks(this.importedPaths.getValue()::contains)));
         }
         return this.importedPacks;
     }
 
     public List<Pack> getPacksForImport() {
-        return this.getPacks(Predicate.not(this.projectService.getProject()
-                .getImportedPacks()::contains
-        ));
+        return this.getPacks(Predicate.not(this.importedPaths.getValue()::contains));
     }
 
     private List<Pack> getPacks(Predicate<Path> load) {

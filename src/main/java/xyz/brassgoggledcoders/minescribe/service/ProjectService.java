@@ -82,7 +82,7 @@ public class ProjectService {
                         .relativize(packPath);
             }
             currentProject.importedPacksProperty()
-                    .add(packPath);
+                    .add(packPath.toString());
         }
     }
 
@@ -91,7 +91,7 @@ public class ProjectService {
             newProject.importedPacksProperty()
                     .addListener((observable, oldValue, newValue) -> this.projectDirty.set(true));
             newProject.importedPacksProperty()
-                    .addListener((ListChangeListener<? super Path>) change -> this.projectDirty.set(true));
+                    .addListener((ListChangeListener<? super String>) change -> this.projectDirty.set(true));
         }
     }
 
