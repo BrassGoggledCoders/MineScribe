@@ -38,8 +38,7 @@ public class PackService {
 
     public List<Pack> getPacksForImport() {
         List<Pack> packs = new ArrayList<>();
-        Path projectPath = this.projectService.getProject()
-                .projectPath();
+        Path projectPath = this.projectService.getProjectPath();
 
         for (RegistryHolder<PackRepository> registryHolder : packRepositoryRegistry) {
             PackRepository packRepository = registryHolder.getValue();

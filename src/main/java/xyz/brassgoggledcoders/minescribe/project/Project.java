@@ -8,11 +8,10 @@ import java.nio.file.Path;
 import java.util.UUID;
 
 public record Project(
-        UUID uuid,
-        Path projectPath
+        UUID uuid
 ) {
-    public Project(Path projectPath) {
-        this(UUID.randomUUID(), projectPath);
+    public Project() {
+        this(UUID.randomUUID());
     }
 
     public static Either<Path, String> checkPath(@Nullable Path path, boolean newProject) {

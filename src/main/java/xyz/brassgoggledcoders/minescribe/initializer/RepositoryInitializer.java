@@ -21,8 +21,7 @@ public class RepositoryInitializer {
     @EventListener(ProjectOpenedEvent.class)
     public void projectOpened(ProjectOpenedEvent event) {
         RegistryRoot builtInFileRoot = new RegistryRoot(
-                event.getProject()
-                        .projectPath()
+                event.getPath()
                         .resolve(".minescribe")
                         .resolve("builtin"),
                 100

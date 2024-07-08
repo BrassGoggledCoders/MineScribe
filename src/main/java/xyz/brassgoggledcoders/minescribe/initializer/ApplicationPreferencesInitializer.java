@@ -43,8 +43,6 @@ public class ApplicationPreferencesInitializer {
     @EventListener(ProjectOpenedEvent.class)
     public void onProjectOpenedEvent(@NotNull ProjectOpenedEvent event) {
         this.applicationPreferencesService.getApplicationPreferences()
-                .setLastProject(event.getProject()
-                        .projectPath()
-                );
+                .setLastProject(event.getPath());
     }
 }
