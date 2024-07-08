@@ -17,6 +17,6 @@ public class ProjectPreferences {
     }
 
     public static ProjectPreferences load(Project project) {
-        return PreferenceHelper.loadOrCreate(ProjectPreferences.class, "project.%s".formatted(project.uuid()), () -> new ProjectPreferences(project.uuid()));
+        return PreferenceHelper.loadOrCreate(ProjectPreferences.class, "project.%s".formatted(project.getUuid()), () -> new ProjectPreferences(project.getUuid()));
     }
 }

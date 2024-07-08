@@ -26,12 +26,16 @@ module xyz.brassgoggledcoders.minescribe {
     requires spring.context;
     requires spring.core;
     requires java.rmi;
+    requires com.fasterxml.jackson.datatype.jdk8;
 
     exports xyz.brassgoggledcoders.minescribe;
     exports xyz.brassgoggledcoders.minescribe.controller.dialog;
     exports xyz.brassgoggledcoders.minescribe.event;
     exports xyz.brassgoggledcoders.minescribe.initializer;
     exports xyz.brassgoggledcoders.minescribe.model;
+    exports xyz.brassgoggledcoders.minescribe.model.component;
+    exports xyz.brassgoggledcoders.minescribe.model.pack;
+    exports xyz.brassgoggledcoders.minescribe.model.pack.metadata;
     exports xyz.brassgoggledcoders.minescribe.model.view;
     exports xyz.brassgoggledcoders.minescribe.preferences;
     exports xyz.brassgoggledcoders.minescribe.project;

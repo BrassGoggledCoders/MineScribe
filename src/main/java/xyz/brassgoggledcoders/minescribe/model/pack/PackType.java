@@ -1,4 +1,4 @@
-package xyz.brassgoggledcoders.minescribe.model;
+package xyz.brassgoggledcoders.minescribe.model.pack;
 
 import xyz.brassgoggledcoders.minescribe.model.component.TextComponent;
 

@@ -1,23 +1,29 @@
 package xyz.brassgoggledcoders.minescribe.service;
 
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xyz.brassgoggledcoders.minescribe.model.Pack;
-import xyz.brassgoggledcoders.minescribe.model.PackRepository;
 import xyz.brassgoggledcoders.minescribe.model.ProjectPath;
 import xyz.brassgoggledcoders.minescribe.model.ProjectPathAnchor;
+import xyz.brassgoggledcoders.minescribe.model.pack.Pack;
+import xyz.brassgoggledcoders.minescribe.model.pack.PackRepository;
+import xyz.brassgoggledcoders.minescribe.model.pack.metadata.PackMetaDataContainer;
 import xyz.brassgoggledcoders.minescribe.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.registry.RegistryHolder;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 public class PackService {
@@ -25,18 +31,37 @@ public class PackService {
 
     private final Registry<PackRepository> packRepositoryRegistry;
     private final ProjectService projectService;
+    private final JsonService jsonService;
+
+    private final SimpleListProperty<Pack> importedPacks;
 
     @Autowired
-    public PackService(Registry<PackRepository> packRepositoryRegistry, ProjectService projectService) {
+    public PackService(Registry<PackRepository> packRepositoryRegistry, ProjectService projectService,
+                       JsonService jsonService) {
         this.packRepositoryRegistry = packRepositoryRegistry;
         this.projectService = projectService;
+        this.jsonService = jsonService;
+
+        this.importedPacks = new SimpleListProperty<>(this, "importedPacks");
     }
 
-    public List<Pack> getImportedPacks() {
-        return List.of();
+    public ObservableList<Pack> getImportedPacks() {
+        if (this.importedPacks.getValue() == null) {
+            List<Path> importedPaths = this.projectService.getProject()
+                    .getImportedPacks();
+
+            this.importedPacks.setValue(FXCollections.observableArrayList(this.getPacks(importedPaths::contains)));
+        }
+        return this.importedPacks;
     }
 
     public List<Pack> getPacksForImport() {
+        return this.getPacks(Predicate.not(this.projectService.getProject()
+                .getImportedPacks()::contains
+        ));
+    }
+
+    private List<Pack> getPacks(Predicate<Path> load) {
         List<Pack> packs = new ArrayList<>();
         Path projectPath = this.projectService.getProjectPath();
 
@@ -47,11 +72,22 @@ public class PackService {
 
                 for (Path repositoryPath : repositoryPaths) {
                     try (DirectoryStream<Path> packDirectories = Files.newDirectoryStream(repositoryPath, this::validPack)) {
-                        for(Path packPath : packDirectories) {
-                            packs.add(new Pack(
-                                    packPath,
-                                    packRepository.packTypes()
-                            ));
+                        for (Path packPath : packDirectories) {
+                            if (load.test(packPath)) {
+                                try (InputStream inputStream = Files.newInputStream(packPath.resolve("pack.mcmeta"))) {
+                                    PackMetaDataContainer container = this.jsonService.readValue(
+                                            inputStream,
+                                            PackMetaDataContainer.class
+                                    );
+                                    packs.add(new Pack(
+                                            packPath,
+                                            container,
+                                            packRepository.packTypes()
+                                    ));
+                                } catch (IOException e) {
+                                    LOGGER.error("Failed to load packs for path {}", packPath, e);
+                                }
+                            }
                         }
                     } catch (IOException e) {
                         LOGGER.error("Failed to find packs for repository {} and path {}", registryHolder.getId(), repositoryPath, e);
@@ -63,7 +99,9 @@ public class PackService {
     }
 
     public void importPack(Pack pack) {
-
+        this.getImportedPacks()
+                .add(pack);
+        this.projectService.importedPack(pack.path());
     }
 
     private boolean validPack(Path path) {

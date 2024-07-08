@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.Order;
-import xyz.brassgoggledcoders.minescribe.model.PackRepository;
-import xyz.brassgoggledcoders.minescribe.model.PackType;
+import xyz.brassgoggledcoders.minescribe.model.pack.PackRepository;
+import xyz.brassgoggledcoders.minescribe.model.pack.PackType;
 import xyz.brassgoggledcoders.minescribe.service.JsonService;
 
 @Configuration

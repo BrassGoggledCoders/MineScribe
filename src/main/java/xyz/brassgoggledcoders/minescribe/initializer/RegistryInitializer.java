@@ -10,11 +10,11 @@ import xyz.brassgoggledcoders.minescribe.registry.RegistryRoot;
 import java.util.List;
 
 @Component
-public class RepositoryInitializer {
+public class RegistryInitializer {
     private final List<? extends Registry<?>> registryList;
 
     @Autowired
-    public RepositoryInitializer(List<? extends Registry<?>> registryList) {
+    public RegistryInitializer(List<? extends Registry<?>> registryList) {
         this.registryList = registryList;
     }
 

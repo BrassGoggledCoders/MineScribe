@@ -13,8 +13,8 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.ListView;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
-import xyz.brassgoggledcoders.minescribe.model.Pack;
-import xyz.brassgoggledcoders.minescribe.model.PackType;
+import xyz.brassgoggledcoders.minescribe.model.pack.Pack;
+import xyz.brassgoggledcoders.minescribe.model.pack.PackType;
 import xyz.brassgoggledcoders.minescribe.model.view.PackImportView;
 import xyz.brassgoggledcoders.minescribe.registry.Registry;
 import xyz.brassgoggledcoders.minescribe.scene.control.cell.PackViewListCell;
@@ -87,7 +87,15 @@ public class PackImportController implements IDialogController<Void> {
 
     @Override
     public Void convert(ButtonType buttonType) {
-
+        if (buttonType == ButtonType.APPLY) {
+            for (PackImportView packImportView : this.packListPane.getItems()) {
+                if (packImportView.toImportProperty().getValue()) {
+                    this.packService.importPack(packImportView.packProperty()
+                            .getValue()
+                    );
+                }
+            }
+        }
 
         return null;
     }

@@ -1,5 +1,6 @@
-package xyz.brassgoggledcoders.minescribe.model;
+package xyz.brassgoggledcoders.minescribe.model.pack;
 
+import xyz.brassgoggledcoders.minescribe.model.ProjectPath;
 import xyz.brassgoggledcoders.minescribe.model.component.TextComponent;
 import xyz.brassgoggledcoders.minescribe.registry.RegistryHolder;
 

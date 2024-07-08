@@ -2,8 +2,8 @@ package xyz.brassgoggledcoders.minescribe.model.view;
 
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import xyz.brassgoggledcoders.minescribe.model.Pack;
-import xyz.brassgoggledcoders.minescribe.model.PackType;
+import xyz.brassgoggledcoders.minescribe.model.pack.Pack;
+import xyz.brassgoggledcoders.minescribe.model.pack.PackType;
 import xyz.brassgoggledcoders.minescribe.registry.RegistryHolder;
 
 public class PackImportView {

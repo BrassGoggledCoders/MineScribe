@@ -12,8 +12,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
-import xyz.brassgoggledcoders.minescribe.model.Pack;
-import xyz.brassgoggledcoders.minescribe.model.PackType;
+import xyz.brassgoggledcoders.minescribe.model.component.TextComponent;
+import xyz.brassgoggledcoders.minescribe.model.pack.Pack;
+import xyz.brassgoggledcoders.minescribe.model.pack.PackType;
 import xyz.brassgoggledcoders.minescribe.model.view.PackImportView;
 import xyz.brassgoggledcoders.minescribe.registry.RegistryHolder;
 
@@ -68,6 +69,7 @@ public class PackViewListCell extends ListCell<PackImportView> {
                 return null;
             }
         });
+
         this.packTypeComboBox.getCheckModel()
                 .getCheckedItems()
                 .addListener(this::onChecksChanged);
@@ -94,9 +96,8 @@ public class PackViewListCell extends ListCell<PackImportView> {
                     .bindBidirectional(item.toImportProperty());
             this.packNameLabel.textProperty()
                     .bind(item.packProperty()
-                            .map(Pack::path)
-                            .map(Path::getFileName)
-                            .map(Path::toString)
+                            .map(Pack::getDescription)
+                            .map(TextComponent::getText)
                     );
             this.packPathLabel.textProperty()
                     .bind(item.packProperty()
@@ -113,7 +114,7 @@ public class PackViewListCell extends ListCell<PackImportView> {
         super.updateItem(item, empty);
     }
 
-    private void onChecksChanged(Observable observable) {
+    private void onChecksChanged(Observable ignoredObservable) {
         if (this.getItem() != null) {
             this.getItem()
                     .typesToImportProperty()

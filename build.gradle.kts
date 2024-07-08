@@ -22,8 +22,11 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
+
     implementation("net.rgielen:javafx-weaver-spring-boot-starter:1.3.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.1")
+
     implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("io.vavr:vavr:0.10.4")

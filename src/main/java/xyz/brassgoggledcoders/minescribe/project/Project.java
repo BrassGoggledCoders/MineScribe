@@ -1,17 +1,46 @@
 package xyz.brassgoggledcoders.minescribe.project;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.control.Either;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-public record Project(
-        UUID uuid
-) {
+public class Project {
+    private final UUID uuid;
+    private final SimpleListProperty<Path> importedPacks;
+
     public Project() {
-        this(UUID.randomUUID());
+        this(UUID.randomUUID(), new ArrayList<>());
+    }
+
+    @JsonCreator
+    public Project(
+            @JsonProperty("uuid") UUID uuid,
+            @JsonProperty("importedPacks") List<Path> importedPacks
+    ) {
+        this.uuid = uuid;
+        this.importedPacks = new SimpleListProperty<>(this, "importedPacks", FXCollections.observableArrayList(importedPacks));
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public ListProperty<Path> importedPacksProperty() {
+        return importedPacks;
+    }
+
+    public List<Path> getImportedPacks() {
+        return importedPacks;
     }
 
     public static Either<Path, String> checkPath(@Nullable Path path, boolean newProject) {

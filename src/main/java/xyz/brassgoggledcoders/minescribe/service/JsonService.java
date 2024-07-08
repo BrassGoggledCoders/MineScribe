@@ -1,7 +1,9 @@
 package xyz.brassgoggledcoders.minescribe.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,9 +36,14 @@ public class JsonService {
         this.registryHolderDeserializer = new RegistryHolderDeserializer();
         module.addDeserializer(RegistryHolder.class, this.registryHolderDeserializer);
         this.objectMapper.registerModule(module);
+        this.objectMapper.registerModule(new Jdk8Module());
     }
 
     public <T> T readValue(InputStream inputStream, Class<T> clazz) throws IOException {
+        return objectMapper.readValue(inputStream, clazz);
+    }
+
+    public <T> T readValue(InputStream inputStream, TypeReference<T> clazz) throws IOException {
         return objectMapper.readValue(inputStream, clazz);
     }
 
@@ -44,5 +51,4 @@ public class JsonService {
     public void setRegistries(ObjectProvider<List<Registry<?>>> registries) {
         this.registryHolderDeserializer.setRegistries(registries);
     }
-
 }
