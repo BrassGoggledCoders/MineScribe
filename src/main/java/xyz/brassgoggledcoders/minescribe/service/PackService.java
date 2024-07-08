@@ -111,10 +111,13 @@ public class PackService {
         return packs;
     }
 
-    public void importPack(Pack pack) {
+    public void importPacks(List<Pack> packs) {
         this.getImportedPacks()
-                .add(pack);
-        this.projectService.importedPack(pack.path());
+                .addAll(packs);
+        this.projectService.importedPacks(packs.stream()
+                .map(Pack::path)
+                .toList()
+        );
     }
 
     private boolean validPack(Path path) {

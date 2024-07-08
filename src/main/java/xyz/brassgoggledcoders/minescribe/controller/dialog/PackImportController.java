@@ -88,12 +88,17 @@ public class PackImportController implements IDialogController<Void> {
     @Override
     public Void convert(ButtonType buttonType) {
         if (buttonType == ButtonType.APPLY) {
-            for (PackImportView packImportView : this.packListPane.getItems()) {
-                if (packImportView.toImportProperty().getValue()) {
-                    this.packService.importPack(packImportView.packProperty()
+            List<Pack> packsToImport = this.packListPane.getItems()
+                    .stream()
+                    .filter(packImportView -> packImportView.toImportProperty()
                             .getValue()
-                    );
-                }
+                    )
+                    .map(packImportView -> packImportView.packProperty()
+                            .getValue()
+                    )
+                    .toList();
+            if (!packsToImport.isEmpty()) {
+                this.packService.importPacks(packsToImport);
             }
         }
 
