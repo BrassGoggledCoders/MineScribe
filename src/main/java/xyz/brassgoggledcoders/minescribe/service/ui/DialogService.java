@@ -63,6 +63,12 @@ public class DialogService {
 
         dialog.initOwner(window);
         dialog.setDialogPane(dialogPane);
+
+
+        if (controllerAndView.getController() instanceof IDialogController<V> dialogController) {
+            dialogController.dialogInitialized(dialog);
+        }
+
         dialog.showAndWait();
     }
 }

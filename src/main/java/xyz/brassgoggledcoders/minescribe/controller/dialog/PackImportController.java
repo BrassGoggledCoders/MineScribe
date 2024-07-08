@@ -9,6 +9,7 @@ import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.ListView;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
@@ -94,5 +95,11 @@ public class PackImportController implements IDialogController<Void> {
     @Override
     public List<ButtonType> getButtonTypes() {
         return List.of(ButtonType.APPLY, ButtonType.CANCEL);
+    }
+
+    @Override
+    public void dialogInitialized(Dialog<Void> dialog) {
+        dialog.getDialogPane()
+                .setMinWidth(700);
     }
 }
