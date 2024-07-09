@@ -51,14 +51,7 @@ public class PackService {
         this.importedPaths = this.projectService.projectProperty()
                 .flatMap(Project::importedPacksProperty)
                 .map(pathStrings -> pathStrings.stream()
-                        .map(pathString -> {
-                            Path path = Path.of(pathString);
-                            if (!path.isAbsolute()) {
-                                path = this.projectService.getProjectPath()
-                                        .resolve(path);
-                            }
-                            return path;
-                        })
+                        .map(this.projectService::makeProjectPath)
                         .toList()
                 );
     }

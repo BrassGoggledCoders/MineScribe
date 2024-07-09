@@ -5,10 +5,12 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import xyz.brassgoggledcoders.minescribe.event.ApplicationExitEvent;
 import xyz.brassgoggledcoders.minescribe.event.ApplicationReadyEvent;
 
 public class MineScribeApplication extends Application {
     private ConfigurableApplicationContext applicationContext;
+    private Stage primaryStage;
 
     @Override
     public void init() {
@@ -22,11 +24,13 @@ public class MineScribeApplication extends Application {
 
     @Override
     public void start(Stage stage) {
+        this.primaryStage = stage;
         this.applicationContext.publishEvent(new ApplicationReadyEvent(stage));
     }
 
     @Override
     public void stop() {
+        this.applicationContext.publishEvent(new ApplicationExitEvent(this.primaryStage));
         this.applicationContext.close();
         Platform.exit();
     }

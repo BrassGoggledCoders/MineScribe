@@ -1,6 +1,7 @@
 plugins {
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.beryx.runtime") version "1.13.1"
     id("org.springframework.boot") version "3.3.1"
 }
 
@@ -22,10 +23,12 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
-
     implementation("net.rgielen:javafx-weaver-spring-boot-starter:1.3.0")
+
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.1")
+
+    implementation("io.methvin:directory-watcher:0.18.0")
 
     implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("org.jetbrains:annotations:24.0.0")
@@ -42,3 +45,7 @@ application {
     mainClass = "xyz.brassgoggledcoders.minescribe.MineScribeSpringApplication"
 }
 
+runtime {
+    options.addAll("--strip-debug", "--compress", "2", "--no-header-files")
+    modules.addAll("javafx.controls", "javafx.fxml")
+}

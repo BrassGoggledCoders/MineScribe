@@ -92,6 +92,20 @@ public class ProjectService {
         }
     }
 
+    public Path makeProjectPath(String path) {
+        return this.makeProjectPath(Path.of(path));
+    }
+
+    public Path makeProjectPath(Path path) {
+        if (path.isAbsolute()) {
+            return path;
+        } else {
+            return this.projectPathProperty()
+                    .getValue()
+                    .resolve(path);
+        }
+    }
+
     private void projectListeners(Project newProject) {
         if (newProject != null) {
             newProject.importedPacksProperty()
