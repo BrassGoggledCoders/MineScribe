@@ -105,7 +105,7 @@ public class Registry<T> implements Iterable<RegistryHolder<T>> {
                     newIdPath += "/";
                 }
                 if (Files.isDirectory(path)) {
-                    loaded += readFromPathFolders(registryRoot, namespace, parent, newIdPath + path.getFileName());
+                    loaded += readFromPathFolders(registryRoot, namespace, path, newIdPath + path.getFileName());
                 } else if (Files.isRegularFile(path)) {
                     RegistryId registryId = new RegistryId(
                             namespace,
