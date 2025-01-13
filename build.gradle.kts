@@ -3,6 +3,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
     id("org.beryx.runtime") version "1.13.1"
     id("org.springframework.boot") version "3.3.1"
+    groovy
 }
 
 apply(plugin = "io.spring.dependency-management")
@@ -20,6 +21,18 @@ javafx {
 repositories {
     mavenCentral()
 }
+
+sourceSets {
+    create("scripting") {
+
+    }
+    main {
+        compileClasspath += sourceSets["scripting"].output
+        runtimeClasspath += sourceSets["scripting"].output
+    }
+}
+
+configurations["scriptingImplementation"].extendsFrom(configurations["implementation"])
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
@@ -39,6 +52,8 @@ dependencies {
     implementation("io.github.mkpaz:atlantafx-base:2.0.1")
 
     implementation("com.dlsc.preferencesfx:preferencesfx-core:11.8.0")
+
+    implementation("org.apache.groovy:groovy:4.0.24")
 }
 
 application {
