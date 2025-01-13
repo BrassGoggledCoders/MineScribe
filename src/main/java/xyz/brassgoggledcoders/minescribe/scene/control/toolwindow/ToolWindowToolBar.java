@@ -18,7 +18,7 @@ import java.util.function.BiConsumer;
 
 @SuppressWarnings("unused")
 public class ToolWindowToolBar extends ToolBar {
-    private final Logger LOGGER = LoggerFactory.getLogger(ToolWindowMainPane.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ToolWindowToolBar.class);
 
     private final ObjectProperty<ToolWindowLocation> location;
     private final ObjectProperty<IToolWindowInfoHandler> toolWindowInfoHandler;
