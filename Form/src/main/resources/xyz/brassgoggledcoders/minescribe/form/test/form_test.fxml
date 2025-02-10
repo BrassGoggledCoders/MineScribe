@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.*?>
+<?import xyz.brassgoggledcoders.minescribe.form.layout.FormPane?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="xyz.brassgoggledcoders.minescribe.form.test.FormTestController"
+            prefHeight="400.0" prefWidth="600.0">
+    <TabPane AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+        <Tab text="String">
+            <FormPane fx:id="formString"/>
+        </Tab>
+    </TabPane>
+</AnchorPane>
